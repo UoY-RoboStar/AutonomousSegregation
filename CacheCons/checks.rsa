@@ -1,0 +1,6 @@
+
+assertion A0 : t0::MoveManager is deterministic
+
+assertion A1 : t0::MoveManager is deadlock-free
+
+assertion A2 : t0::MoveManager is divergence-free

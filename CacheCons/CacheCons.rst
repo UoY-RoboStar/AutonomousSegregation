@@ -1,4 +1,4 @@
-package t0 import Mathematics::*
+package t0 import Mathematics::*  
 
 interface IVisibleClustersCC {
 	event VisibleClustersCC: nat*Seq(ClusterData)*Seq(PuckData)
@@ -138,11 +138,12 @@ connection CacheConsC on Pose_O to stm_ref0 on Pose_O
 	connection CacheConsC on VisibleClustersTW to stm_ref4 on VisibleClustersTW
 
 connection stm_ref5 on RWMove to stm_ref1 on RWMove
-	connection stm_ref2 on NOAMove to stm_ref1 on NOAMove
+
 	connection stm_ref2 on OAMove to stm_ref1 on OAMove
 connection CacheConsC on closestAngle to stm_ref2 on closestAngle
 	connection CacheConsC on closestDistance to stm_ref2 on closestDistance
 	cycleDef cycle == 1
+connection stm_ref1 on NOAMove to stm_ref2 on NOAMove
 }
 
 stm CacheConsS {
@@ -150,7 +151,7 @@ stm CacheConsS {
 	const lv : real = 1 // 0.25
 	const av : real = 1 // 1.0
 	const pi : real = 3 // 3.14159
-	const randcoef : real = 100 // 100.0
+	var randcoef : real = 100 // const randcoef : real = 100 // 100.0
 	const k1 : real = 1 // 0.1
 	const timeout : real = 6 // 6.0
 	const timeout_PUSH: real = 1 // 0.5
@@ -273,7 +274,7 @@ stm CacheConsS {
 
 			$     VisibleClustersCC ? data
 			action 
-		counter = 1 ; SmallestVisibleCluster . clusterSize = 0 ; $ DisableClusterWatch ; $ CCMove ! ( 0 , 0 ) ; exec
+		counter = 1 ; SmallestVisibleCluster . clusterSize = 0 ; $ DisableClusterWatch ; $ CCMove  ! [| 0 , 0 |] ; exec
 		}
 		transition t2 {
 			from ClusterSeen
@@ -322,10 +323,10 @@ stm CacheConsS {
 			exec
 			condition since(T) > pi / (2 * av)
 			action 
-		$ CCMove ! ( 
+		$ CCMove ! [| 
 			0 //0.0 
 			, lv
-		)
+		|]
 		}
 		transition t2 {
 			from EXILE_Turn
@@ -333,39 +334,39 @@ stm CacheConsS {
 			exec
 			condition since(T) <= pi / (2 * av)
 			action 
-		$  CCMove ! ( av , 
+		$  CCMove ! [| av , 
 			0 // 0.0
-		)
+		|]
 		}
 	transition t3 {
 			from EXILE_LinearMove
 			to EXILE_LinearMove
 			exec
 			condition since ( T ) < timeout_EXILE
-			action $ CCMove ! ( 0 // 0.0 
+			action $ CCMove ! [| 0 // 0.0 
 				, lv
-			)
+			|]
 		}
 	}
 	state DE_PUSH {
-		entry $ CCMove ! ( 0 //0.0 
+		entry $ CCMove ! [| 0 //0.0 
 			, 1 * lv //0.2 * lv
-		)
+		|]
 	}
 
 	state PU_TARGET {
 		state MoveToTarget {
 			state TurnToTarget {
-				entry $ DisableVHF ; if angle > 0 then $ CCMove ! ( 
+				entry $ DisableVHF ; if angle > 0 then $ CCMove ! [| 
 					1 * av, // 0.3 * av , 
 					0
-				) end ; if angle < 0 then $ CCMove ! ( 
+				|] end ; if angle < 0 then $ CCMove ! [|
 					- 1 * av, //- 0.3 * av , 
 					0
-				) end
+				|] end
 			}
 			state LinearMoveToTarget {
-				entry $ CCMove ! ( 0, lv) // (0.0 , lv )
+				entry $ CCMove ! [| 0, lv |] // (0.0 , lv )
 			}
 			initial i0
 			transition t0 {
@@ -382,7 +383,7 @@ stm CacheConsS {
 				condition abs ( angle - 1 ) <= 1 //0.01
 				action 
 			
-			$ EnableVHF ; # T ; $ CCMove ! (0,0) //( 0.0 , 0.0 )
+			$ EnableVHF ; # T ; $ CCMove ! [|0,0|] //( 0.0 , 0.0 )
 			}
 			transition t2 {
 				from LinearMoveToTarget
@@ -426,8 +427,8 @@ stm CacheConsS {
 		//entry distance = distance ( m [ j ] , ( pose [ 1 ] , pose [ 2 ] ) )
 	state TurnToHome {
 			entry if angle > 0 
-				then $ CCMove ! ( 1 * av , 0 ) // ( 0.3 * av , 0.0 ) 
-				else $ CCMove ! ( - 1 * av , 0 ) // ( - 0.3 * av , 0.0 ) 
+				then $ CCMove ! [| 1 * av , 0 |] // ( 0.3 * av , 0.0 ) 
+				else $ CCMove ! [| - 1 * av , 0 |] // ( - 0.3 * av , 0.0 ) 
 				end
 		}
 		initial i0
@@ -444,7 +445,7 @@ stm CacheConsS {
 			to LinearMoveToHome
 			exec
 			condition $ Pose_O ? pose /\ abs ( angle - 1 ) <= 0 // abs ( angle - 0.1 ) <= 0.01
-			action $ CCMove ! ( 0 , 0 ) // ( 0.0 , 0.0 ) 
+			action $ CCMove ! [| 0 , 0 |] // ( 0.0 , 0.0 ) 
 				; # T ; $ EnableVHF
 		}
 		transition t2 {
@@ -460,7 +461,7 @@ stm CacheConsS {
 			to LinearMoveToHome
 			exec
 			condition since ( T ) < timeout
-			action $ CCMove ! ( 0 , 1 * lv ) //( 0.0 , 0.8 * lv )
+			action $ CCMove ! [| 0 , 1 * lv |] //( 0.0 , 0.8 * lv )
 		}
 		transition t4 {
 			from WaitForPose
@@ -480,7 +481,7 @@ stm CacheConsS {
 			to TurnToHome
 			exec
 			condition since ( T ) >= timeout
-			action $ CCMove ! ( 0, 0 ) ; // ( 0.0 , 0.0 )
+			action $ CCMove ! [| 0, 0 |] ; // ( 0.0 , 0.0 )
 				angle = calculate_turn_angle ( pose , m [ j ] . centroid ) ; $ DisableVHF
 		}
 	}
@@ -493,7 +494,7 @@ stm CacheConsS {
 		to HOMING
 		condition $ PuckCarried /\ $ CachePointsCC ? m
 		action 
-	$ CCMove ! ( 0 , 0 ) ; // ( 0.0 , 0.0 ) ;
+	$ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 ) ;
 	$ DisableTargetWatch ; exec
 	}
 	transition t9 {
@@ -508,7 +509,7 @@ stm CacheConsS {
 		action 
 	
 	 
-	$  CCMove ! ( 0, 0 ) // ( 0.0 , 0.0 )
+	$  CCMove ! [| 0, 0 |] // ( 0.0 , 0.0 )
 	}
 	transition t1 {
 		from PU_SCAN
@@ -517,7 +518,7 @@ stm CacheConsS {
 		action 
 	
 	$ CurrentTypeCA ! j ; $ DisableClusterWatch ;
-	$ CCMove ! ( 0 , 0 ) ; // ( 0.0 , 0.0 )
+	$ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 )
 	# T ; done = false ; angle = 10 ; $ EnableTargetWatch ! targetPosition ; exec
 	}
 	transition t15 {
@@ -526,7 +527,7 @@ stm CacheConsS {
 		exec
 		condition since ( T ) >= timeout_PUSH
 		action 
-	$ CCMove ! ( 0 , 0 ) ; // ( 0.0 , 0.0 )
+	$ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 )
 	$ DepositPuck ( ) ; # T
 	}
 	transition t18 {
@@ -536,7 +537,7 @@ stm CacheConsS {
 		condition since ( T ) >= timeout_EXILE
 		action 
 	
-	$ CCMove ! ( 0 , 0 ) // ( 0.0 , 0.0 )
+	$ CCMove ! [| 0 , 0 |] // ( 0.0 , 0.0 )
 	}
 transition t19 {
 		from PU_TARGET
@@ -547,7 +548,7 @@ transition t19 {
 	
 	
 	
-	$ CCMove ! ( 0 , 0 ) ; // ( 0.0 , 0.0 ) 
+	$ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 ) 
 	$ EnableVHF ; $ DisableTargetWatch ; exec
 	}
 transition t2 {
@@ -555,7 +556,7 @@ transition t2 {
 		to EXILE
 		exec
 		condition ( not $ PuckCarried ) /\ since ( T ) >= timeout_BACKUP
-		action $ CCMove ! ( 0 , 0 ) ; // ( 0.0 , 0.0 )
+		action $ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 )
 		# T
 	}
 transition t3 {
@@ -568,7 +569,7 @@ transition t3 {
 		from PU_SCAN
 		to HOMING
 		condition $ PuckCarried /\ $ CachePointsCC ? m
-		action $ CCMove ! ( 0 , 0 ) ; // ( 0.0 , 0.0 )
+		action $ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 )
 		$ DisableTargetWatch ; exec
 	}
 transition t7 {
@@ -576,7 +577,7 @@ transition t7 {
 		to DE_PUSH
 		exec
 		condition distance ( m [ j ] . centroid , [| pose [ 1 ] , pose [ 2 ] |] ) < 1 // 0.8
-		action # T ; $ CCMove ! ( 0 , 0 ) // ( 0.0 , 0.0 )
+		action # T ; $ CCMove ! [| 0 , 0 |] // ( 0.0 , 0.0 )
 	}
 transition t4 {
 		from DE_BACKUP
@@ -590,7 +591,7 @@ transition t4 {
 		to DE_BACKUP
 		exec
 		condition not $ PuckCarried /\ since ( T ) < timeout_BACKUP
-		action $ CCMove ! ( 0 , - lv ) // ( 0 , - lv )
+		action $ CCMove ! [| 0 , - lv |] // ( 0 , - lv )
 	}
 }
 
@@ -610,7 +611,7 @@ stm ObstacleAvoidance {
 	output context { uses OAMove }
 	cycleDef cycle == 1
 	state VHFEnabled {
-		entry $OAMove!(av,lv)
+		entry $OAMove![|av,lv|]
 	}
 	state VHFDisabled {
 	}
@@ -705,7 +706,7 @@ transition t6 {
 }
 
 stm MoveManager {
-	const NOAcmd : vector ( real , 2 )
+	var NOAcmd : vector ( real , 2 ) // const NOAcmd : vector ( real , 2 )
 	var cmd: vector(real, 2)
 	input context { uses CCMove uses OAMove uses RWMove }
 	output context { requires Move uses NOAMove }
@@ -926,7 +927,7 @@ stm RandomWalk {
 	const pi : real = 3 // 3.14159
 	clock T
 
-	const randcoef : real = 1 //0.2
+	var randcoef : real = 1 //const randcoef : real = 0.2
 	var sign : nat = 1
 
 	input context {uses IClusterWatch }
@@ -936,10 +937,10 @@ stm RandomWalk {
 	state Wander {
 		initial i0
 			state Turn {
-			entry randcoef = randomcoef ( ) ; $ RWMove ! ( av * sign , 0 ) // 0.0
+			entry randcoef = randomcoef ( ) ; $ RWMove ! [| av * sign , 0 |] // 0.0
 			}
 			state Move_Forward {
-			entry $ RWMove ! ( 0 , lv ) // ( 0.0 , lv )
+			entry $ RWMove ! [| 0 , lv |] // ( 0.0 , lv )
 			}
 			transition t0 {
 				from i0
@@ -953,7 +954,7 @@ stm RandomWalk {
 				action 
 			
 			
-			$ RWMove ! ( 0 , 0 ) ; // ( 0.0 , 0.0 )
+			$ RWMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 )
 			 # T ; randcoef = randomcoef ( ) ; sign = random_sign ( )
 		}
 			transition t2 {
@@ -964,7 +965,7 @@ stm RandomWalk {
 				action 
 			
 			
-		$ RWMove ! ( 0 , 0 ) ; // ( 0.0 , 0.0 )
+		$ RWMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 )
 		 # T ; randcoef = randomcoef ( )
 		}
 			transition t3 {
@@ -1004,7 +1005,7 @@ transition t1 {
 		exec
 		condition  $ 
 		DisableClusterWatch
-		action $ RWMove ! ( 0 , 0 ) // ( 0.0 , 0.0 )
+		action $ RWMove ! [| 0 , 0 |] // ( 0.0 , 0.0 )
 	}
 }
 
