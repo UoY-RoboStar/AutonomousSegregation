@@ -76,8 +76,8 @@ interface NOAMove {
 }
 
 interface IVHF {
-	event EnableVHF
-	event DisableVHF
+	event EnableOA
+	event DisableOA
 }
 
 interface ICurrentTypeCA{
@@ -121,9 +121,9 @@ controller CacheConsC {
 
 	connection stm_ref2 on Avoiding to stm_ref1 on Avoiding
 
-	connection stm_ref0 on EnableVHF to stm_ref2 on EnableVHF
+	connection stm_ref0 on EnableOA to stm_ref2 on EnableOA
 connection stm_ref0 on EnableTargetWatch to stm_ref4 on EnableTargetWatch
-	connection stm_ref0 on DisableVHF to stm_ref2 on DisableVHF
+	connection stm_ref0 on DisableOA to stm_ref2 on DisableOA
 connection CacheConsC on VisibleClustersCC to stm_ref0 on VisibleClustersCC
 	connection stm_ref0 on CurrentTypeCA to stm_ref3 on CurrentTypeCA
 	connection stm_ref3 on CachePointsCC to stm_ref0 on CachePointsCC
@@ -185,7 +185,7 @@ stm CacheConsS {
 	output context {  requires IPuckOps uses CCMove uses IVHF uses IClusterWatch uses ITargetWatchFromCC uses ICurrentTypeCA uses ICurrentTypeTW}
 	cycleDef cycle == 1
 	state PU_SCAN {
-		entry $ EnableClusterWatch ; $ EnableVHF
+		entry $ EnableClusterWatch ; $ EnableOA
 	initial i0
 		state ClusterSeen {
 			entry j = SmallestVisibleCluster.clusterType
@@ -357,7 +357,7 @@ stm CacheConsS {
 	state PU_TARGET {
 		state MoveToTarget {
 			state TurnToTarget {
-				entry $ DisableVHF ; if angle > 0 then $ CCMove ! [| 
+				entry $ DisableOA ; if angle > 0 then $ CCMove ! [| 
 					1 * av, // 0.3 * av , 
 					0
 				|] end ; if angle < 0 then $ CCMove ! [|
@@ -383,7 +383,7 @@ stm CacheConsS {
 				condition abs ( angle - 1 ) <= 1 //0.01
 				action 
 			
-			$ EnableVHF ; # T ; $ CCMove ! [|0,0|] //( 0.0 , 0.0 )
+			$ EnableOA ; # T ; $ CCMove ! [|0,0|] //( 0.0 , 0.0 )
 			}
 			transition t2 {
 				from LinearMoveToTarget
@@ -446,7 +446,7 @@ stm CacheConsS {
 			exec
 			condition $ Pose_O ? pose /\ abs ( angle - 1 ) <= 0 // abs ( angle - 0.1 ) <= 0.01
 			action $ CCMove ! [| 0 , 0 |] // ( 0.0 , 0.0 ) 
-				; # T ; $ EnableVHF
+				; # T ; $ EnableOA
 		}
 		transition t2 {
 			from TurnToHome
@@ -482,7 +482,7 @@ stm CacheConsS {
 			exec
 			condition since ( T ) >= timeout
 			action $ CCMove ! [| 0, 0 |] ; // ( 0.0 , 0.0 )
-				angle = calculate_turn_angle ( pose , m [ j ] . centroid ) ; $ DisableVHF
+				angle = calculate_turn_angle ( pose , m [ j ] . centroid ) ; $ DisableOA
 		}
 	}
 	transition t0 {
@@ -549,7 +549,7 @@ transition t19 {
 	
 	
 	$ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 ) 
-	$ EnableVHF ; $ DisableTargetWatch ; exec
+	$ EnableOA ; $ DisableTargetWatch ; exec
 	}
 transition t2 {
 		from DE_BACKUP
@@ -625,19 +625,19 @@ stm ObstacleAvoidance {
 		to VHFDisabled
 	exec
 		condition  $ 
-		DisableVHF
+		DisableOA
 	}
 	transition t8 {
 		from VHFDisabled
 		to VHFEnabled
 	exec
 		condition  $ 
-		EnableVHF
+		EnableOA
 	}
 	transition t1 {
 		from VHFDisabled
 		to VHFDisabled
-		condition not $ EnableVHF
+		condition not $ EnableOA
 		action exec
 	}
 transition t2 {
