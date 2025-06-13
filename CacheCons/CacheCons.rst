@@ -157,6 +157,11 @@ stm CacheConsS {
 	const timeout_PUSH: real = 1 // 0.5
 	const timeout_BACKUP: real = 5 // 5.0
 	const timeout_EXILE: real = 5 //5.0
+	const PUSH_LV : real = 1 //0.2
+	const TARGET_AV : real = 1 //0.3
+	const ANGLE_DIFF : real = 1 //0.1
+	const ANGLE_DIFF_TOLERANCE : real = 1 // 0.01
+	const LINEAR_HOME : real = 1 // 0.8
 	
 	//Variables
 	var done : boolean = false
@@ -350,7 +355,7 @@ stm CacheConsS {
 	}
 	state DE_PUSH {
 		entry $ CCMove ! [| 0 //0.0 
-			, 1 * lv //0.2 * lv
+			, PUSH_LV * lv //0.2 * lv -> replaced by PUSH_LV
 		|]
 	}
 
@@ -358,10 +363,10 @@ stm CacheConsS {
 		state MoveToTarget {
 			state TurnToTarget {
 				entry $ DisableOA ; if angle > 0 then $ CCMove ! [| 
-					1 * av, // 0.3 * av , 
+					TARGET_AV * av, // 0.3 * av , 
 					0
 				|] end ; if angle < 0 then $ CCMove ! [|
-					- 1 * av, //- 0.3 * av , 
+					- TARGET_AV * av, //- 0.3 * av , 
 					0
 				|] end
 			}
@@ -380,7 +385,7 @@ stm CacheConsS {
 				from TurnToTarget
 				to LinearMoveToTarget
 				exec
-				condition abs ( angle - 1 ) <= 1 //0.01
+				condition abs ( angle - 1 ) <= ANGLE_DIFF_TOLERANCE //0.01
 				action 
 			
 			$ EnableOA ; # T ; $ CCMove ! [|0,0|] //( 0.0 , 0.0 )
@@ -394,14 +399,14 @@ stm CacheConsS {
 				from TurnToTarget
 				to TurnToTarget
 				exec
-				condition $ Pose_O ? pose /\ abs ( angle - 1 ) > 0 // abs ( angle - 0.1 ) > 0.01
+				condition $ Pose_O ? pose /\ abs ( angle - ANGLE_DIFF ) > ANGLE_DIFF_TOLERANCE // abs ( angle - 0.1 ) > 0.01
 				action targetPosition = targetPuck + pose ; angle = calculate_turn_angle ( pose , targetPosition )
 				}
 		transition t4 {
 				from TurnToTarget
 				to TurnToTarget
 				condition 
-				not ( abs ( angle - 1 ) <= 1 /\ not ( abs ( angle - 1 ) > 0 ) ) // not ( abs ( angle - 0.1 ) <= 0.01 /\ not ( abs ( angle - 0.1 ) > 0.01 ) )
+				not ( abs ( angle - ANGLE_DIFF ) <= ANGLE_DIFF_TOLERANCE /\ not ( abs ( angle - ANGLE_DIFF ) > ANGLE_DIFF_TOLERANCE ) ) // not ( abs ( angle - 0.1 ) <= 0.01 /\ not ( abs ( angle - 0.1 ) > 0.01 ) )
 				action 
 			exec
 			}
@@ -427,8 +432,8 @@ stm CacheConsS {
 		//entry distance = distance ( m [ j ] , ( pose [ 1 ] , pose [ 2 ] ) )
 	state TurnToHome {
 			entry if angle > 0 
-				then $ CCMove ! [| 1 * av , 0 |] // ( 0.3 * av , 0.0 ) 
-				else $ CCMove ! [| - 1 * av , 0 |] // ( - 0.3 * av , 0.0 ) 
+				then $ CCMove ! [| TARGET_AV * av , 0 |] // ( 0.3 * av , 0.0 ) 
+				else $ CCMove ! [| - TARGET_AV * av , 0 |] // ( - 0.3 * av , 0.0 ) 
 				end
 		}
 		initial i0
@@ -444,7 +449,7 @@ stm CacheConsS {
 			from TurnToHome
 			to LinearMoveToHome
 			exec
-			condition $ Pose_O ? pose /\ abs ( angle - 1 ) <= 0 // abs ( angle - 0.1 ) <= 0.01
+			condition $ Pose_O ? pose /\ abs ( angle - ANGLE_DIFF ) <= ANGLE_DIFF_TOLERANCE // abs ( angle - 0.1 ) <= 0.01
 			action $ CCMove ! [| 0 , 0 |] // ( 0.0 , 0.0 ) 
 				; # T ; $ EnableOA
 		}
@@ -452,7 +457,7 @@ stm CacheConsS {
 			from TurnToHome
 			to TurnToHome
 			exec
-			condition abs ( angle - 1 ) > 0 // abs ( angle - 0.1 ) > 0.01
+			condition abs ( angle - ANGLE_DIFF ) > ANGLE_DIFF_TOLERANCE // abs ( angle - 0.1 ) > 0.01
 				/\ $ Pose_O ? pose
 				action angle = calculate_turn_angle ( pose , m [ j ] . centroid )
 		}
@@ -461,7 +466,7 @@ stm CacheConsS {
 			to LinearMoveToHome
 			exec
 			condition since ( T ) < timeout
-			action $ CCMove ! [| 0 , 1 * lv |] //( 0.0 , 0.8 * lv )
+			action $ CCMove ! [| 0 , LINEAR_HOME * lv |] //( 0.0 , 0.8 * lv )
 		}
 		transition t4 {
 			from WaitForPose
@@ -576,7 +581,7 @@ transition t7 {
 		from HOMING
 		to DE_PUSH
 		exec
-		condition distance ( m [ j ] . centroid , [| pose [ 1 ] , pose [ 2 ] |] ) < 1 // 0.8
+		condition distance ( m [ j ] . centroid , [| pose [ 1 ] , pose [ 2 ] |] ) < LINEAR_HOME // 0.8
 		action # T ; $ CCMove ! [| 0 , 0 |] // ( 0.0 , 0.0 )
 	}
 transition t4 {
@@ -597,7 +602,8 @@ transition t4 {
 
 stm ObstacleAvoidance {
 	const pi : real = 3 //3.14159
-
+	const DISTANCE : real = 1 // 0.4
+	
 	var closest_angle : real = 0
 	var closest_distance : real = 0
 	const min_range : real = 1 //0.1
@@ -682,25 +688,25 @@ transition t6 {
 	transition t10 {
 		from j2
 		to VHFEnabled
-		condition ( closest_distance < 0 ) // 0.4
-		action lv = - 0 // 0.4
+		condition ( closest_distance < DISTANCE ) // 0.4
+		action lv = - DISTANCE // 0.4
 	}
 	transition t11 {
 		from j2
 		to VHFEnabled
-		condition ( closest_distance >= 0 ) // 0.4
+		condition ( closest_distance >= DISTANCE ) // 0.4
 		action lv = 0 // 0.0
 	}
 	transition t12 {
 		from j3
 		to j0
-		condition ( closest_distance > 0 ) // 0.4
+		condition ( closest_distance > DISTANCE ) // 0.4
 		action lv = current_speed / 2
 	}
 	transition t13 {
 		from j3
 		to j0
-		condition ( closest_distance <= 0 ) // 0.4
+		condition ( closest_distance <= DISTANCE ) // 0.4
 		action lv = 0 // 0.0
 	}
 }
