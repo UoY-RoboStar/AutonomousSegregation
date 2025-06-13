@@ -1059,19 +1059,19 @@ function random_sign(): nat{
 }
     
 module CacheCons {
-	connection Turtlebot on PuckCarried to ctrl_ref0 on PuckCarried ( _async )
+	connection TurtleBot on PuckCarried to ctrl_ref0 on PuckCarried ( _async )
 	//connection TurtlebotGazebo on ClusterSeen to ctrl_ref0 on ClusterSeen ( _async )
-	robotic platform Turtlebot {
+	robotic platform TurtleBot {
 		uses ObstacleEvents uses IStatus provides IPuckOps uses IVisibleClustersCC uses IVisibleClustersCA uses IVisibleClustersTW uses IPose provides Move }
 
 	cref ctrl_ref0 = CacheConsC
 	cycleDef cycle == 1
 
-	connection Turtlebot on VisibleClustersCC to ctrl_ref0 on VisibleClustersCC ( _async )
-connection Turtlebot on Pose_O to ctrl_ref0 on Pose_O ( _async )
-	connection Turtlebot on VisibleClustersTW to ctrl_ref0 on VisibleClustersTW ( _async )
-	connection Turtlebot on VisibleClustersCA to ctrl_ref0 on VisibleClustersCA ( _async )
-connection Turtlebot on closestDistance to ctrl_ref0 on closestDistance ( _async )
-connection Turtlebot on closestAngle to ctrl_ref0 on closestAngle ( _async )
+	connection TurtleBot on VisibleClustersCC to ctrl_ref0 on VisibleClustersCC ( _async )
+connection TurtleBot on Pose_O to ctrl_ref0 on Pose_O ( _async )
+	connection TurtleBot on VisibleClustersTW to ctrl_ref0 on VisibleClustersTW ( _async )
+	connection TurtleBot on VisibleClustersCA to ctrl_ref0 on VisibleClustersCA ( _async )
+connection TurtleBot on closestDistance to ctrl_ref0 on closestDistance ( _async )
+connection TurtleBot on closestAngle to ctrl_ref0 on closestAngle ( _async )
 }
 
