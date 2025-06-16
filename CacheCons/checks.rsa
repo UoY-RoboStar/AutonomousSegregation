@@ -1,6 +1,21 @@
 
 assertion A0 : t0::MoveManager is deterministic
-
 assertion A1 : t0::MoveManager is deadlock-free
-
 assertion A2 : t0::MoveManager is divergence-free
+
+assertion A3 : t0::ObstacleAvoidance is deterministic
+assertion A4 : t0::ObstacleAvoidance is deadlock-free
+assertion A5 : t0::ObstacleAvoidance is divergence-free
+
+assertion A6 : t0::RandomWalk is deterministic
+assertion A7 : t0::RandomWalk is deadlock-free
+assertion A8 : t0::RandomWalk is divergence-free
+
+assertion A9 : t0::TargetWatch is deterministic
+assertion A10 : t0::TargetWatch is deadlock-free
+assertion A11 : t0::TargetWatch is divergence-free
+
+assertion A12 : t0::CachePointAssignment is deterministic
+assertion A13 : t0::CachePointAssignment is deadlock-free
+assertion A14 : t0::CachePointAssignment is divergence-free
+

@@ -1,0 +1,155 @@
+-- generate nat not
+nametype core_nat = {0..2}
+
+-- generate t0_distance not
+t0_distance(x1,x2) = 0
+
+-- generate t0_dot not
+t0_dot(x1,x2) = 
+    Plus(Mult(vector_real_2_get(x1,1),vector_real_2_get(x2,1),core_real),
+         Mult(vector_real_2_get(x2,1),vector_real_2_get(x2,2),core_real),
+         core_real)
+
+-- generate t0_randcoef not
+t0_randcoef() = 1
+
+-- generate t0_unit not
+t0_unit(x) = (Div(vector_real_2_get(x,1),t0_L2(x),core_real),Div(vector_real_2_get(x,2),t0_L2(x),core_real))
+
+-- generate t0_acos not
+t0_acos(-1) = 3
+t0_acos(0) = 2
+t0_acos(1) = 0
+
+-- generate real not
+nametype core_real = {0..2} 
+
+-- VECTOR TYPES AND OPERATIONS
+nametype vector_real_2 = (core_real, core_real)				
+vector_real_2_add((a1, a2), (b1, b2), T) = (Plus(a1,b1,T), Plus(a2,b2,T))
+vector_real_2_minus((a1, a2), (b1, b2), T) = (Minus(a1,b1,T), Minus(a2,b2,T))
+vector_real_2_mult((a1, a2), (b1, b2), T) = Plus(Mult(a1,b1,T), Mult(a2,b2,T),T)
+vector_real_2_neg((a1, a2), T) = (Neg(a1,T), Neg(a2,T))
+vector_real_2_transpose((a1, a2)) = (a1).(a2)
+
+vector_real_2_get((x__, _),1) = x__
+vector_real_2_get((_, x__),2) = x__
+
+vector_real_2_set((x1__, x2__),value,1) = (value, x2__)
+vector_real_2_set((x1__, x2__),value,2) = (x1__, value)
+
+
+
+-- CLOCKS
+
+-- generate t0_abs not
+t0_abs(x) = t0_sqrt(Mult(x,x,core_real))
+
+-- generate t0_randnat not
+t0_randnat() = 1
+
+-- generate int not
+nametype core_int = {0..2}
+
+-- generate t0_sqrt not
+t0_sqrt(4) = 2
+t0_sqrt(3) = 2
+t0_sqrt(2) = 1
+t0_sqrt(1) = 1
+t0_sqrt(0) = 0
+
+-- generate t0_L2 not
+t0_L2(x) = t0_sqrt(Plus(Mult(vector_real_2_get(x,1),vector_real_2_get(x,1),core_real),Mult(vector_real_2_get(x,2),vector_real_2_get(x,2),core_real),core_real))
+
+-- generate Mathematics_randomcoef not
+Mathematics_randomcoef() = 1
+
+-- generate t0_angle_between not
+t0_angle_between(x1,x2) = t0_acos(t0_dot(t0_unit(x1),t0_unit(x2)))
+
+-- generate t0_calculate_turn_angle not
+t0_calculate_turn_angle(x1,x2) = 0
+
+-- generate t0_random_sign not
+t0_random_sign() = 1
+
+-- generate cycle_t0_CacheConsS_CacheConsS
+cycle_t0_CacheConsS_CacheConsS = 1
+
+-- generate string
+nametype core_string = LSeq(Char,2)
+
+-- generate cycle_t0_RandomWalk_RandomWalk
+cycle_t0_RandomWalk_RandomWalk = 1
+
+-- generate -- OPERATION BOUNDS
+
+-- MODULE CONSTANTS
+
+-- CONTROLLER CONSTANTS
+
+-- STATEMACHINE CONSTANTS
+
+-- OPERATION CONSTANTS
+
+-- BASIC TYPES
+
+-- generate Plus
+Plus(e1,e2,T) = if member(e1+e2,T) then e1+e2 else e1
+
+-- generate Mathematics_randomnat
+Mathematics_randomnat() = 0
+
+-- generate cycle_t0_MoveManager_MoveManager
+cycle_t0_MoveManager_MoveManager = 1
+
+-- generate --
+
+-- MODULE CONSTANTS
+
+-- CONTROLLER CONSTANTS
+
+-- STATEMACHINE CONSTANTS
+
+-- OPERATION CONSTANTS
+
+-- BASIC TYPES
+
+-- generate core_clock_type
+nametype core_clock_type = {0..10}
+
+-- BASIC FUNCTIONS
+
+-- generate cycle_t0_TargetWatch_TargetWatch
+cycle_t0_TargetWatch_TargetWatch = 1
+
+-- generate cycle_t0_CacheConsC_CacheConsC
+cycle_t0_CacheConsC_CacheConsC = 1
+
+-- generate Div
+Div(e1,e2,T) = if member(e1/e2,T) then e1/e2 else e1
+
+-- generate Neg
+Neg(e1,T) = if member(-e1,T) then -e1 else e1
+
+-- generate boolean
+nametype core_boolean = Bool
+
+-- generate Mult
+Mult(e1,e2,T) = if member(e1*e2,T) then e1*e2 else e1
+
+-- generate cycle_t0_CachePointAssignment_CachePointAssignment
+cycle_t0_CachePointAssignment_CachePointAssignment = 1
+
+-- generate cycle_t0_CacheCons_CacheCons
+cycle_t0_CacheCons_CacheCons = 1
+
+-- generate Modulus
+Modulus(e1,e2,T) = if member(e1%e2,T) then e1%e2 else e1
+
+-- generate cycle_t0_ObstacleAvoidance_ObstacleAvoidance
+cycle_t0_ObstacleAvoidance_ObstacleAvoidance = 1
+
+-- generate Minus
+Minus(e1,e2,T) = if member(e1-e2,T) then e1-e2 else e1
+
