@@ -74,7 +74,7 @@ interface NOAMove {
 	event NOAMove : vector ( real , 2 )
 }
 
-interface IVHF {
+interface IOA {
 	event EnableOA
 	event DisableOA
 }
@@ -86,8 +86,6 @@ interface ICurrentTypeCA{
 interface ICurrentTypeTW{
 	event CurrentTypeTW: nat
 }
-
-//type O_ID = nat
 
 datatype ObjectData {
 	objectID: nat
@@ -187,7 +185,7 @@ stm CacheConsS {
 	var j: nat = 0
 	var pose : vector ( real , 2)
 	input context { uses IStatus uses IVisibleClustersCC uses ITargetWatchToCC uses IPose uses ICachePointsCC}
-	output context {  requires IObjectOps uses CCMove uses IVHF uses IClusterWatch uses ITargetWatchFromCC uses ICurrentTypeCA uses ICurrentTypeTW}
+	output context {  requires IObjectOps uses CCMove uses IOA uses IClusterWatch uses ITargetWatchFromCC uses ICurrentTypeCA uses ICurrentTypeTW}
 	cycleDef cycle == 1
 	state PU_SCAN {
 		entry $ EnableClusterWatch ; $ EnableOA
@@ -612,7 +610,7 @@ stm ObstacleAvoidance {
 	var NOA_Move : vector ( real , 2 )
 	var current_speed : real
 	clock T
-	input context { uses ObstacleEvents uses IVHF uses NOAMove}
+	input context { uses ObstacleEvents uses IOA uses NOAMove}
 	output context { uses OAMove }
 	cycleDef cycle == 1
 	state OAEnabled {
