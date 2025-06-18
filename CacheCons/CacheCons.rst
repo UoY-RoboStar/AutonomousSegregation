@@ -67,7 +67,6 @@ interface RWMove {
 }
 
 interface OAMove {
-	event Avoiding : boolean
 	event OAMove : vector ( real , 2 )
 }
 
@@ -87,6 +86,8 @@ interface ICurrentTypeCA{
 interface ICurrentTypeTW{
 	event CurrentTypeTW: nat
 }
+
+//type O_ID = nat
 
 datatype ObjectData {
 	objectID: nat
@@ -119,7 +120,6 @@ controller CacheConsC {
 	connection stm_ref0 on EnableClusterWatch to stm_ref5 on EnableClusterWatch
 	connection stm_ref0 on DisableClusterWatch to stm_ref5 on DisableClusterWatch
 
-	connection stm_ref2 on Avoiding to stm_ref1 on Avoiding
 
 	connection stm_ref0 on EnableOA to stm_ref2 on EnableOA
 connection stm_ref0 on EnableTargetWatch to stm_ref4 on EnableTargetWatch
