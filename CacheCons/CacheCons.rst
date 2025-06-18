@@ -1,15 +1,15 @@
 package t0 import Mathematics::*  
 
 interface IVisibleClustersCC {
-	event VisibleClustersCC: nat*Seq(ClusterData)*Seq(PuckData)
+	event VisibleClustersCC: nat*Seq(ClusterData)*Seq(ObjectData)
 }
 
 interface IVisibleClustersCA {
-	event VisibleClustersCA: nat*Seq(ClusterData)*Seq(PuckData)
+	event VisibleClustersCA: nat*Seq(ClusterData)*Seq(ObjectData)
 }
 
 interface IVisibleClustersTW {
-	event VisibleClustersTW: nat*Seq(ClusterData)*Seq(PuckData)
+	event VisibleClustersTW: nat*Seq(ClusterData)*Seq(ObjectData)
 }
 
 interface IClusterWatch {
@@ -24,7 +24,7 @@ interface ITargetWatchFromCC {
 
 interface ITargetWatchToCC {
 	event InvalidTarget
-	event TargetPuck: vector(real,2)
+	event TargetObject: vector(real,2)
 }
 
 interface IPose{
@@ -41,12 +41,12 @@ interface ICachePointsTW{
 
 
 interface IStatus {
-	event PuckCarried
+	event ObjectCarried
 }
 
 
-interface IPuckOps {
-	DepositPuck ( )
+interface IObjectOps {
+	DepositObject ( )
 }
 
 interface ObstacleEvents {
@@ -68,7 +68,7 @@ interface RWMove {
 
 interface OAMove {
 	event Avoiding : boolean
-event OAMove : vector ( real , 2 )
+	event OAMove : vector ( real , 2 )
 }
 
 interface NOAMove {
@@ -88,8 +88,8 @@ interface ICurrentTypeTW{
 	event CurrentTypeTW: nat
 }
 
-datatype PuckData {
-	puckID: nat
+datatype ObjectData {
+	objectID: nat
 	clusterID: nat
 	graphOrder: nat
 	position: vector(real,2)
@@ -102,18 +102,18 @@ datatype  ClusterData {
        clusterSize: nat
        clusterType: nat
        centroid: vector(real,2)
-}
+} 
 
 
 controller CacheConsC {
-	uses ObstacleEvents  uses IStatus uses IVisibleClustersCC uses IVisibleClustersCA uses IVisibleClustersTW uses IPose requires Move requires IPuckOps  sref stm_ref0 = CacheConsS
+	uses ObstacleEvents  uses IStatus uses IVisibleClustersCC uses IVisibleClustersCA uses IVisibleClustersTW uses IPose requires Move requires IObjectOps  sref stm_ref0 = CacheConsS
 	sref stm_ref5 = RandomWalk
 	sref stm_ref4 = TargetWatch
 	sref stm_ref3 = CachePointAssignment
 	sref stm_ref2 = ObstacleAvoidance
 	sref stm_ref1 = MoveManager
 
-	connection CacheConsC on PuckCarried to stm_ref0 on PuckCarried
+	connection CacheConsC on ObjectCarried to stm_ref0 on ObjectCarried
 
 	connection stm_ref0 on CCMove to stm_ref1 on CCMove
 	connection stm_ref0 on EnableClusterWatch to stm_ref5 on EnableClusterWatch
@@ -128,7 +128,7 @@ connection CacheConsC on VisibleClustersCC to stm_ref0 on VisibleClustersCC
 	connection stm_ref0 on CurrentTypeCA to stm_ref3 on CurrentTypeCA
 	connection stm_ref3 on CachePointsCC to stm_ref0 on CachePointsCC
 	connection stm_ref0 on DisableTargetWatch to stm_ref4 on DisableTargetWatch
-	connection stm_ref4 on TargetPuck to stm_ref0 on TargetPuck
+	connection stm_ref4 on TargetObject to stm_ref0 on TargetObject
 	connection stm_ref4 on InvalidTarget to stm_ref0 on InvalidTarget
 
 	connection stm_ref3 on CachePointsTW to stm_ref4 on CachePointsTW
@@ -170,24 +170,24 @@ stm CacheConsS {
 	var angle : real = 10 // 10.0
 	var prob : real = 0 // 0.0
 	var counter : nat = 0
-	var data : nat*Seq(ClusterData)*Seq(PuckData)
+	var data : nat*Seq(ClusterData)*Seq(ObjectData)
 	var SmallestVisibleCluster: ClusterData
 	var m: Seq(ClusterData)
-	var leftPuck : nat = 0
-	var leftPuckx : real = 0 // 0.0
-	var leftPucky: real = 0 // 0.0
-	var rightPuck : nat = 0
-	var rightPuckx : real = 0 // 0.0
-	var rightPucky: real = 0 // 0.0
-	var targetPuckID : nat = 0
-	var targetPuckx : real = 0 // 0.0
-	var targetPucky : real = 0 // 0.0
+	var leftObject : nat = 0
+	var leftObjectx : real = 0 // 0.0
+	var leftObjecty: real = 0 // 0.0
+	var rightObject : nat = 0
+	var rightObjectx : real = 0 // 0.0
+	var rightObjecty: real = 0 // 0.0
+	var targetObjectID : nat = 0
+	var targetObjectx : real = 0 // 0.0
+	var targetObjecty : real = 0 // 0.0
 	var targetPosition: vector(real,2)
-	var targetPuck: vector(real, 2)
+	var targetObject: vector(real, 2)
 	var j: nat = 0
 	var pose : vector ( real , 2)
 	input context { uses IStatus uses IVisibleClustersCC uses ITargetWatchToCC uses IPose uses ICachePointsCC}
-	output context {  requires IPuckOps uses CCMove uses IVHF uses IClusterWatch uses ITargetWatchFromCC uses ICurrentTypeCA uses ICurrentTypeTW}
+	output context {  requires IObjectOps uses CCMove uses IVHF uses IClusterWatch uses ITargetWatchFromCC uses ICurrentTypeCA uses ICurrentTypeTW}
 	cycleDef cycle == 1
 	state PU_SCAN {
 		entry $ EnableClusterWatch ; $ EnableOA
@@ -220,50 +220,50 @@ stm CacheConsS {
 		}
 		state ChooseTargetPosition {
 		initial i0
-			state CalcLeftPuck {
-				entry if (data[3])[counter].clusterID == SmallestVisibleCluster.clusterID /\ (data[3])[counter].positionx < leftPuckx then leftPuckx = (data[3])[counter].positionx ; leftPucky = (data[3])[counter].positiony; leftPuck = (data[3])[counter].puckID end
+			state CalcLeftObject {
+				entry if (data[3])[counter].clusterID == SmallestVisibleCluster.clusterID /\ (data[3])[counter].positionx < leftObjectx then leftObjectx = (data[3])[counter].positionx ; leftObjecty = (data[3])[counter].positiony; leftObject = (data[3])[counter].objectID end
 			}
-			state CalcRightPuck {
-				entry if (data[3])[counter].clusterID == SmallestVisibleCluster.clusterID /\ (data[3])[counter].positionx > rightPuckx then rightPuckx = (data[3])[counter].positionx; rightPucky = (data[3])[counter].positiony ; rightPuck = (data[3])[counter].puckID end
+			state CalcRightObject {
+				entry if (data[3])[counter].clusterID == SmallestVisibleCluster.clusterID /\ (data[3])[counter].positionx > rightObjectx then rightObjectx = (data[3])[counter].positionx; rightObjecty = (data[3])[counter].positiony ; rightObject = (data[3])[counter].objectID end
 			}
-			state ChooseLeftPuck {
-				entry targetPosition[1] = leftPuckx; targetPosition[2] = leftPucky; done = true
+			state ChooseLeftObject {
+				entry targetPosition[1] = leftObjectx; targetPosition[2] = leftObjecty; done = true
 			}
-			state ChooseRightPuck {
-				entry targetPosition[1] = rightPuckx; targetPosition[2] = rightPucky; done = true
+			state ChooseRightObject {
+				entry targetPosition[1] = rightObjectx; targetPosition[2] = rightObjecty; done = true
 			}
 
 			transition t0 {
-				from CalcLeftPuck
-				to CalcLeftPuck
+				from CalcLeftObject
+				to CalcLeftObject
 				condition counter < data[1]
 				action counter = counter + 1
 			}
 		transition t1 {
 				from i0
-				to CalcLeftPuck
+				to CalcLeftObject
 			}
 		transition t2 {
-				from CalcLeftPuck
-				to CalcRightPuck
+				from CalcLeftObject
+				to CalcRightObject
 				condition counter == data[1]
 				action counter = 0
 			}
 		transition t3 {
-				from CalcRightPuck
-				to CalcRightPuck
+				from CalcRightObject
+				to CalcRightObject
 				condition counter < data[1]
 				action counter = counter +1
 			}
 		transition t4 {
-				from CalcRightPuck
-				to ChooseLeftPuck
-				condition (data[3])[leftPuck].graphOrder < (data[3])[rightPuck].graphOrder
+				from CalcRightObject
+				to ChooseLeftObject
+				condition (data[3])[leftObject].graphOrder < (data[3])[rightObject].graphOrder
 			}
 			transition t5 {
-				from CalcRightPuck
-				to ChooseRightPuck
-				condition (data[3])[rightPuck].graphOrder < (data[3])[leftPuck].graphOrder
+				from CalcRightObject
+				to ChooseRightObject
+				condition (data[3])[rightObject].graphOrder < (data[3])[leftObject].graphOrder
 			}
 		}
 		state WaitForCluster {
@@ -377,7 +377,7 @@ stm CacheConsS {
 			transition t0 {
 				from TurnToTarget
 				to TurnToTarget
-				condition not $ TargetPuck
+				condition not $ TargetObject
 				action 
 			exec
 			}
@@ -400,7 +400,7 @@ stm CacheConsS {
 				to TurnToTarget
 				exec
 				condition $ Pose_O ? pose /\ abs ( angle - ANGLE_DIFF ) > ANGLE_DIFF_TOLERANCE // abs ( angle - 0.1 ) > 0.01
-				action targetPosition = targetPuck + pose ; angle = calculate_turn_angle ( pose , targetPosition )
+				action targetPosition = targetObject + pose ; angle = calculate_turn_angle ( pose , targetPosition )
 				}
 		transition t4 {
 				from TurnToTarget
@@ -414,8 +414,8 @@ stm CacheConsS {
 				from LinearMoveToTarget
 				to TurnToTarget
 				exec
-				condition not $ InvalidTarget /\ since ( T ) >= timeout /\ $ TargetPuck ? targetPuck /\ $ Pose_O ? pose
-				action targetPosition = targetPuck + pose
+				condition not $ InvalidTarget /\ since ( T ) >= timeout /\ $ TargetObject ? targetObject /\ $ Pose_O ? pose
+				action targetPosition = targetObject + pose
 			}
 		transition t6 {
 				from i0
@@ -497,7 +497,7 @@ stm CacheConsS {
 	transition t5 {
 		from PU_TARGET
 		to HOMING
-		condition $ PuckCarried /\ $ CachePointsCC ? m
+		condition $ ObjectCarried /\ $ CachePointsCC ? m
 		action 
 	$ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 ) ;
 	$ DisableTargetWatch ; exec
@@ -510,7 +510,7 @@ stm CacheConsS {
 	
 		
 		
-		not $ PuckCarried
+		not $ ObjectCarried
 		action 
 	
 	 
@@ -533,7 +533,7 @@ stm CacheConsS {
 		condition since ( T ) >= timeout_PUSH
 		action 
 	$ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 )
-	$ DepositPuck ( ) ; # T
+	$ DepositObject ( ) ; # T
 	}
 	transition t18 {
 		from EXILE
@@ -560,7 +560,7 @@ transition t2 {
 		from DE_BACKUP
 		to EXILE
 		exec
-		condition ( not $ PuckCarried ) /\ since ( T ) >= timeout_BACKUP
+		condition ( not $ ObjectCarried ) /\ since ( T ) >= timeout_BACKUP
 		action $ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 )
 		# T
 	}
@@ -573,7 +573,7 @@ transition t3 {
 	transition t6 {
 		from PU_SCAN
 		to HOMING
-		condition $ PuckCarried /\ $ CachePointsCC ? m
+		condition $ ObjectCarried /\ $ CachePointsCC ? m
 		action $ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 )
 		$ DisableTargetWatch ; exec
 	}
@@ -588,14 +588,14 @@ transition t4 {
 		from DE_BACKUP
 		to DE_BACKUP
 		exec
-		condition $ PuckCarried
-		action $ DepositPuck ( )
+		condition $ ObjectCarried
+		action $ DepositObject ( )
 	}
 	transition t8 {
 		from DE_BACKUP
 		to DE_BACKUP
 		exec
-		condition not $ PuckCarried /\ since ( T ) < timeout_BACKUP
+		condition not $ ObjectCarried /\ since ( T ) < timeout_BACKUP
 		action $ CCMove ! [| 0 , - lv |] // ( 0 , - lv )
 	}
 }
@@ -756,7 +756,7 @@ stm CachePointAssignment {
 	var j : nat
 	var counter : nat = 1
 	var L : ClusterData
-	var data : nat * Seq( ClusterData ) * Seq( PuckData )
+	var data : nat * Seq( ClusterData ) * Seq( ObjectData )
 	var m : Seq( ClusterData )
 	input context { uses IVisibleClustersCA uses ICurrentTypeCA}
 	output context { uses ICachePointsCC uses ICachePointsTW }
@@ -837,14 +837,14 @@ transition t9 {
 	}
 }
 stm TargetWatch {
-	var targetPuckxy : vector ( real , 2 )
-	var closestTargetPuck: PuckData
-	var closestTargetPuckPosition: vector ( real , 2 )
+	var targetObjectxy : vector ( real , 2 )
+	var closestTargetObject: ObjectData
+	var closestTargetObjectPosition: vector ( real , 2 )
 	var counter: nat  = 0
-	var data : nat*Seq(ClusterData)*Seq(PuckData)
-	const PuckThreshold: real = 1 // 0.01
+	var data : nat*Seq(ClusterData)*Seq(ObjectData)
+	const ObjectThreshold: real = 1 // 0.01
 	var done : boolean = false
-	var validPuck : boolean = true
+	var validObject : boolean = true
 	var targetType: nat
 	var m: Seq(ClusterData)
 	input context {uses ITargetWatchFromCC uses IVisibleClustersTW uses ICurrentTypeTW uses ICachePointsTW}
@@ -852,49 +852,49 @@ stm TargetWatch {
 	cycleDef cycle == 1
 initial i0
 	state DetectingTarget {
-	state ValidateTargetPuck {
-		entry if  (closestTargetPuck.clusterID == m[targetType].clusterID) \/ (distance(closestTargetPuck.position,targetPuckxy) < PuckThreshold) then validPuck = false end 
+	state ValidateTargetObject {
+		entry if  (closestTargetObject.clusterID == m[targetType].clusterID) \/ (distance(closestTargetObject.position,targetObjectxy) < ObjectThreshold) then validObject = false end 
 		}
-		state PublishTargetPuck {
-			entry closestTargetPuckPosition = closestTargetPuck.position
+		state PublishTargetObject {
+			entry closestTargetObjectPosition = closestTargetObject.position
 		}
-	state CalculateTargetPuck {
-		entry if distance((data[3])[counter].position,targetPuckxy) < distance(closestTargetPuck.position,targetPuckxy)  then closestTargetPuck = (data[3])[counter]  end
+	state CalculateTargetObject {
+		entry if distance((data[3])[counter].position,targetObjectxy) < distance(closestTargetObject.position,targetObjectxy)  then closestTargetObject = (data[3])[counter]  end
 		}
 		initial i0
 		state WaitForDisableTargetWatch {
 		}
 		transition t0 {
-			from CalculateTargetPuck
-			to ValidateTargetPuck
+			from CalculateTargetObject
+			to ValidateTargetObject
 		condition (counter == 1) /\ $CachePointsTW?m
 		}
 		transition t1 {
-			from ValidateTargetPuck
-			to PublishTargetPuck
+			from ValidateTargetObject
+			to PublishTargetObject
 			exec
-			condition validPuck == true
+			condition validObject == true
 		}
 		transition t2 {
 			from i0
-			to CalculateTargetPuck
+			to CalculateTargetObject
 		}
 	transition t3 {
-			from PublishTargetPuck
-			to CalculateTargetPuck
+			from PublishTargetObject
+			to CalculateTargetObject
 			exec
-			action counter = 0;$ TargetPuck!closestTargetPuckPosition
+			action counter = 0;$ TargetObject!closestTargetObjectPosition
 		}
 	transition t4 {
-			from ValidateTargetPuck
+			from ValidateTargetObject
 			to WaitForDisableTargetWatch
 			exec
-			condition validPuck == false
+			condition validObject == false
 			action $ InvalidTarget
 		}
 	transition t5 {
-			from CalculateTargetPuck
-			to CalculateTargetPuck
+			from CalculateTargetObject
+			to CalculateTargetObject
 			condition counter < data[1]
 			action counter = counter + 1
 		}
@@ -909,7 +909,7 @@ transition t1 {
 		from WaitingForTarget
 		to DetectingTarget
 		exec
-		condition $ EnableTargetWatch ? targetPuckxy /\ $ VisibleClustersTW ? data /\ $CurrentTypeTW?targetType
+		condition $ EnableTargetWatch ? targetObjectxy /\ $ VisibleClustersTW ? data /\ $CurrentTypeTW?targetType
 	}
 	transition t2 {
 		from DetectingTarget
@@ -1065,10 +1065,10 @@ function random_sign(): nat{
 }
     
 module CacheCons {
-	connection TurtleBot on PuckCarried to ctrl_ref0 on PuckCarried ( _async )
+	connection TurtleBot on ObjectCarried to ctrl_ref0 on ObjectCarried ( _async )
 	//connection TurtlebotGazebo on ClusterSeen to ctrl_ref0 on ClusterSeen ( _async )
 	robotic platform TurtleBot {
-		uses ObstacleEvents uses IStatus provides IPuckOps uses IVisibleClustersCC uses IVisibleClustersCA uses IVisibleClustersTW uses IPose provides Move }
+		uses ObstacleEvents uses IStatus provides IObjectOps uses IVisibleClustersCC uses IVisibleClustersCA uses IVisibleClustersTW uses IPose provides Move }
 
 	cref ctrl_ref0 = CacheConsC
 	cycleDef cycle == 1
