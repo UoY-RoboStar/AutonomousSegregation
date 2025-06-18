@@ -1,4 +1,4 @@
-package t0 import Mathematics::*  
+import Mathematics::*  
 
 interface IVisibleClustersCC {
 	event VisibleClustersCC: nat*Seq(ClusterData)*Seq(ObjectData)
