@@ -615,10 +615,10 @@ stm ObstacleAvoidance {
 	input context { uses ObstacleEvents uses IVHF uses NOAMove}
 	output context { uses OAMove }
 	cycleDef cycle == 1
-	state VHFEnabled {
+	state OAEnabled {
 		entry $OAMove![|av,lv|]
 	}
-	state VHFDisabled {
+	state OADisabled {
 	}
 	initial i1
 	junction j0
@@ -626,28 +626,28 @@ stm ObstacleAvoidance {
 	junction j2
 	junction j3
 	transition t7 {
-		from VHFEnabled
-		to VHFDisabled
+		from OAEnabled
+		to OADisabled
 	exec
 		condition  $ 
 		DisableOA
 	}
 	transition t8 {
-		from VHFDisabled
-		to VHFEnabled
+		from OADisabled
+		to OAEnabled
 	exec
 		condition  $ 
 		EnableOA
 	}
 	transition t1 {
-		from VHFDisabled
-		to VHFDisabled
+		from OADisabled
+		to OADisabled
 		condition not $ EnableOA
 		action exec
 	}
 transition t2 {
 		from i1
-		to VHFEnabled
+		to OAEnabled
 	}
 	transition t0 {
 		from j1
@@ -657,25 +657,25 @@ transition t2 {
 	}
 	transition t3 {
 		from j0
-		to VHFEnabled
+		to OAEnabled
 		condition ( closest_angle > 0 )
 		action av = ( closest_angle - 100 ) * pi / 180
 	}
 	transition t4 {
 		from j0
-		to VHFEnabled
+		to OAEnabled
 	condition ( closest_angle <= 0 )
 		action av = ( closest_angle + 100 ) * pi / 180
 	}
 	transition t5 {
-		from VHFEnabled
+		from OAEnabled
 		to j1
 		exec
 		condition $ closestAngle ? closest_angle /\ $ closestDistance ? closest_distance /\ $ NOAMove ? NOA_Move
 	}
 transition t6 {
 		from j1
-		to VHFEnabled
+		to OAEnabled
 		condition not ( ( closest_distance >= min_range ) /\ ( closest_distance < max_range ) /\ (abs ( closest_angle) <= 90 ) )
 		action lv = NOA_Move [ 2 ] ; av = NOA_Move [ 1 ]
 	}
@@ -686,13 +686,13 @@ transition t6 {
 	}
 	transition t10 {
 		from j2
-		to VHFEnabled
+		to OAEnabled
 		condition ( closest_distance < DISTANCE ) // 0.4
 		action lv = - DISTANCE // 0.4
 	}
 	transition t11 {
 		from j2
-		to VHFEnabled
+		to OAEnabled
 		condition ( closest_distance >= DISTANCE ) // 0.4
 		action lv = 0 // 0.0
 	}
