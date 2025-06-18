@@ -601,13 +601,12 @@ transition t4 {
 }
 
 stm ObstacleAvoidance {
-	const pi : real = 3 //3.14159
-	const DISTANCE : real = 1 // 0.4
-	
+	const pi : real  //3.14159
+	const DISTANCE : real // 0.4
+	const min_range : real //0.1
+	const max_range : real //0.4
 	var closest_angle : real = 0
 	var closest_distance : real = 0
-	const min_range : real = 1 //0.1
-	const max_range : real = 1 //0.4
 	var av : real = 1 // 0.7
 	var lv : real = 1 // 0.07
 	var NOA_Move : vector ( real , 2 )
@@ -928,14 +927,12 @@ transition t1 {
 }
 
 stm RandomWalk {
-	const lv : real = 1 //0.07
-	const av : real = 1 // 0.6
-	const pi : real = 3 // 3.14159
+	const lv : real //0.07
+	const av : real // 0.6
+	const pi : real // 3.14159
 	clock T
-
 	var randcoef : real = 1 //const randcoef : real = 0.2
 	var sign : nat = 1
-
 	input context {uses IClusterWatch }
 	output context {  uses RWMove}
 	cycleDef cycle == 1
