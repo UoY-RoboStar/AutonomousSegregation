@@ -711,8 +711,8 @@ transition t6 {
 }
 
 stm MoveManager {
-	var NOAcmd : vector ( real , 2 ) // const NOAcmd : vector ( real , 2 )
-	var cmd: vector(real, 2)
+	var NOAcmd : vector ( real , 2 ) = [|0,0|] // const NOAcmd : vector ( real , 2 )
+	var cmd: vector(real, 2) = [|0,0|]
 	input context { uses CCMove uses OAMove uses RWMove }
 	output context { requires Move uses NOAMove }
 	cycleDef cycle == 1
