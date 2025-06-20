@@ -27,8 +27,8 @@ interface ITargetWatchToCC {
 	event TargetObject: vector(real,2)
 }
 
-interface IPose{
-	event Pose_O: vector(real,2)
+interface ICoord{
+	event Coord_O: vector(real,2)
 }
 
 interface ICachePointsCC{
@@ -89,7 +89,7 @@ interface ICurrentTypeTW{
 
 datatype ObjectData {
 	objectID: nat
-	clusterID: nat
+	clusterID: C_ID
 	graphOrder: nat
 	position: vector(real,2)
 	positionx: real
@@ -97,15 +97,17 @@ datatype ObjectData {
 }
 
 datatype  ClusterData {
-       clusterID: nat
+       clusterID: C_ID
        clusterSize: nat
        clusterType: nat
        centroid: vector(real,2)
 } 
 
+type C_ID 
+
 
 controller CacheConsC {
-	uses ObstacleEvents  uses IStatus uses IVisibleClustersCC uses IVisibleClustersCA uses IVisibleClustersTW uses IPose requires Move requires IObjectOps  sref stm_ref0 = CacheConsS
+	uses ObstacleEvents  uses IStatus uses IVisibleClustersCC uses IVisibleClustersCA uses IVisibleClustersTW uses ICoord requires Move requires IObjectOps  sref stm_ref0 = CacheConsS
 	sref stm_ref5 = RandomWalk
 	sref stm_ref4 = TargetWatch
 	sref stm_ref3 = CachePointAssignment
@@ -132,7 +134,7 @@ connection CacheConsC on VisibleClustersCC to stm_ref0 on VisibleClustersCC
 	connection stm_ref3 on CachePointsTW to stm_ref4 on CachePointsTW
 	connection CacheConsC on VisibleClustersCA to stm_ref3 on VisibleClustersCA
 	connection stm_ref0 on CurrentTypeTW to stm_ref4 on CurrentTypeTW
-connection CacheConsC on Pose_O to stm_ref0 on Pose_O
+connection CacheConsC on Coord_O to stm_ref0 on Coord_O
 	connection CacheConsC on VisibleClustersTW to stm_ref4 on VisibleClustersTW
 
 connection stm_ref5 on RWMove to stm_ref1 on RWMove
@@ -183,8 +185,8 @@ stm CacheConsS {
 	var targetPosition: vector(real,2)
 	var targetObject: vector(real, 2)
 	var j: nat = 0
-	var pose : vector ( real , 2)
-	input context { uses IStatus uses IVisibleClustersCC uses ITargetWatchToCC uses IPose uses ICachePointsCC}
+	var coord : vector ( real , 2)
+	input context { uses IStatus uses IVisibleClustersCC uses ITargetWatchToCC uses ICoord uses ICachePointsCC}
 	output context {  requires IObjectOps uses CCMove uses IOA uses IClusterWatch uses ITargetWatchFromCC uses ICurrentTypeCA uses ICurrentTypeTW}
 	cycleDef cycle == 1
 	state PU_SCAN {
@@ -397,8 +399,8 @@ stm CacheConsS {
 				from TurnToTarget
 				to TurnToTarget
 				exec
-				condition $ Pose_O ? pose /\ abs ( angle - ANGLE_DIFF ) > ANGLE_DIFF_TOLERANCE // abs ( angle - 0.1 ) > 0.01
-				action targetPosition = targetObject + pose ; angle = calculate_turn_angle ( pose , targetPosition )
+				condition $ Coord_O ? coord /\ abs ( angle - ANGLE_DIFF ) > ANGLE_DIFF_TOLERANCE // abs ( angle - 0.1 ) > 0.01
+				action targetPosition = targetObject + coord ; angle = calculate_turn_angle ( coord , targetPosition )
 				}
 		transition t4 {
 				from TurnToTarget
@@ -412,8 +414,8 @@ stm CacheConsS {
 				from LinearMoveToTarget
 				to TurnToTarget
 				exec
-				condition not $ InvalidTarget /\ since ( T ) >= timeout /\ $ TargetObject ? targetObject /\ $ Pose_O ? pose
-				action targetPosition = targetObject + pose
+				condition not $ InvalidTarget /\ since ( T ) >= timeout /\ $ TargetObject ? targetObject /\ $ Coord_O ? coord
+				action targetPosition = targetObject + coord
 			}
 		transition t6 {
 				from i0
@@ -437,17 +439,17 @@ stm CacheConsS {
 		initial i0
 		state LinearMoveToHome {
 		}
-		state WaitForPose {
+		state WaitForCoord {
 		}
 		transition t0 {
 			from i0
-			to WaitForPose
+			to WaitForCoord
 		}
 		transition t1 {
 			from TurnToHome
 			to LinearMoveToHome
 			exec
-			condition $ Pose_O ? pose /\ abs ( angle - ANGLE_DIFF ) <= ANGLE_DIFF_TOLERANCE // abs ( angle - 0.1 ) <= 0.01
+			condition $ Coord_O ? coord /\ abs ( angle - ANGLE_DIFF ) <= ANGLE_DIFF_TOLERANCE // abs ( angle - 0.1 ) <= 0.01
 			action $ CCMove ! [| 0 , 0 |] // ( 0.0 , 0.0 ) 
 				; # T ; $ EnableOA
 		}
@@ -456,8 +458,8 @@ stm CacheConsS {
 			to TurnToHome
 			exec
 			condition abs ( angle - ANGLE_DIFF ) > ANGLE_DIFF_TOLERANCE // abs ( angle - 0.1 ) > 0.01
-				/\ $ Pose_O ? pose
-				action angle = calculate_turn_angle ( pose , m [ j ] . centroid )
+				/\ $ Coord_O ? coord
+				action angle = calculate_turn_angle ( coord , m [ j ] . centroid )
 		}
 		transition t3 {
 			from LinearMoveToHome
@@ -467,17 +469,17 @@ stm CacheConsS {
 			action $ CCMove ! [| 0 , LINEAR_HOME * lv |] //( 0.0 , 0.8 * lv )
 		}
 		transition t4 {
-			from WaitForPose
+			from WaitForCoord
 			to TurnToHome
 			exec
-			condition $ Pose_O ? pose
-			action angle = calculate_turn_angle ( pose , targetPosition )
+			condition $ Coord_O ? coord
+			action angle = calculate_turn_angle ( coord , targetPosition )
 		}
 		transition t5 {
-			from WaitForPose
-			to WaitForPose
+			from WaitForCoord
+			to WaitForCoord
 			exec
-			condition not $ Pose_O
+			condition not $ Coord_O
 		}
 		transition t6 {
 			from LinearMoveToHome
@@ -485,7 +487,7 @@ stm CacheConsS {
 			exec
 			condition since ( T ) >= timeout
 			action $ CCMove ! [| 0, 0 |] ; // ( 0.0 , 0.0 )
-				angle = calculate_turn_angle ( pose , m [ j ] . centroid ) ; $ DisableOA
+				angle = calculate_turn_angle ( coord , m [ j ] . centroid ) ; $ DisableOA
 		}
 	}
 	transition t0 {
@@ -579,7 +581,7 @@ transition t7 {
 		from HOMING
 		to DE_PUSH
 		exec
-		condition distance ( m [ j ] . centroid , [| pose [ 1 ] , pose [ 2 ] |] ) < LINEAR_HOME // 0.8
+		condition distance ( m [ j ] . centroid , [| coord [ 1 ] , coord [ 2 ] |] ) < LINEAR_HOME // 0.8
 		action # T ; $ CCMove ! [| 0 , 0 |] // ( 0.0 , 0.0 )
 	}
 transition t4 {
@@ -1063,13 +1065,13 @@ module CacheCons {
 	connection TurtleBot on ObjectCarried to ctrl_ref0 on ObjectCarried ( _async )
 	//connection TurtlebotGazebo on ClusterSeen to ctrl_ref0 on ClusterSeen ( _async )
 	robotic platform TurtleBot {
-		uses ObstacleEvents uses IStatus provides IObjectOps uses IVisibleClustersCC uses IVisibleClustersCA uses IVisibleClustersTW uses IPose provides Move }
+		uses ObstacleEvents uses IStatus provides IObjectOps uses IVisibleClustersCC uses IVisibleClustersCA uses IVisibleClustersTW uses ICoord provides Move }
 
 	cref ctrl_ref0 = CacheConsC
 	cycleDef cycle == 1
 
 	connection TurtleBot on VisibleClustersCC to ctrl_ref0 on VisibleClustersCC ( _async )
-connection TurtleBot on Pose_O to ctrl_ref0 on Pose_O ( _async )
+connection TurtleBot on Coord_O to ctrl_ref0 on Coord_O ( _async )
 	connection TurtleBot on VisibleClustersTW to ctrl_ref0 on VisibleClustersTW ( _async )
 	connection TurtleBot on VisibleClustersCA to ctrl_ref0 on VisibleClustersCA ( _async )
 connection TurtleBot on closestDistance to ctrl_ref0 on closestDistance ( _async )
