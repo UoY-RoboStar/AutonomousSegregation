@@ -11,8 +11,8 @@ import random
 import re
 
 # search_url = "https://scholar.google.com/scholar?q=Software+Design+and+Verification+for+Robotics+in+the+Nuclear+Sector&hl=en&as_sdt=0%2C5&as_ylo=2020&as_yhi=2024"
-search_url = "https://scholar.google.com/scholar?q=What+are+the+software+design+approaches+of+robotics+in+the+nuclear+sector%3F&hl=en&as_sdt=0%2C5&as_ylo=2020&as_yhi=2024"
-# search_url = "https://scholar.google.com/scholar?q=What+are+the+software+verification+approaches+for+robotics+in+the+nuclear+sector%3F&hl=en&as_sdt=0%2C5&as_ylo=2020&as_yhi=2024"
+# search_url = "https://scholar.google.com/scholar?q=What+are+the+software+design+approaches+of+robotics+in+the+nuclear+sector%3F&hl=en&as_sdt=0%2C5&as_ylo=2020&as_yhi=2024"
+search_url = "https://scholar.google.com/scholar?q=What+are+the+software+verification+approaches+for+robotics+in+the+nuclear+sector%3F&hl=en&as_sdt=0%2C5&as_ylo=2020&as_yhi=2024"
 num_pages = 50
 list_condition_1 = ["software", "program", "develop", "code"]
 list_condition_2 = ["verification", "testing", "simulation"]
@@ -359,10 +359,10 @@ def main():
                 cond4_count = matching['Condition4'].sum()
 
                 print(f"   Matches breakdown:")
-                print(f"   Condition 1 (software OR design OR program): {cond1_count}")
-                print(f"   Condition 2 (verification OR validation OR testing OR simulation): {cond2_count}")
-                print(f"   Condition 3 (nuclear OR waste OR decommission): {cond3_count}")
-                print(f"   Condition 4 (robot OR system): {cond4_count}")
+                print(f"   Condition 1 (software OR program OR develop OR code): {cond1_count}")
+                print(f"   Condition 2 (verification OR testing OR simulation): {cond2_count}")
+                print(f"   Condition 3 (nuclear): {cond3_count}")
+                print(f"   Condition 4 (robot OR autonomous): {cond4_count}")
             else:
                 print("❌ No papers matched your criteria")
         else:
