@@ -8,14 +8,36 @@ from selenium.webdriver.support import expected_conditions as EC
 import pandas as pd
 import time
 import random
+import re
 
-search_url = "https://scholar.google.com/scholar?q=Software+Design+and+Verification+for+Robotics+in+the+Nuclear+Sector&hl=en&as_sdt=0%2C5&as_ylo=2020&as_yhi=2024"
-num_pages = 60
-list_condition_1 = ["software", "program", "develop"]
+# search_url = "https://scholar.google.com/scholar?q=Software+Design+and+Verification+for+Robotics+in+the+Nuclear+Sector&hl=en&as_sdt=0%2C5&as_ylo=2020&as_yhi=2024"
+search_url = "https://scholar.google.com/scholar?q=What+are+the+software+design+approaches+of+robotics+in+the+nuclear+sector%3F&hl=en&as_sdt=0%2C5&as_ylo=2020&as_yhi=2024"
+# search_url = "https://scholar.google.com/scholar?q=What+are+the+software+verification+approaches+for+robotics+in+the+nuclear+sector%3F&hl=en&as_sdt=0%2C5&as_ylo=2020&as_yhi=2024"
+num_pages = 50
+list_condition_1 = ["software", "program", "develop", "code"]
 list_condition_2 = ["verification", "testing", "simulation"]
-list_condition_3 = ["nuclear", "decommissioning"]
-list_condition_4 = ["robot", "system"]
+list_condition_3 = ["nuclear"]
+list_condition_4 = ["robot", "autonomous"]
 
+"""Clean text by removing unwanted patterns"""
+def clean_text(text):
+    if not text or text == "No title" or text == "No snippet":
+        return text
+    
+    # Remove [HTML], [PDF], [BOOK] etc. (case insensitive)
+    text = re.sub(r'\[(?:HTML|PDF|BOOK|DOC|DOCX|PPT|PPTX)\]', '', text, flags=re.IGNORECASE)
+    
+    # Remove "â€¦" and other common encoding artifacts
+    text = text.replace("â€¦", "...")
+    text = text.replace("â€™", "'")
+    text = text.replace("â€œ", '"')
+    text = text.replace("â€", '"')
+    text = text.replace("â€˜", "'")
+    
+    # Remove extra whitespace
+    text = ' '.join(text.split())
+    
+    return text.strip()
 
 """Set up browser"""
 def setup_browser():
@@ -107,6 +129,8 @@ def scrape_current_page(driver, page_num):
                 try:
                     title_elem = paper.find_element(By.CSS_SELECTOR, "h3.gs_rt")
                     title = title_elem.text.strip()
+                    # Clean the title
+                    title = clean_text(title)
                     print(f"  {i}. {title[:60]}...")
                 except:
                     title = "No title"
@@ -116,6 +140,8 @@ def scrape_current_page(driver, page_num):
                 try:
                     snippet_elem = paper.find_element(By.CSS_SELECTOR, "div.gs_rs")
                     snippet = snippet_elem.text.strip()
+                    # Clean the snippet
+                    snippet = clean_text(snippet)
                     print(f"      {snippet[:80]}...")
                 except:
                     snippet = "No snippet"
@@ -125,6 +151,8 @@ def scrape_current_page(driver, page_num):
                 try:
                     author_elem = paper.find_element(By.CSS_SELECTOR, "div.gs_a")
                     authors = author_elem.text.strip()
+                    # Clean authors too
+                    authors = clean_text(authors)
                 except:
                     authors = "No authors"
                 
@@ -135,7 +163,7 @@ def scrape_current_page(driver, page_num):
                 except:
                     link = "No link"
                 
-                # Check if paper matches the keywords
+                # Check if paper matches the keywords (use cleaned text)
                 text_to_check = f"{title} {snippet}".lower()
                 
                 # Boolean logic based on new query:
@@ -251,6 +279,8 @@ def check_for_blocking(driver):
     
     return True
 
+
+
 """Main scraping function"""
 def main():    
     print("Google Scholar Scraper - Direct URL Navigation")
@@ -312,13 +342,13 @@ def main():
         if all_results:
             # Save all results
             df = pd.DataFrame(all_results)
-            df.to_csv("scholar_direct_url_results.csv", index=False)
+            df.to_csv("software_verification_results.csv", index=False)
             print(f"\nSaved {len(all_results)} total results to scholar_direct_url_results.csv")
             
             # Save only matching results
             matching = df[df['Matches_Keywords'] == True]
             if not matching.empty:
-                matching.to_csv("scholar_direct_url_matching.csv", index=False)
+                matching.to_csv("software_verification_matching.csv", index=False)
                 print(f"Saved {len(matching)} matching papers to scholar_direct_url_matching.csv")
                 print(f"Match rate: {(len(matching)/len(all_results)*100):.1f}%")
                 
@@ -347,13 +377,5 @@ def main():
         input("\n Press Enter to close browser...")
         driver.quit()
 
-if __name__ == "__main__":
-    print("Google Scholar Direct URL Scraper")
-    print("Install: pip install selenium pandas")
-    print("This will:")
-    print("   1. Visit Google Scholar homepage")
-    print("   2. Navigate to your exact search URL") 
-    print("   3. Scrape results with visual feedback")
-    print()
-    
+if __name__ == "__main__":    
     main()

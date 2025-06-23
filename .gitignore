@@ -1,2 +1,5 @@
 # Ignore CSV files in any subdirectory
 **/*.csv
+
+# Ignore old results
+old results/
