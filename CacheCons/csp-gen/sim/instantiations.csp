@@ -1,3 +1,34 @@
+-- generate unit not
+unit(x) = (Div(vector_real_2_get(x,1),L2(x),core_real),Div(vector_real_2_get(x,2),L2(x),core_real))
+
+-- generate abs not
+abs(x) = sqrt(Mult(x,x,core_real))
+
+-- generate distance not
+distance(x1,x2) = 0
+
+-- generate randnat not
+randnat() = 1
+
+-- generate sqrt not
+sqrt(4) = 2
+sqrt(3) = 2
+sqrt(2) = 1
+sqrt(1) = 1
+sqrt(0) = 0
+
+-- generate L2 not
+L2(x) = sqrt(Plus(Mult(vector_real_2_get(x,1),vector_real_2_get(x,1),core_real),Mult(vector_real_2_get(x,2),vector_real_2_get(x,2),core_real),core_real))
+
+-- generate dot not
+dot(x1,x2) = 
+    Plus(Mult(vector_real_2_get(x1,1),vector_real_2_get(x2,1),core_real),
+         Mult(vector_real_2_get(x2,1),vector_real_2_get(x2,2),core_real),
+         core_real)
+
+-- generate Mathematics_randomnat not
+Mathematics_randomnat() = 1
+
 -- generate const_ObstacleAvoidance_max_range
 const_ObstacleAvoidance_max_range = 0
 
@@ -23,16 +54,6 @@ const_CacheConsC_stm_ref5_av = 0
 -- generate const_RandomWalk_lv
 const_RandomWalk_lv = 0
 
--- generate randnat not
-randnat() = 1
-
--- generate sqrt not
-sqrt(4) = 2
-sqrt(3) = 2
-sqrt(2) = 1
-sqrt(1) = 1
-sqrt(0) = 0
-
 -- generate cycle_CacheConsS_CacheConsS
 cycle_CacheConsS_CacheConsS = 1
 
@@ -42,9 +63,6 @@ cycle_MoveManager_MoveManager = 1
 -- generate Plus
 Plus(e1,e2,T) = if member(e1+e2,T) then e1+e2 else e1
 
--- generate Mathematics_randomnat not
-Mathematics_randomnat() = 1
-
 -- generate --
 
 -- MODULE CONSTANTS
@@ -53,7 +71,7 @@ Mathematics_randomnat() = 1
 
 -- STATEMACHINE CONSTANTS
 
--- generate nat
+-- generate nat not
 nametype core_nat = {0..2}
 
 -- generate core_clock_type
@@ -70,8 +88,8 @@ const_ObstacleAvoidance_DISTANCE = 0
 -- generate cycle_CacheCons_CacheCons
 cycle_CacheCons_CacheCons = 1
 
--- generate real
-nametype core_real = { 0..2} 
+-- generate real not
+nametype core_real = {0..2}
 
 -- VECTOR TYPES AND OPERATIONS
 nametype vector_real_2 = (core_real, core_real)				
@@ -91,17 +109,14 @@ vector_real_2_set((x1__, x2__),value,2) = (x1__, value)
 
 -- CLOCKS
 
--- generate t0_abs not
-abs(x) = sqrt(Mult(x,x,core_real))
+-- generate acos
+acos(x) = 0
 
 -- generate const_CacheConsC_stm_ref2_pi
 const_CacheConsC_stm_ref2_pi = 0
 
 -- generate const_ObstacleAvoidance_pi
 const_ObstacleAvoidance_pi = 0
-
--- generate unit not
-unit(x) = (Div(vector_real_2_get(x,1),L2(x),core_real),Div(vector_real_2_get(x,2),L2(x),core_real))
 
 -- generate const_CacheConsC_stm_ref2_DISTANCE
 const_CacheConsC_stm_ref2_DISTANCE = 0
@@ -115,9 +130,6 @@ const_RandomWalk_av = 0
 -- generate const_CacheConsC_stm_ref2_min_range
 const_CacheConsC_stm_ref2_min_range = 0
 
--- generate angle_between not
-angle_between(x1,x2) = acos(t0_dot(t0_unit(x1),t0_unit(x2)))
-
 -- generate Minus
 Minus(e1,e2,T) = if member(e1-e2,T) then e1-e2 else e1
 
@@ -126,15 +138,6 @@ cycle_TargetWatch_TargetWatch = 1
 
 -- generate string
 nametype core_string = LSeq(Char,2)
-
--- generate distance not
-distance(x1,x2) = 0
-
--- generate dot not
-dot(x1,x2) = 
-    Plus(Mult(vector_real_2_get(x1,1),vector_real_2_get(x2,1),core_real),
-         Mult(vector_real_2_get(x2,1),vector_real_2_get(x2,2),core_real),
-         core_real)
 
 -- generate -- OPERATION BOUNDS
 
@@ -153,17 +156,14 @@ randcoef() = 0
 -- generate const_RandomWalk_pi
 const_RandomWalk_pi = 0
 
--- generate L2 not
-L2(x) = sqrt(Plus(Mult(vector_real_2_get(x,1),vector_real_2_get(x,1),core_real),Mult(vector_real_2_get(x,2),vector_real_2_get(x,2),core_real),core_real))
-
 -- generate calculate_turn_angle
 calculate_turn_angle(x1,x2) = 0
 
 -- generate cycle_ObstacleAvoidance_ObstacleAvoidance
 cycle_ObstacleAvoidance_ObstacleAvoidance = 1
 
--- generate int
-nametype core_int = { 0..2}
+-- generate int not
+nametype core_int = {0..2}
 
 -- generate Div
 Div(e1,e2,T) = if member(e1/e2,T) then e1/e2 else e1
@@ -180,15 +180,11 @@ Mathematics_randomcoef() = 0
 -- generate boolean
 nametype core_boolean = Bool
 
--- generate abs not
-abs(x) = sqrt(Mult(x,x,core_real))
-
 -- generate Mult
 Mult(e1,e2,T) = if member(e1*e2,T) then e1*e2 else e1
 
 -- generate random_sign
 random_sign() = 0
--- CYCLE DEFINITIONS
 
 -- generate const_CacheConsC_stm_ref5_lv
 const_CacheConsC_stm_ref5_lv = 0
