@@ -12,12 +12,13 @@ import re
 
 # search_url = "https://scholar.google.com/scholar?q=Software+Design+and+Verification+for+Robotics+in+the+Nuclear+Sector&hl=en&as_sdt=0%2C5&as_ylo=2020&as_yhi=2024"
 # search_url = "https://scholar.google.com/scholar?q=What+are+the+software+design+approaches+of+robotics+in+the+nuclear+sector%3F&hl=en&as_sdt=0%2C5&as_ylo=2020&as_yhi=2024"
-search_url = "https://scholar.google.com/scholar?q=What+are+the+software+verification+approaches+for+robotics+in+the+nuclear+sector%3F&hl=en&as_sdt=0%2C5&as_ylo=2020&as_yhi=2024"
+# search_url = "https://scholar.google.com/scholar?q=What+are+the+software+verification+approaches+for+robotics+in+the+nuclear+sector%3F&hl=en&as_sdt=0%2C5&as_ylo=2020&as_yhi=2024"
+search_url = "https://scholar.google.com/scholar?q=What+are+the+software+design+and+verification+approaches+for+robotics+in+the+nuclear+sector&hl=en&as_sdt=0%2C5&as_ylo=2020&as_yhi=2024"
 num_pages = 50
-list_condition_1 = ["software", "program", "develop", "code"]
+list_condition_1 = ["software", "program", "code", "design", "approach", "algo", "develop"]
 list_condition_2 = ["verification", "testing", "simulation"]
 list_condition_3 = ["nuclear"]
-list_condition_4 = ["robot", "autonomous"]
+list_condition_4 = ["robot", "auto"]
 
 """Clean text by removing unwanted patterns"""
 def clean_text(text):
@@ -32,7 +33,7 @@ def clean_text(text):
     text = text.replace("â€™", "'")
     text = text.replace("â€œ", '"')
     text = text.replace("â€", '"')
-    text = text.replace("â€˜", "'")
+    text = text.replace("â€˜", "'") 
     
     # Remove extra whitespace
     text = ' '.join(text.split())
@@ -342,13 +343,20 @@ def main():
         if all_results:
             # Save all results
             df = pd.DataFrame(all_results)
-            df.to_csv("software_verification_results.csv", index=False)
+            
+            file_name = ""
+            if "design" in search_url:
+                file_name = "software_design"
+            else:
+                file_name = "software_all"
+                
+            df.to_csv((file_name+"_results.csv"), index=False)
             print(f"\nSaved {len(all_results)} total results to scholar_direct_url_results.csv")
             
             # Save only matching results
             matching = df[df['Matches_Keywords'] == True]
             if not matching.empty:
-                matching.to_csv("software_verification_matching.csv", index=False)
+                matching.to_csv((file_name+"_matching.csv"), index=False)
                 print(f"Saved {len(matching)} matching papers to scholar_direct_url_matching.csv")
                 print(f"Match rate: {(len(matching)/len(all_results)*100):.1f}%")
                 
@@ -359,10 +367,10 @@ def main():
                 cond4_count = matching['Condition4'].sum()
 
                 print(f"   Matches breakdown:")
-                print(f"   Condition 1 (software OR program OR develop OR code): {cond1_count}")
-                print(f"   Condition 2 (verification OR testing OR simulation): {cond2_count}")
-                print(f"   Condition 3 (nuclear): {cond3_count}")
-                print(f"   Condition 4 (robot OR autonomous): {cond4_count}")
+                print(f"   Condition 1 {"OR".join(list_condition_1)}): {cond1_count}")
+                print(f"   Condition 2 ({"OR".join(list_condition_2)}): {cond2_count}")
+                print(f"   Condition 3 ({"OR".join(list_condition_3)}): {cond3_count}")
+                print(f"   Condition 4 ({"OR".join(list_condition_4)}): {cond4_count}")
             else:
                 print("❌ No papers matched your criteria")
         else:

@@ -184,7 +184,7 @@ stm CacheConsS {
 	var targetObjecty : real = 0 // 0.0
 	var targetPosition: vector(real,2)
 	var targetObject: vector(real, 2)
-	var j: nat = 0
+	var ct: nat = 0
 	var coord : vector ( real , 2)
 	input context { uses IStatus uses IVisibleClustersCC uses ITargetWatchToCC uses ICoord uses ICachePointsCC}
 	output context {  requires IObjectOps uses CCMove uses IOA uses IClusterWatch uses ITargetWatchFromCC uses ICurrentTypeCA uses ICurrentTypeTW}
@@ -193,7 +193,7 @@ stm CacheConsS {
 		entry $ EnableClusterWatch ; $ EnableOA
 	initial i0
 		state ClusterSeen {
-			entry j = SmallestVisibleCluster.clusterType
+			entry ct = SmallestVisibleCluster.clusterType
 			state CalculateProb {
 			entry randcoef = randomcoef ( ) ; prob = ( k1 / ( k1 + SmallestVisibleCluster.clusterSize ) ) * ( k1 / ( k1 + SmallestVisibleCluster.clusterSize ) )
 		}
@@ -459,7 +459,7 @@ stm CacheConsS {
 			exec
 			condition abs ( angle - ANGLE_DIFF ) > ANGLE_DIFF_TOLERANCE // abs ( angle - 0.1 ) > 0.01
 				/\ $ Coord_O ? coord
-				action angle = calculate_turn_angle ( coord , m [ j ] . centroid )
+				action angle = calculate_turn_angle ( coord , m [ ct ] . centroid )
 		}
 		transition t3 {
 			from LinearMoveToHome
@@ -487,7 +487,7 @@ stm CacheConsS {
 			exec
 			condition since ( T ) >= timeout
 			action $ CCMove ! [| 0, 0 |] ; // ( 0.0 , 0.0 )
-				angle = calculate_turn_angle ( coord , m [ j ] . centroid ) ; $ DisableOA
+				angle = calculate_turn_angle ( coord , m [ ct ] . centroid ) ; $ DisableOA
 		}
 	}
 	transition t0 {
@@ -522,7 +522,7 @@ stm CacheConsS {
 		condition done == true
 		action 
 	
-	$ CurrentTypeCA ! j ; $ DisableClusterWatch ;
+	$ CurrentTypeCA ! ct ; $ DisableClusterWatch ;
 	$ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 )
 	# T ; done = false ; angle = 10 ; $ EnableTargetWatch ! targetPosition ; exec
 	}
@@ -581,7 +581,7 @@ transition t7 {
 		from HOMING
 		to DE_PUSH
 		exec
-		condition distance ( m [ j ] . centroid , [| coord [ 1 ] , coord [ 2 ] |] ) < LINEAR_HOME // 0.8
+		condition distance ( m [ ct ] . centroid , [| coord [ 1 ] , coord [ 2 ] |] ) < LINEAR_HOME // 0.8
 		action # T ; $ CCMove ! [| 0 , 0 |] // ( 0.0 , 0.0 )
 	}
 transition t4 {
