@@ -605,10 +605,14 @@ stm ObstacleAvoidance {
 	const DISTANCE : real // 0.4
 	const min_range : real //0.1
 	const max_range : real //0.4
-	var closest_angle : real = 0
-	var closest_distance : real = 0
-	var av : real = 1 // 0.7
-	var lv : real = 1 // 0.07
+	const v_closest_angle : real // 0
+	const v_closest_distance : real // 0
+	const v_av : real // 1 // 0.7
+	const v_lv : real // 1 // 0.07
+	var closest_angle : real = v_closest_angle // 0
+	var closest_distance : real = v_closest_distance // 0
+	var av : real = v_av // 0.7
+	var lv : real = v_lv // 0.07
 	var NOA_Move : vector ( real , 2 )
 	var current_speed : real
 	clock T
@@ -836,12 +840,12 @@ transition t9 {
 	}
 }
 stm TargetWatch {
+	const ObjectThreshold: real // const ObjectThreshold: real = 1 // 0.01
 	var targetObjectxy : vector ( real , 2 )
 	var closestTargetObject: ObjectData
 	var closestTargetObjectPosition: vector ( real , 2 )
 	var counter: nat  = 0
 	var data : nat*Seq(ClusterData)*Seq(ObjectData)
-	const ObjectThreshold: real = 1 // 0.01
 	var done : boolean = false
 	var validObject : boolean = true
 	var targetType: nat
@@ -930,8 +934,9 @@ stm RandomWalk {
 	const lv : real //0.07
 	const av : real // 0.6
 	const pi : real // 3.14159
+	const v_randcoef : real // 1 //const randcoef : real = 0.2
 	clock T
-	var randcoef : real = 1 //const randcoef : real = 0.2
+	var randcoef : real = v_randcoef //const randcoef : real = 0.2
 	var sign : nat = 1
 	input context {uses IClusterWatch }
 	output context {  uses RWMove}
