@@ -1,0 +1,15 @@
+
+--
+-- RoboSim generator version 3.0.0.202504011350
+-- Automatically generated on 30-06-2025 11:27:51
+--
+
+include "defs/state_timed_defs.csp"
+include "defs/robochart_defs.csp"
+include "defs/core_defs.csp"
+include "defs/core_timed_defs.csp"
+include "defs/file_CacheCons_defs.csp"
+include "defs/Mathematics.csp"
+include "instantiations.csp"
+include "defs/Mathematics_defs.csp"
+channel r__
