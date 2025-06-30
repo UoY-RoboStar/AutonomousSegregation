@@ -184,7 +184,7 @@ stm CacheConsS {
 	var targetObjecty : real = 0 // 0.0
 	var targetPosition: vector(real,2)
 	var targetObject: vector(real, 2)
-	var ct: nat = 0
+	var ct: nat = 1
 	var coord : vector ( real , 2)
 	input context { uses IStatus uses IVisibleClustersCC uses ITargetWatchToCC uses ICoord uses ICachePointsCC}
 	output context {  requires IObjectOps uses CCMove uses IOA uses IClusterWatch uses ITargetWatchFromCC uses ICurrentTypeCA uses ICurrentTypeTW}
