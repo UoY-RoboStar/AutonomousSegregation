@@ -1,5 +1,7 @@
 # Autonomous Segregation System (based on the CacheCons algorithm)
 
+## ROS 2 Jazzy code
+
 ## RoboSim d-model 
 ### Module: `CacheCons`
  
@@ -20,7 +22,7 @@ The top-level module defines:
 - `IPose` — `Pose_O` event with robot position and orientation
 ---
  
-## Controller: `CacheConsC`
+### Controller: `CacheConsC`
  
 Contains **state machines**:
  
@@ -37,7 +39,7 @@ Contains **state machines**:
  
 ---
  
-## Core State Machine: `CacheConsS`
+### Core State Machine: `CacheConsS`
  
 Implements the CacheCons algorithm through **six composite states**:
  
@@ -56,7 +58,7 @@ Key behaviours include:
 - **Passive gripper support** — repeated `DepositObject()` calls until the object is confirmed dropped.
 ---
  
-## Key Data Types
+### Key Data Types
 - `ClusterData` — cluster size, type, and centroid location
 - `ObjectData` — object position, cluster association, and ID
 - `vector(real, 2)` — 2D vector for velocity commands
