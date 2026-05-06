@@ -1,0 +1,62 @@
+
+--
+-- RoboSim generator version 3.0.0.202603091039
+-- Automatically generated on 06-05-2026 18:18:09
+--
+
+include "core_timed_defs.csp"
+include "CacheConsS.csp"
+include "core_defs.csp"
+include "file_AutoSegCC_defs.csp"
+include "state_timed_defs.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+
+transparent wbisim
+channel r__
+-- generate CacheConsS
+P_CacheConsS = let
+	cycle_CacheConsS_CacheConsS = 1
+	id__ = 0
+	
+	
+	const_CacheConsS_lv = 1
+	const_CacheConsS_av = 1
+	const_CacheConsS_pi = 3
+	const_CacheConsS_k1 = 1
+	const_CacheConsS_timeout = 6
+	const_CacheConsS_timeout_PUSH = 1
+	const_CacheConsS_timeout_BACKUP = 5
+	const_CacheConsS_timeout_EXILE = 5
+	const_CacheConsS_PUSH_LV = 1
+	const_CacheConsS_TARGET_AV = 1
+	const_CacheConsS_ANGLE_DIFF = 1
+	const_CacheConsS_ANGLE_DIFF_TOLERANCE = 1
+	const_CacheConsS_LINEAR_HOME = 1
+	
+within
+	CacheConsS::O__(
+		id__,
+		const_CacheConsS_lv,
+		const_CacheConsS_av,
+		const_CacheConsS_pi,
+		const_CacheConsS_k1,
+		const_CacheConsS_timeout,
+		const_CacheConsS_timeout_PUSH,
+		const_CacheConsS_timeout_BACKUP,
+		const_CacheConsS_timeout_EXILE,
+		const_CacheConsS_PUSH_LV,
+		const_CacheConsS_TARGET_AV,
+		const_CacheConsS_ANGLE_DIFF,
+		const_CacheConsS_ANGLE_DIFF_TOLERANCE,
+		const_CacheConsS_LINEAR_HOME
+	)
+assert P_CacheConsS :[deadlock-free]	
+assert P_CacheConsS;RUN({r__}) :[deadlock-free]
+assert P_CacheConsS :[deterministic]
+assert P_CacheConsS :[divergence-free]
+-- timed deadlock free
+assert prioritise(P_CacheConsS[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_CacheConsS

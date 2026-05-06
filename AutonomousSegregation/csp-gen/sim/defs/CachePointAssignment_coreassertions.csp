@@ -1,0 +1,36 @@
+
+--
+-- RoboSim generator version 3.0.0.202603091039
+-- Automatically generated on 06-05-2026 18:18:09
+--
+
+include "core_timed_defs.csp"
+include "core_defs.csp"
+include "file_AutoSegCC_defs.csp"
+include "state_timed_defs.csp"
+include "CachePointAssignment.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+
+transparent wbisim
+channel r__
+-- generate CachePointAssignment
+P_CachePointAssignment = let
+	cycle_CachePointAssignment_CachePointAssignment = 1
+	id__ = 0
+	
+	
+	
+within
+	CachePointAssignment::O__(
+		id__
+	)
+assert P_CachePointAssignment :[deadlock-free]	
+assert P_CachePointAssignment;RUN({r__}) :[deadlock-free]
+assert P_CachePointAssignment :[deterministic]
+assert P_CachePointAssignment :[divergence-free]
+-- timed deadlock free
+assert prioritise(P_CachePointAssignment[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_CachePointAssignment

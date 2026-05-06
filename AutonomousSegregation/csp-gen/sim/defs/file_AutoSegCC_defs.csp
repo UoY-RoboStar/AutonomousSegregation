@@ -1,0 +1,50 @@
+
+--
+-- RoboSim generator version 3.0.0.202603091039
+-- Automatically generated on 06-05-2026 18:18:09
+--
+
+-- data definitions used by platform:/resource/AutonomousSegregationCC/AutoSegCC.rst
+nametype ObjectData = (core_nat,C_ID,core_nat,Vec2,core_real,core_real)
+ObjectData_objectID((objectID,clusterID,graphOrder,position,positionx,positiony)) = objectID
+update_ObjectData_objectID((objectID,clusterID,graphOrder,position,positionx,positiony),v__) = (v__,clusterID,graphOrder,position,positionx,positiony)
+ObjectData_clusterID((objectID,clusterID,graphOrder,position,positionx,positiony)) = clusterID
+update_ObjectData_clusterID((objectID,clusterID,graphOrder,position,positionx,positiony),v__) = (objectID,v__,graphOrder,position,positionx,positiony)
+ObjectData_graphOrder((objectID,clusterID,graphOrder,position,positionx,positiony)) = graphOrder
+update_ObjectData_graphOrder((objectID,clusterID,graphOrder,position,positionx,positiony),v__) = (objectID,clusterID,v__,position,positionx,positiony)
+ObjectData_position((objectID,clusterID,graphOrder,position,positionx,positiony)) = position
+update_ObjectData_position((objectID,clusterID,graphOrder,position,positionx,positiony),v__) = (objectID,clusterID,graphOrder,v__,positionx,positiony)
+ObjectData_positionx((objectID,clusterID,graphOrder,position,positionx,positiony)) = positionx
+update_ObjectData_positionx((objectID,clusterID,graphOrder,position,positionx,positiony),v__) = (objectID,clusterID,graphOrder,position,v__,positiony)
+ObjectData_positiony((objectID,clusterID,graphOrder,position,positionx,positiony)) = positiony
+update_ObjectData_positiony((objectID,clusterID,graphOrder,position,positionx,positiony),v__) = (objectID,clusterID,graphOrder,position,positionx,v__)
+nametype ClusterData = (C_ID,core_nat,core_nat,Vec2)
+ClusterData_clusterID((clusterID,clusterSize,clusterType,centroid)) = clusterID
+update_ClusterData_clusterID((clusterID,clusterSize,clusterType,centroid),v__) = (v__,clusterSize,clusterType,centroid)
+ClusterData_clusterSize((clusterID,clusterSize,clusterType,centroid)) = clusterSize
+update_ClusterData_clusterSize((clusterID,clusterSize,clusterType,centroid),v__) = (clusterID,v__,clusterType,centroid)
+ClusterData_clusterType((clusterID,clusterSize,clusterType,centroid)) = clusterType
+update_ClusterData_clusterType((clusterID,clusterSize,clusterType,centroid),v__) = (clusterID,clusterSize,v__,centroid)
+ClusterData_centroid((clusterID,clusterSize,clusterType,centroid)) = centroid
+update_ClusterData_centroid((clusterID,clusterSize,clusterType,centroid),v__) = (clusterID,clusterSize,clusterType,v__)
+nametype Vec2 = (core_real,core_real)
+Vec2_x((x,y)) = x
+update_Vec2_x((x,y),v__) = (v__,y)
+Vec2_y((x,y)) = y
+update_Vec2_y((x,y),v__) = (x,v__)
+
+pre_randomnat() = true
+pre_randomcoef() = true
+pre_sqrt(param_v) =  (param_v>=0)
+pre_distance(param_x1,param_x2) = true
+pre_L2(param_x) = true
+pre_dot(param_x1,param_x2) = true
+pre_unit(param_x) = true
+pre_angle_between(param_x1,param_x2) = true
+pre_calculate_turn_angle(param_x1,param_x2) = true
+pre_acos(param_x) = true
+pre_abs(param_x) = true
+pre_randcoef() = true
+pre_randnat() = true
+pre_random_sign() = true
+	

@@ -1,0 +1,44 @@
+
+--
+-- RoboSim generator version 3.0.0.202603091039
+-- Automatically generated on 06-05-2026 18:18:09
+--
+
+include "core_timed_defs.csp"
+include "ObstacleAvoidance.csp"
+include "core_defs.csp"
+include "file_AutoSegCC_defs.csp"
+include "state_timed_defs.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+
+transparent wbisim
+channel r__
+-- generate ObstacleAvoidance
+P_ObstacleAvoidance = let
+	cycle_ObstacleAvoidance_ObstacleAvoidance = 1
+	id__ = 0
+	
+	
+	
+within
+	ObstacleAvoidance::O__(
+		id__,
+		const_ObstacleAvoidance_pi,
+		const_ObstacleAvoidance_DISTANCE,
+		const_ObstacleAvoidance_min_range,
+		const_ObstacleAvoidance_max_range,
+		const_ObstacleAvoidance_v_closest_angle,
+		const_ObstacleAvoidance_v_closest_distance,
+		const_ObstacleAvoidance_v_av,
+		const_ObstacleAvoidance_v_lv
+	)
+assert P_ObstacleAvoidance :[deadlock-free]	
+assert P_ObstacleAvoidance;RUN({r__}) :[deadlock-free]
+assert P_ObstacleAvoidance :[deterministic]
+assert P_ObstacleAvoidance :[divergence-free]
+-- timed deadlock free
+assert prioritise(P_ObstacleAvoidance[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_ObstacleAvoidance

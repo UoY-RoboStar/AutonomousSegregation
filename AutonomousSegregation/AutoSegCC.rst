@@ -16,17 +16,17 @@ interface IClusterWatch {
 }
 
 interface ITargetWatchFromCC {
-	event EnableTargetWatch: vector(real,2)
+	event EnableTargetWatch: Vec2
 	event DisableTargetWatch
 }
 
 interface ITargetWatchToCC {
 	event InvalidTarget
-	event TargetObject: vector(real,2)
+	event TargetObject: Vec2
 }
 
 interface ICoord{
-	event Coord_O: vector(real,2)
+	event Coord_O: Vec2
 }
 
 interface ICachePointsCC{
@@ -53,23 +53,23 @@ interface ObstacleEvents {
 }
 
 interface Move {
-	move( cmd: vector(real,2) )
+	move( cmd: Vec2 )
 }
 
 interface CCMove {
-	event CCMove : vector(real,2)
+	event CCMove : Vec2
 }
 
 interface RWMove {
-	event RWMove : vector ( real , 2 )
+	event RWMove : Vec2
 }
 
 interface OAMove {
-	event OAMove : vector ( real , 2 )
+	event OAMove : Vec2
 }
 
 interface NOAMove {
-	event NOAMove : vector ( real , 2 )
+	event NOAMove : Vec2
 }
 
 interface IOA {
@@ -89,17 +89,22 @@ datatype ObjectData {
 	objectID: nat
 	clusterID: C_ID
 	graphOrder: nat
-	position: vector(real,2)
+	position: Vec2
 	positionx: real
 	positiony: real
 }
 
-datatype  ClusterData {
+datatype ClusterData {
        clusterID: C_ID
        clusterSize: nat
        clusterType: nat
-       centroid: vector(real,2)
+       centroid: Vec2
 } 
+
+datatype Vec2 {
+    x: real
+    y: real
+}
 
 type C_ID 
 
@@ -180,12 +185,14 @@ stm CacheConsS {
 	var targetObjectID : nat = 0
 	var targetObjectx : real = 0 // 0.0
 	var targetObjecty : real = 0 // 0.0
-	var targetPosition: vector(real,2)
-	var targetObject: vector(real, 2)
+	var targetPosition: Vec2
+	var targetObject: Vec2
 	var ct: nat = 1
-	var coord : vector ( real , 2)
+	var coord : Vec2
+	var moveCmd : Vec2
 	input context { uses IStatus uses IVisibleClustersCC uses ITargetWatchToCC uses ICoord uses ICachePointsCC}
 	output context {  requires IObjectOps uses CCMove uses IOA uses IClusterWatch uses ITargetWatchFromCC uses ICurrentTypeCA uses ICurrentTypeTW}
+	
 	cycleDef cycle == 1
 	state PU_SCAN {
 		entry $ EnableClusterWatch ; $ EnableOA
@@ -225,10 +232,10 @@ stm CacheConsS {
 				entry if (data[3])[counter].clusterID == SmallestVisibleCluster.clusterID /\ (data[3])[counter].positionx > rightObjectx then rightObjectx = (data[3])[counter].positionx; rightObjecty = (data[3])[counter].positiony ; rightObject = (data[3])[counter].objectID end
 			}
 			state ChooseLeftObject {
-				entry targetPosition[1] = leftObjectx; targetPosition[2] = leftObjecty; done = true
+				entry targetPosition.x = leftObjectx ; targetPosition.y = leftObjecty; done = true
 			}
 			state ChooseRightObject {
-				entry targetPosition[1] = rightObjectx; targetPosition[2] = rightObjecty; done = true
+				entry targetPosition.x = rightObjectx ; targetPosition.y = rightObjecty; done = true
 			}
 
 			transition t0 {
@@ -277,7 +284,7 @@ stm CacheConsS {
 
 			$     VisibleClustersCC ? data
 			action 
-		counter = 1 ; SmallestVisibleCluster . clusterSize = 0 ; $ DisableClusterWatch ; $ CCMove  ! [| 0 , 0 |] ; exec
+		counter = 1 ; SmallestVisibleCluster . clusterSize = 0 ; $ DisableClusterWatch ; moveCmd.x = 0 ; moveCmd.y = 0 ; $ CCMove ! moveCmd; exec
 		}
 		transition t2 {
 			from ClusterSeen
@@ -325,51 +332,36 @@ stm CacheConsS {
 			to EXILE_LinearMove
 			exec
 			condition since(T) > pi / (2 * av)
-			action 
-		$ CCMove ! [| 
-			0 //0.0 
-			, lv
-		|]
+			action moveCmd.x = 0 ; moveCmd.y = lv ; $ CCMove ! moveCmd
 		}
 		transition t2 {
 			from EXILE_Turn
 			to EXILE_Turn
 			exec
 			condition since(T) <= pi / (2 * av)
-			action 
-		$  CCMove ! [| av , 
-			0 // 0.0
-		|]
+			action moveCmd.x = av ; moveCmd.y = 0 ; $ CCMove ! moveCmd
 		}
 	transition t3 {
 			from EXILE_LinearMove
 			to EXILE_LinearMove
 			exec
 			condition since ( T ) < timeout_EXILE
-			action $ CCMove ! [| 0 // 0.0 
-				, lv
-			|]
+			action moveCmd.x = 0 ; moveCmd.y = lv ; $ CCMove ! moveCmd
 		}
 	}
 	state DE_PUSH {
-		entry $ CCMove ! [| 0 //0.0 
-			, PUSH_LV * lv //0.2 * lv -> replaced by PUSH_LV
-		|]
+		entry moveCmd.x = 0 ; moveCmd.y = PUSH_LV * lv ; $ CCMove ! moveCmd
 	}
 
 	state PU_TARGET {
 		state MoveToTarget {
 			state TurnToTarget {
-				entry $ DisableOA ; if angle > 0 then $ CCMove ! [| 
-					TARGET_AV * av, // 0.3 * av , 
-					0
-				|] end ; if angle < 0 then $ CCMove ! [|
-					- TARGET_AV * av, //- 0.3 * av , 
-					0
-				|] end
+				entry $ DisableOA ; 
+				if angle > 0 then moveCmd.x = TARGET_AV * av ; moveCmd.y = 0 ; $ CCMove ! moveCmd end ; 
+				if angle < 0 then moveCmd.x = - TARGET_AV * av ; moveCmd.y = 0 ; $ CCMove ! moveCmd  end
 			}
 			state LinearMoveToTarget {
-				entry $ CCMove ! [| 0, lv |] // (0.0 , lv )
+				entry moveCmd.x = 0 ; moveCmd.y = lv ; $ CCMove ! moveCmd  // (0.0 , lv )
 			}
 			initial i0
 			transition t0 {
@@ -386,7 +378,7 @@ stm CacheConsS {
 				condition abs ( angle - 1 ) <= ANGLE_DIFF_TOLERANCE //0.01
 				action 
 			
-			$ EnableOA ; # T ; $ CCMove ! [|0,0|] //( 0.0 , 0.0 )
+			$ EnableOA ; #T ; moveCmd.x = 0 ; moveCmd.y = 0 ; $ CCMove ! moveCmd //( 0.0 , 0.0 )
 			}
 			transition t2 {
 				from LinearMoveToTarget
@@ -398,7 +390,7 @@ stm CacheConsS {
 				to TurnToTarget
 				exec
 				condition $ Coord_O ? coord /\ abs ( angle - ANGLE_DIFF ) > ANGLE_DIFF_TOLERANCE // abs ( angle - 0.1 ) > 0.01
-				action targetPosition = targetObject + coord ; angle = calculate_turn_angle ( coord , targetPosition )
+				action targetPosition.x = targetObject.x + coord.x ; targetPosition.y = targetObject.y + coord.y ; angle = calculate_turn_angle ( coord , targetPosition )
 				}
 		transition t4 {
 				from TurnToTarget
@@ -413,7 +405,7 @@ stm CacheConsS {
 				to TurnToTarget
 				exec
 				condition not $ InvalidTarget /\ since ( T ) >= timeout /\ $ TargetObject ? targetObject /\ $ Coord_O ? coord
-				action targetPosition = targetObject + coord
+				action targetPosition.x = targetObject.x + coord.x ; targetPosition.y = targetObject.y + coord.y
 			}
 		transition t6 {
 				from i0
@@ -430,8 +422,8 @@ stm CacheConsS {
 		//entry distance = distance ( m [ j ] , ( pose [ 1 ] , pose [ 2 ] ) )
 	state TurnToHome {
 			entry if angle > 0 
-				then $ CCMove ! [| TARGET_AV * av , 0 |] // ( 0.3 * av , 0.0 ) 
-				else $ CCMove ! [| - TARGET_AV * av , 0 |] // ( - 0.3 * av , 0.0 ) 
+				then moveCmd.x = TARGET_AV * av ; moveCmd.y = 0 ; $ CCMove ! moveCmd // ( 0.3 * av , 0.0 ) 
+				else moveCmd.x = - TARGET_AV * av ; moveCmd.y = 0 ; $ CCMove ! moveCmd // ( - 0.3 * av , 0.0 ) 
 				end
 		}
 		initial i0
@@ -448,8 +440,8 @@ stm CacheConsS {
 			to LinearMoveToHome
 			exec
 			condition $ Coord_O ? coord /\ abs ( angle - ANGLE_DIFF ) <= ANGLE_DIFF_TOLERANCE // abs ( angle - 0.1 ) <= 0.01
-			action $ CCMove ! [| 0 , 0 |] // ( 0.0 , 0.0 ) 
-				; # T ; $ EnableOA
+			action moveCmd.x = 0 ; moveCmd.y = 0 ; $ CCMove ! moveCmd // ( 0.0 , 0.0 ) 
+				; #T ; $ EnableOA
 		}
 		transition t2 {
 			from TurnToHome
@@ -464,7 +456,7 @@ stm CacheConsS {
 			to LinearMoveToHome
 			exec
 			condition since ( T ) < timeout
-			action $ CCMove ! [| 0 , LINEAR_HOME * lv |] //( 0.0 , 0.8 * lv )
+			action moveCmd.x = 0 ; moveCmd.y = LINEAR_HOME * lv  ; $ CCMove ! moveCmd  //( 0.0 , 0.8 * lv )
 		}
 		transition t4 {
 			from WaitForCoord
@@ -484,7 +476,7 @@ stm CacheConsS {
 			to TurnToHome
 			exec
 			condition since ( T ) >= timeout
-			action $ CCMove ! [| 0, 0 |] ; // ( 0.0 , 0.0 )
+			action moveCmd.x = 0 ; moveCmd.y = 0 ; $ CCMove ! moveCmd ; // ( 0.0 , 0.0 )
 				angle = calculate_turn_angle ( coord , m [ ct ] . centroid ) ; $ DisableOA
 		}
 	}
@@ -496,8 +488,7 @@ stm CacheConsS {
 		from PU_TARGET
 		to HOMING
 		condition $ ObjectCarried /\ $ CachePointsCC ? m
-		action 
-	$ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 ) ;
+		action moveCmd.x = 0 ; moveCmd.y = 0 ; $ CCMove ! moveCmd ; // ( 0.0 , 0.0 ) ;
 	$ DisableTargetWatch ; exec
 	}
 	transition t9 {
@@ -512,7 +503,7 @@ stm CacheConsS {
 		action 
 	
 	 
-	$  CCMove ! [| 0, 0 |] // ( 0.0 , 0.0 )
+	moveCmd.x = 0 ; moveCmd.y = 0 ; $ CCMove ! moveCmd // ( 0.0 , 0.0 )
 	}
 	transition t1 {
 		from PU_SCAN
@@ -521,7 +512,7 @@ stm CacheConsS {
 		action 
 	
 	$ CurrentTypeCA ! ct ; $ DisableClusterWatch ;
-	$ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 )
+	moveCmd.x = 0 ; moveCmd.y = 0 ; $ CCMove ! moveCmd ; // ( 0.0 , 0.0 )
 	# T ; done = false ; angle = 10 ; $ EnableTargetWatch ! targetPosition ; exec
 	}
 	transition t15 {
@@ -530,7 +521,7 @@ stm CacheConsS {
 		exec
 		condition since ( T ) >= timeout_PUSH
 		action 
-	$ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 )
+	moveCmd.x = 0 ; moveCmd.y = 0 ; $ CCMove ! moveCmd ; // ( 0.0 , 0.0 )
 	$ DepositObject ( ) ; # T
 	}
 	transition t18 {
@@ -540,7 +531,7 @@ stm CacheConsS {
 		condition since ( T ) >= timeout_EXILE
 		action 
 	
-	$ CCMove ! [| 0 , 0 |] // ( 0.0 , 0.0 )
+	moveCmd.x = 0 ; moveCmd.y = 0 ; $ CCMove ! moveCmd// ( 0.0 , 0.0 )
 	}
 transition t19 {
 		from PU_TARGET
@@ -551,7 +542,7 @@ transition t19 {
 	
 	
 	
-	$ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 ) 
+	moveCmd.x = 0 ; moveCmd.y = 0 ; $ CCMove ! moveCmd ; // ( 0.0 , 0.0 ) 
 	$ EnableOA ; $ DisableTargetWatch ; exec
 	}
 transition t2 {
@@ -559,7 +550,7 @@ transition t2 {
 		to EXILE
 		exec
 		condition ( not $ ObjectCarried ) /\ since ( T ) >= timeout_BACKUP
-		action $ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 )
+		action $moveCmd.x = 0 ; moveCmd.y = 0 ; $ CCMove ! moveCmd ; // ( 0.0 , 0.0 )
 		# T
 	}
 transition t3 {
@@ -572,15 +563,15 @@ transition t3 {
 		from PU_SCAN
 		to HOMING
 		condition $ ObjectCarried /\ $ CachePointsCC ? m
-		action $ CCMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 )
+		action moveCmd.x = 0 ; moveCmd.y = 0 ; $ CCMove ! moveCmd ; // ( 0.0 , 0.0 )
 		$ DisableTargetWatch ; exec
 	}
 transition t7 {
 		from HOMING
 		to DE_PUSH
 		exec
-		condition distance ( m [ ct ] . centroid , [| coord [ 1 ] , coord [ 2 ] |] ) < LINEAR_HOME // 0.8
-		action # T ; $ CCMove ! [| 0 , 0 |] // ( 0.0 , 0.0 )
+		condition distance(m[ct].centroid, coord) < LINEAR_HOME // 0.8
+		action # T ; moveCmd.x = 0 ; moveCmd.y = 0 ; $ CCMove ! moveCmd // ( 0.0 , 0.0 )
 	}
 transition t4 {
 		from DE_BACKUP
@@ -594,7 +585,7 @@ transition t4 {
 		to DE_BACKUP
 		exec
 		condition not $ ObjectCarried /\ since ( T ) < timeout_BACKUP
-		action $ CCMove ! [| 0 , - lv |] // ( 0 , - lv )
+		action moveCmd.x = 0 ; moveCmd.y = -lv ; $ CCMove ! moveCmd  // ( 0 , - lv )
 	}
 }
 
@@ -613,12 +604,13 @@ stm ObstacleAvoidance {
 	var lv : real = v_lv // 0.07
 	var NOA_Move : vector ( real , 2 )
 	var current_speed : real
+	var oaCmd : Vec2
 	clock T
 	input context { uses ObstacleEvents uses IOA uses NOAMove}
 	output context { uses OAMove }
 	cycleDef cycle == 1
 	state OAEnabled {
-		entry $OAMove![|av,lv|]
+		entry oaCmd.x = av ; oaCmd.y = lv ; $ OAMove ! oaCmd
 	}
 	state OADisabled {
 	}
@@ -713,8 +705,8 @@ transition t6 {
 }
 
 stm MoveManager {
-	var NOAcmd : vector ( real , 2 ) = [|0,0|] // const NOAcmd : vector ( real , 2 )
-	var cmd: vector(real, 2) = [|0,0|]
+	var NOAcmd : Vec2// const NOAcmd : vector ( real , 2 )
+	var cmd: Vec2
 	input context { uses CCMove uses OAMove uses RWMove }
 	output context { requires Move uses NOAMove }
 	cycleDef cycle == 1
@@ -819,18 +811,18 @@ transition t2 {
 		condition counter <= data [1]
 		action counter = counter + 1
 	}
-transition t7 {
+	transition t7 {
 		from UpdateCurrentCache
 		to DetectCluster
 		exec
 		condition counter > data [1]
 		action $CachePointsCC!m; $CachePointsTW!m
 	}
-transition t8 {
+	transition t8 {
 		from i0
 		to DetectCluster
 	}
-transition t9 {
+	transition t9 {
 		from DetectCluster
 		to DetectCluster
 		exec
@@ -839,9 +831,9 @@ transition t9 {
 }
 stm TargetWatch {
 	const ObjectThreshold: real // const ObjectThreshold: real = 1 // 0.01
-	var targetObjectxy : vector ( real , 2 )
+	var targetObjectxy : Vec2
 	var closestTargetObject: ObjectData
-	var closestTargetObjectPosition: vector ( real , 2 )
+	var closestTargetObjectPosition: Vec2
 	var counter: nat  = 0
 	var data : nat*Seq(ClusterData)*Seq(ObjectData)
 	var done : boolean = false
@@ -851,7 +843,7 @@ stm TargetWatch {
 	input context {uses ITargetWatchFromCC uses IVisibleClustersTW uses ICurrentTypeTW uses ICachePointsTW}
 	output context {uses ITargetWatchToCC }
 	cycleDef cycle == 1
-initial i0
+	initial i0
 	state DetectingTarget {
 	state ValidateTargetObject {
 		entry if  (closestTargetObject.clusterID == m[targetType].clusterID) \/ (distance(closestTargetObject.position,targetObjectxy) < ObjectThreshold) then validObject = false end 
@@ -906,7 +898,7 @@ initial i0
 		from i0
 		to WaitingForTarget
 	}
-transition t1 {
+	transition t1 {
 		from WaitingForTarget
 		to DetectingTarget
 		exec
@@ -936,6 +928,7 @@ stm RandomWalk {
 	clock T
 	var randcoef : real = v_randcoef //const randcoef : real = 0.2
 	var sign : nat = 1
+	var rwCmd : Vec2
 	input context {uses IClusterWatch }
 	output context {  uses RWMove}
 	cycleDef cycle == 1
@@ -943,10 +936,10 @@ stm RandomWalk {
 	state Wander {
 		initial i0
 			state Turn {
-			entry randcoef = randomcoef ( ) ; $ RWMove ! [| av * sign , 0 |] // 0.0
+			entry randcoef = randomcoef ( ) ; rwCmd.x = av * sign ; rwCmd.y = 0 ; $ RWMove ! rwCmd // 0.0
 			}
 			state Move_Forward {
-			entry $ RWMove ! [| 0 , lv |] // ( 0.0 , lv )
+			entry rwCmd.x = 0 ; rwCmd.y = lv ; $ RWMove ! rwCmd // ( 0.0 , lv )
 			}
 			transition t0 {
 				from i0
@@ -960,7 +953,7 @@ stm RandomWalk {
 				action 
 			
 			
-			$ RWMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 )
+			$ rwCmd.x = 0; rwCmd.y = 0 ; $ RWMove ! rwCmd ; // ( 0.0 , 0.0 )
 			 # T ; randcoef = randomcoef ( ) ; sign = random_sign ( )
 		}
 			transition t2 {
@@ -968,10 +961,7 @@ stm RandomWalk {
 				to Turn
 			exec
 			condition since ( T ) >= randcoef
-				action 
-			
-			
-		$ RWMove ! [| 0 , 0 |] ; // ( 0.0 , 0.0 )
+				action rwCmd.x = 0; rwCmd.y = 0 ; $ RWMove ! rwCmd ; // ( 0.0 , 0.0 )
 		 # T ; randcoef = randomcoef ( )
 		}
 			transition t3 {
@@ -1011,7 +1001,7 @@ stm RandomWalk {
 		exec
 		condition  $ 
 		DisableClusterWatch
-		action $ RWMove ! [| 0 , 0 |] // ( 0.0 , 0.0 )
+		action rwCmd.x = 0 ; rwCmd.y = 0 ; $ RWMove ! rwCmd // ( 0.0 , 0.0 )
 	}
 }
 
@@ -1024,29 +1014,29 @@ function sqrt(v:real): real {
 	postcondition result*result == v
 }
 
-function distance(x1:vector(real,2), x2:vector(real,2)): real {
-    postcondition result == sqrt((x2[1] - x1[1])*(x2[1] - x1[1]) - (x2[2] - x1[2])*(x2[2]- x1[2]))
+function distance(x1: Vec2, x2: Vec2): real {
+    postcondition result == sqrt((x2.x - x1.x)*(x2.x - x1.x) - (x2.y - x1.y)*(x2.y - x1.y))
 }
     
-function L2(x: vector(real,2)): real{
-	postcondition result == sqrt((x[1]*x[1] + x[2] * x[2]))
+function L2(x: Vec2): real {
+    postcondition result == sqrt((x.x*x.x + x.y*x.y))
 }
 
-function dot(x1: vector(real,2), x2: vector(real,2)): real{
-	postcondition result == x1[1]*x2[1] + x1[2]*x2[2]
+function dot(x1: Vec2, x2: Vec2): real {
+    postcondition result == x1.x*x2.x + x1.y*x2.y
 }
 
-function unit(x: vector(real,2)) : vector(real,2){
-	postcondition result[1] == x[1]/L2(x)
-	postcondition result[2] == x[2]/L2(x)
+function unit(x: Vec2): Vec2 {
+    postcondition result.x == x.x/L2(x)
+    postcondition result.y == x.y/L2(x)
 }
 
-function angle_between(x1: vector(real,2), x2: vector(real,2)): real{
-	postcondition result == acos(dot(unit(x1), unit(x2)))
+function angle_between(x1: Vec2, x2: Vec2): real {
+    postcondition result == acos(dot(unit(x1), unit(x2)))
 }
 
-function calculate_turn_angle(x1: vector(real,2), x2: vector(real,2)): real{
-	postcondition result == 0
+function calculate_turn_angle(x1: Vec2, x2: Vec2): real{
+    postcondition result == 0
 }
 
 function acos(x: real): real{

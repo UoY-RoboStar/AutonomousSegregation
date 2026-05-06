@@ -1,0 +1,1794 @@
+
+--
+-- RoboSim generator version 3.0.0.202603091039
+-- Automatically generated on 06-05-2026 18:18:09
+--
+
+module RandomWalk
+exports
+	transparent diamond
+	transparent sbisim
+	transparent dbisim
+	transparent chase
+
+	-- Transition identifiers
+	-- declaring identifiers of transitions
+	datatype NIDS = 
+	              NID_i0|
+	              NID_Wander|
+	              NID_Wait
+	
+	channel internal__ : NIDS
+	
+	-- Flow channels		
+	channel interrupt
+	channel exited
+	channel exit
+	channel terminate
+	
+	-- Variable channels
+	channel get_randcoef, set_randcoef, setL_randcoef, setR_randcoef: core_real
+	channel get_sign, set_sign, setL_sign, setR_sign: core_nat
+	channel get_rwCmd, set_rwCmd, setL_rwCmd, setR_rwCmd: Vec2
+	
+	-- Shared variable channels
+	
+	-- Local variable channels for defined operations that are required by the state machine
+	
+	-- Declaring state machine events
+	
+	-- Declaring call and ret events for undefined operations
+	
+	enterSS = {|
+	i0::enter,
+	Wander::enter,
+	Wait::enter
+	|}
+	
+	enteredSS = 	{|
+	Wander::entered,
+	Wait::entered
+	|}
+	
+	internal_events = union(enteredSS,union(enterSS,{|interrupt,exited|}))
+	
+	shared_variable_events = {|
+	|}
+	
+	datatype ClockSet = 
+		CLID_T
+	
+	channel clockReset, clockResetL, clockResetR : ClockSet
+	
+	localClockResets = {|clockReset.CLID_T|}
+	
+	
+	channel get_CLID_Wait : core_clock_type 
+	channel get_CLID_Wander : core_clock_type 
+	channel get_CLID_T : core_clock_type 
+	--channel increment__
+	
+	CLID_Wait_clock_type(id__,
+			          const_RandomWalk_lv,
+			          const_RandomWalk_av,
+			          const_RandomWalk_pi,
+			          const_RandomWalk_v_randcoef) = 
+		let
+			max = (clock_type_max(Union({
+	{}
+	}))+1)
+		ctype = {0..max}
+	within
+		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+	
+	CLID_Wander_clock_type(id__,
+			          const_RandomWalk_lv,
+			          const_RandomWalk_av,
+			          const_RandomWalk_pi,
+			          const_RandomWalk_v_randcoef) = 
+		let
+			max = (clock_type_max(Union({
+	{}
+	}))+1)
+		ctype = {0..max}
+	within
+		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+	
+	CLID_T_clock_type(id__,
+			          const_RandomWalk_lv,
+			          const_RandomWalk_av,
+			          const_RandomWalk_pi,
+			          const_RandomWalk_v_randcoef) = 
+		let
+			max = (clock_type_max(Union({
+	({randcoef|randcoef <- core_real}),
+	({randcoef|randcoef <- core_real}),
+	({randcoef|randcoef <- core_real}),
+	({randcoef|randcoef <- core_real}),
+	{}
+	}))+1)
+		ctype = {0..max}
+	within
+		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+	
+	
+	
+	-- RoboSim-specific declarations
+	channel endexec, endexec_action
+	channel endexec__ : NIDS
+	channel startexec, startexec_action
+	
+	-- declaring registerRead/Write datatypes
+	datatype RegisterDataInput = i_EnableClusterWatch.Bool
+		| i_DisableClusterWatch.Bool
+	
+	
+	datatype RegisterDataOutput = o_RWMove.Vec2
+	
+	
+	nametype RegisterOutputs = {|
+	o_RWMove|}
+		
+	nametype RegisterInputs = {|
+	i_EnableClusterWatch,
+	i_DisableClusterWatch|}
+	
+	channel registerRead 	: RegisterDataInput
+	channel registerWrite 	: RegisterDataOutput
+	
+	-- variable channels
+	channel get_EnableClusterWatch : Bool
+	channel get_DisableClusterWatch : Bool
+	
+	-- channel set with all visible events
+	sem__events = {|endexec,terminate
+				,registerRead
+				,registerWrite
+		|}
+
+		-- Nodes --
+		-- declaring all nodes
+		
+		----------------------------------------------------------------------
+		-- Initial: i0
+		module i0
+		exports
+		
+			channel enter, interrupt
+			
+			Timed(OneStep) {
+				D__(id__,cycle_RandomWalk_RandomWalk,
+						    const_RandomWalk_lv,
+						    const_RandomWalk_av,
+						    const_RandomWalk_pi,
+						    const_RandomWalk_v_randcoef) = 
+					dbisim(let
+						Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+						
+						Termination = terminate -> SKIP
+						
+						Active 		= share__choice(interrupt -> SKIP) ; Inactive
+					within
+						Inactive [| {terminate} |> SKIP)
+				
+				VS_O__(id__,cycle_RandomWalk_RandomWalk,
+						    const_RandomWalk_lv,
+						    const_RandomWalk_av,
+						    const_RandomWalk_pi,
+						    const_RandomWalk_v_randcoef) = D__(id__,cycle_RandomWalk_RandomWalk,
+						    const_RandomWalk_lv,
+						    const_RandomWalk_av,
+						    const_RandomWalk_pi,
+						    const_RandomWalk_v_randcoef)
+			}
+		
+		endmodule
+		----------------------------------------------------------------------
+		
+		
+		----------------------------------------------------------------------
+		-- State: Wander
+		module Wander
+		
+		enterSS = 
+				{|			i0::enter,
+					Turn::enter,
+					Move_Forward::enter
+				|}
+		enteredSS = 
+				{|			Turn::entered,
+					Move_Forward::entered
+				|}
+		exports
+		
+			--  Declarations
+			channel endexec__ : NIDS
+			
+			
+			channel enter, entered, interrupt
+			channel enteredL, enteredR
+			
+							
+			-- declaring identifiers of transitions
+			datatype NIDS = 
+			              NID_i0|
+			              NID_Turn|
+			              NID_Move_Forward
+			
+			channel internal__ : NIDS
+			
+			channel get_CLID_Turn : core_clock_type 
+			channel get_CLID_Move_Forward : core_clock_type 
+			--channel increment__
+			
+			CLID_Turn_clock_type(id__,
+					          const_RandomWalk_lv,
+					          const_RandomWalk_av,
+					          const_RandomWalk_pi,
+					          const_RandomWalk_v_randcoef) = 
+				let
+					max = (clock_type_max(Union({
+			{}
+			}))+1)
+				ctype = {0..max}
+			within
+				if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+			
+			CLID_Move_Forward_clock_type(id__,
+					          const_RandomWalk_lv,
+					          const_RandomWalk_av,
+					          const_RandomWalk_pi,
+					          const_RandomWalk_v_randcoef) = 
+				let
+					max = (clock_type_max(Union({
+			{}
+			}))+1)
+				ctype = {0..max}
+			within
+				if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
+			
+			
+			--	Nodes
+			-- declaring all nodes
+			
+			----------------------------------------------------------------------
+			-- Initial: i0
+			module i0
+			exports
+			
+				channel enter, interrupt
+				
+				Timed(OneStep) {
+					D__(id__,cycle_RandomWalk_RandomWalk,
+							    const_RandomWalk_lv,
+							    const_RandomWalk_av,
+							    const_RandomWalk_pi,
+							    const_RandomWalk_v_randcoef) = 
+						dbisim(let
+							Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+							
+							Termination = terminate -> SKIP
+							
+							Active 		= share__choice(interrupt -> SKIP) ; Inactive
+						within
+							Inactive [| {terminate} |> SKIP)
+					
+					VS_O__(id__,cycle_RandomWalk_RandomWalk,
+							    const_RandomWalk_lv,
+							    const_RandomWalk_av,
+							    const_RandomWalk_pi,
+							    const_RandomWalk_v_randcoef) = D__(id__,cycle_RandomWalk_RandomWalk,
+							    const_RandomWalk_lv,
+							    const_RandomWalk_av,
+							    const_RandomWalk_pi,
+							    const_RandomWalk_v_randcoef)
+				}
+			
+			endmodule
+			----------------------------------------------------------------------
+			
+			
+			----------------------------------------------------------------------
+			-- State: Turn
+			module Turn
+			
+			enterSS = {}
+			
+			enteredSS = {}
+			
+			exports
+			
+				--  Declarations
+				channel endexec__ : NIDS
+				
+				
+				channel enter, entered, interrupt
+				channel enteredL, enteredR
+				
+								
+				
+				--channel increment__
+				
+				
+				--	Nodes
+				-- declaring all nodes
+				
+				
+				Timed(OneStep) {
+					--	Rule: behaviours(Node)
+					--  Note that FDR has problems with efficiently compiling the process below
+					-- 	if using a different recursion pattern.
+					D__(id__,cycle_RandomWalk_RandomWalk,
+							    const_RandomWalk_lv,
+							    const_RandomWalk_av,
+							    const_RandomWalk_pi,
+							    const_RandomWalk_v_randcoef) = 
+					dbisim(let
+						-- IMPLEMENTATION NOTE: 
+						-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+						-- however FDR struggles with that form in certain cases. So we use the exception operator
+						-- instead to 'terminate'.
+						
+						Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+						
+						Termination = terminate -> SKIP
+						
+						Active 		= share__choice(true & (share__choice(set_randcoef!randomcoef() -> SKIP)));share__choice(share__choice(get_rwCmd?rwCmd -> share__choice(get_sign?sign -> true & (share__choice(set_rwCmd!update_Vec2_x(rwCmd,Mult(const_RandomWalk_av, sign, core_real)) -> SKIP)))));share__choice(share__choice(get_rwCmd?rwCmd -> true & (share__choice(set_rwCmd!update_Vec2_y(rwCmd,0) -> SKIP))));share__choice(get_rwCmd?rwCmd -> registerWrite.o_RWMove.rwCmd -> SKIP) ; 
+								 	  Behaviour ; 
+								 	  share__choice(exit -> SKIP) ; SKIP ; 
+								 	  share__choice(exited -> SKIP) ; Inactive
+					
+						Behaviour 	= entered -> During
+						During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+					within
+						Inactive [| {terminate} |> SKIP)
+						
+					VS_O__(id__,cycle_RandomWalk_RandomWalk,
+							    const_RandomWalk_lv,
+							    const_RandomWalk_av,
+							    const_RandomWalk_pi,
+							    const_RandomWalk_v_randcoef) = 
+					dbisim(let
+						Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+						
+						Termination = terminate -> SKIP
+						
+						Active 		= share__choice(true & (share__choice(set_randcoef!randomcoef() -> SKIP)));share__choice(share__choice(get_rwCmd?rwCmd -> share__choice(get_sign?sign -> true & (share__choice(set_rwCmd!update_Vec2_x(rwCmd,Mult(const_RandomWalk_av, sign, core_real)) -> SKIP)))));share__choice(share__choice(get_rwCmd?rwCmd -> true & (share__choice(set_rwCmd!update_Vec2_y(rwCmd,0) -> SKIP))));share__choice(get_rwCmd?rwCmd -> registerWrite.o_RWMove.rwCmd -> SKIP) ; 
+								 	  Behaviour ; 
+								 	  share__choice(exit -> SKIP) ; SKIP ; 
+								 	  share__choice(exited -> SKIP) ; Inactive
+					
+						Behaviour 	= entered -> During
+						During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+					within
+						Inactive [| {terminate} |> SKIP)
+					
+					
+					-- Clocks
+					
+					StateClocks(id__,
+							          const_RandomWalk_lv,
+							          const_RandomWalk_av,
+							          const_RandomWalk_pi,
+							          const_RandomWalk_v_randcoef) = terminate -> SKIP
+					
+					stateClockSync = {||}
+				}
+			
+			endmodule
+			----------------------------------------------------------------------
+			
+			
+			----------------------------------------------------------------------
+			-- State: Move_Forward
+			module Move_Forward
+			
+			enterSS = {}
+			
+			enteredSS = {}
+			
+			exports
+			
+				--  Declarations
+				channel endexec__ : NIDS
+				
+				
+				channel enter, entered, interrupt
+				channel enteredL, enteredR
+				
+								
+				
+				--channel increment__
+				
+				
+				--	Nodes
+				-- declaring all nodes
+				
+				
+				Timed(OneStep) {
+					--	Rule: behaviours(Node)
+					--  Note that FDR has problems with efficiently compiling the process below
+					-- 	if using a different recursion pattern.
+					D__(id__,cycle_RandomWalk_RandomWalk,
+							    const_RandomWalk_lv,
+							    const_RandomWalk_av,
+							    const_RandomWalk_pi,
+							    const_RandomWalk_v_randcoef) = 
+					dbisim(let
+						-- IMPLEMENTATION NOTE: 
+						-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+						-- however FDR struggles with that form in certain cases. So we use the exception operator
+						-- instead to 'terminate'.
+						
+						Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+						
+						Termination = terminate -> SKIP
+						
+						Active 		= share__choice(share__choice(get_rwCmd?rwCmd -> true & (share__choice(set_rwCmd!update_Vec2_x(rwCmd,0) -> SKIP))));share__choice(share__choice(get_rwCmd?rwCmd -> true & (share__choice(set_rwCmd!update_Vec2_y(rwCmd,const_RandomWalk_lv) -> SKIP))));share__choice(get_rwCmd?rwCmd -> registerWrite.o_RWMove.rwCmd -> SKIP) ; 
+								 	  Behaviour ; 
+								 	  share__choice(exit -> SKIP) ; SKIP ; 
+								 	  share__choice(exited -> SKIP) ; Inactive
+					
+						Behaviour 	= entered -> During
+						During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+					within
+						Inactive [| {terminate} |> SKIP)
+						
+					VS_O__(id__,cycle_RandomWalk_RandomWalk,
+							    const_RandomWalk_lv,
+							    const_RandomWalk_av,
+							    const_RandomWalk_pi,
+							    const_RandomWalk_v_randcoef) = 
+					dbisim(let
+						Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+						
+						Termination = terminate -> SKIP
+						
+						Active 		= share__choice(share__choice(get_rwCmd?rwCmd -> true & (share__choice(set_rwCmd!update_Vec2_x(rwCmd,0) -> SKIP))));share__choice(share__choice(get_rwCmd?rwCmd -> true & (share__choice(set_rwCmd!update_Vec2_y(rwCmd,const_RandomWalk_lv) -> SKIP))));share__choice(get_rwCmd?rwCmd -> registerWrite.o_RWMove.rwCmd -> SKIP) ; 
+								 	  Behaviour ; 
+								 	  share__choice(exit -> SKIP) ; SKIP ; 
+								 	  share__choice(exited -> SKIP) ; Inactive
+					
+						Behaviour 	= entered -> During
+						During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+					within
+						Inactive [| {terminate} |> SKIP)
+					
+					
+					-- Clocks
+					
+					StateClocks(id__,
+							          const_RandomWalk_lv,
+							          const_RandomWalk_av,
+							          const_RandomWalk_pi,
+							          const_RandomWalk_v_randcoef) = terminate -> SKIP
+					
+					stateClockSync = {||}
+				}
+			
+			endmodule
+			----------------------------------------------------------------------
+			
+			
+			
+			Timed(OneStep) {
+				--	Rule: behaviours(Node)
+				--  Note that FDR has problems with efficiently compiling the process below
+				-- 	if using a different recursion pattern.
+				D__(id__,cycle_RandomWalk_RandomWalk,
+						    const_RandomWalk_lv,
+						    const_RandomWalk_av,
+						    const_RandomWalk_pi,
+						    const_RandomWalk_v_randcoef) = 
+				dbisim(let
+					-- IMPLEMENTATION NOTE: 
+					-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+					-- however FDR struggles with that form in certain cases. So we use the exception operator
+					-- instead to 'terminate'.
+					
+					Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+					
+					Termination = terminate -> SKIP
+					
+					Active 		= SKIP ; 
+							 	  Behaviour ; 
+							 	  share__choice(exit -> SKIP) ; SKIP ; 
+							 	  share__choice(exited -> SKIP) ; Inactive
+				
+				
+					Behaviour 	= dbisim(
+						((
+						 (((dbisim(
+						 	sbisim(
+						 		dbisim(
+						 			sbisim(
+						 				(let
+						 					-- IMPLEMENTATION NOTE:
+						 					-- Here the 'enter' channel set is calculated explicitly because of the use of CSPM 
+						 					-- modules for defining the semantics of each node.
+						 					enterSS = {|
+						 					i0::enter,
+						 					Turn::enter,
+						 					Move_Forward::enter
+						 					|}
+						 					hideSet = union(enterSS,{|exit,exited,internal__|})
+						 				within 
+						 					((let
+						 						-- IMPLEMENTATION NOTE: the channel set 'enter' is calculated explicitly
+						 						-- because CSPM modules are used for the semantics of Node.
+						 						flowevts = union(enterSS,{|exit,exited|})
+						 						transSync = {|internal__.NID_i0,endexec__.NID_Turn,endexec__.NID_Move_Forward,endexec__.NID_Move_Forward,endexec__.NID_Turn|}
+						 					within
+						 						((
+						 						 (((-- RULE composeNodes(nc:NodeContainer)^nops : CSPProcess
+						 						   i0::D__(id__,cycle_RandomWalk_RandomWalk,
+						 						   		    const_RandomWalk_lv,
+						 						   		    const_RandomWalk_av,
+						 						   		    const_RandomWalk_pi,
+						 						   		    const_RandomWalk_v_randcoef)
+						 						   [| { share__, terminate } |] (
+						 						   Turn::D__(id__,cycle_RandomWalk_RandomWalk,
+						 						   		    const_RandomWalk_lv,
+						 						   		    const_RandomWalk_av,
+						 						   		    const_RandomWalk_pi,
+						 						   		    const_RandomWalk_v_randcoef)
+						 						   [| { share__, terminate } |] (
+						 						   Move_Forward::D__(id__,cycle_RandomWalk_RandomWalk,
+						 						   		    const_RandomWalk_lv,
+						 						   		    const_RandomWalk_av,
+						 						   		    const_RandomWalk_pi,
+						 						   		    const_RandomWalk_v_randcoef)
+						 						   )
+						 						   )
+						 						 )
+						 						 [[Turn::interrupt <- x__ | x__ <- {|interrupt,endexec__.NID_Turn,endexec__.NID_Turn|}]]
+						 						 [[Move_Forward::interrupt <- x__ | x__ <- {|interrupt,endexec__.NID_Move_Forward,endexec__.NID_Move_Forward|}]]
+						 						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
+						 						 )
+						 						  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
+						 						  [[set_randcoef <- setL_randcoef,clockReset.CLID_T <- clockResetL.CLID_T]]
+						 						 )
+						 						 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
+						 						 			,setL_randcoef
+						 						 			,clockResetL.CLID_T
+						 						|}) |]
+						 						 ((i0::enter -> Transitions(id__,cycle_RandomWalk_RandomWalk,
+						 						 		    const_RandomWalk_lv,
+						 						 		    const_RandomWalk_av,
+						 						 		    const_RandomWalk_pi,
+						 						 		    const_RandomWalk_v_randcoef))
+						 						  [[ share__ <- x__ | x__ <- {| share__,setL_randcoef,clockResetL.CLID_T |} ]]
+						 						 )
+						 						)[[setL_randcoef <- set_randcoef,clockResetL.CLID_T <- clockReset.CLID_T]]
+						 						)
+						 					)
+						 					 \ hideSet)
+						 					[[ endexec__.x____  <- endexec | x____ <- NIDS ]]
+						 					[[ endexec_action <- endexec ]]
+						 					[[ startexec_action <- startexec ]]
+						 				)
+						 				[| {|get_CLID_Move_Forward,Move_Forward::entered,terminate|} |]
+						 				dbisim(Clock_CLID_Move_Forward(id__,0,
+						 						          const_RandomWalk_lv,
+						 						          const_RandomWalk_av,
+						 						          const_RandomWalk_pi,
+						 						          const_RandomWalk_v_randcoef))
+						 			)\{|get_CLID_Move_Forward|}
+						 		)
+						 		[| {|get_CLID_Turn,Turn::entered,terminate|} |]
+						 		dbisim(Clock_CLID_Turn(id__,0,
+						 				          const_RandomWalk_lv,
+						 				          const_RandomWalk_av,
+						 				          const_RandomWalk_pi,
+						 				          const_RandomWalk_v_randcoef))
+						 	)\{|get_CLID_Turn|}
+						 )
+						 ))
+						  [[ share__ <- x__ | x__ <- {| share__,setR_rwCmd,setR_randcoef,setR_sign,clockResetR.CLID_T |} ]] 
+						  [[set_rwCmd <- setL_rwCmd,set_randcoef <- setL_randcoef,set_sign <- setL_sign,clockReset.CLID_T <- clockResetL.CLID_T]]
+						 )
+						 [| union(union(enteredSS,{| interrupt, terminate |}),{|share__
+						 			,setL_rwCmd
+						 			,setL_randcoef
+						 			,setL_sign
+						 			,clockResetL.CLID_T
+						 			,setR_rwCmd
+						 			 			,setR_randcoef
+						 			 			,setR_sign
+						 			 			,clockResetR.CLID_T
+						 			|}) |]
+						 ((During)
+						  [[ share__ <- x__ | x__ <- {| share__,setL_rwCmd,setL_randcoef,setL_sign,clockResetL.CLID_T |} ]]
+						  [[set_rwCmd <- setR_rwCmd,set_randcoef <- setR_randcoef,set_sign <- setR_sign,clockReset.CLID_T <- clockResetR.CLID_T]]
+						 )
+						)[[setL_rwCmd <- set_rwCmd,setL_randcoef <- set_randcoef,setL_sign <- set_sign,clockResetL.CLID_T <- clockReset.CLID_T]]
+						 [[setR_rwCmd <- set_rwCmd,setR_randcoef <- set_randcoef,setR_sign <- set_sign,clockResetR.CLID_T <- clockReset.CLID_T]]
+						)\union(enteredSS,{terminate}) 
+					)
+					During 		= share__choice(([] e__ : enteredSS @ e__ -> SKIP))
+							 	  ; entered -> ((CRUN(enteredSS) ||| SKIP ; SStop) /\ interrupt -> share__choice(terminate -> SKIP))
+				within
+					Inactive [| {terminate} |> SKIP)
+					
+				VS_O__(id__,cycle_RandomWalk_RandomWalk,
+						    const_RandomWalk_lv,
+						    const_RandomWalk_av,
+						    const_RandomWalk_pi,
+						    const_RandomWalk_v_randcoef) = 
+				dbisim(let
+					Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+					
+					Termination = terminate -> SKIP
+					
+					Active 		= SKIP ; 
+							 	  Behaviour ; 
+							 	  share__choice(exit -> SKIP) ; SKIP ; 
+							 	  share__choice(exited -> SKIP) ; Inactive
+				
+				
+					Behaviour 	= dbisim(
+						((
+						 (((dbisim(
+						 	sbisim(
+						 		dbisim(
+						 			sbisim(
+						 				(let
+						 					-- IMPLEMENTATION NOTE:
+						 					-- Here the 'enter' channel set is calculated explicitly because of the use of CSPM 
+						 					-- modules for defining the semantics of each node.
+						 					enterSS = {|
+						 					i0::enter,
+						 					Turn::enter,
+						 					Move_Forward::enter
+						 					|}
+						 					hideSet = union(enterSS,{|exit,exited,internal__|})
+						 				within 
+						 					((let
+						 						-- IMPLEMENTATION NOTE: the channel set 'enter' is calculated explicitly
+						 						-- because CSPM modules are used for the semantics of Node.
+						 						flowevts = union(enterSS,{|exit,exited|})
+						 						transSync = {|internal__.NID_i0,endexec__.NID_Turn,endexec__.NID_Move_Forward,endexec__.NID_Move_Forward,endexec__.NID_Turn|}
+						 					within
+						 						((
+						 						 (((-- RULE composeNodes(nc:NodeContainer)^nops : CSPProcess
+						 						   i0::VS_O__(id__,cycle_RandomWalk_RandomWalk,
+						 						   		    const_RandomWalk_lv,
+						 						   		    const_RandomWalk_av,
+						 						   		    const_RandomWalk_pi,
+						 						   		    const_RandomWalk_v_randcoef)
+						 						   [| { share__, terminate } |] (
+						 						   Turn::VS_O__(id__,cycle_RandomWalk_RandomWalk,
+						 						   		    const_RandomWalk_lv,
+						 						   		    const_RandomWalk_av,
+						 						   		    const_RandomWalk_pi,
+						 						   		    const_RandomWalk_v_randcoef)
+						 						   [| { share__, terminate } |] (
+						 						   Move_Forward::VS_O__(id__,cycle_RandomWalk_RandomWalk,
+						 						   		    const_RandomWalk_lv,
+						 						   		    const_RandomWalk_av,
+						 						   		    const_RandomWalk_pi,
+						 						   		    const_RandomWalk_v_randcoef)
+						 						   )
+						 						   )
+						 						 )
+						 						 [[Turn::interrupt <- x__ | x__ <- {|interrupt,endexec__.NID_Turn,endexec__.NID_Turn|}]]
+						 						 [[Move_Forward::interrupt <- x__ | x__ <- {|interrupt,endexec__.NID_Move_Forward,endexec__.NID_Move_Forward|}]]
+						 						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
+						 						 )
+						 						  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
+						 						  [[set_randcoef <- setL_randcoef,clockReset.CLID_T <- clockResetL.CLID_T]]
+						 						 )
+						 						 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
+						 						 			,setL_randcoef
+						 						 			,clockResetL.CLID_T
+						 						|}) |]
+						 						 ((i0::enter -> Transitions(id__,cycle_RandomWalk_RandomWalk,
+						 						 		    const_RandomWalk_lv,
+						 						 		    const_RandomWalk_av,
+						 						 		    const_RandomWalk_pi,
+						 						 		    const_RandomWalk_v_randcoef))
+						 						  [[ share__ <- x__ | x__ <- {| share__,setL_randcoef,clockResetL.CLID_T |} ]]
+						 						 )
+						 						)[[setL_randcoef <- set_randcoef,clockResetL.CLID_T <- clockReset.CLID_T]]
+						 						)
+						 					)
+						 					 \ hideSet)
+						 					[[ endexec__.x____  <- endexec | x____ <- NIDS ]]
+						 					[[ endexec_action <- endexec ]]
+						 					[[ startexec_action <- startexec ]]
+						 				)
+						 				[| {|get_CLID_Move_Forward,Move_Forward::entered,terminate|} |]
+						 				dbisim(Clock_CLID_Move_Forward(id__,0,
+						 						          const_RandomWalk_lv,
+						 						          const_RandomWalk_av,
+						 						          const_RandomWalk_pi,
+						 						          const_RandomWalk_v_randcoef))
+						 			)\{|get_CLID_Move_Forward|}
+						 		)
+						 		[| {|get_CLID_Turn,Turn::entered,terminate|} |]
+						 		dbisim(Clock_CLID_Turn(id__,0,
+						 				          const_RandomWalk_lv,
+						 				          const_RandomWalk_av,
+						 				          const_RandomWalk_pi,
+						 				          const_RandomWalk_v_randcoef))
+						 	)\{|get_CLID_Turn|}
+						 )
+						 ))
+						  [[ share__ <- x__ | x__ <- {| share__,setR_rwCmd,setR_randcoef,setR_sign,clockResetR.CLID_T |} ]] 
+						  [[set_rwCmd <- setL_rwCmd,set_randcoef <- setL_randcoef,set_sign <- setL_sign,clockReset.CLID_T <- clockResetL.CLID_T]]
+						 )
+						 [| union(union(enteredSS,{| interrupt, terminate |}),{|share__
+						 			,setL_rwCmd
+						 			,setL_randcoef
+						 			,setL_sign
+						 			,clockResetL.CLID_T
+						 			,setR_rwCmd
+						 			 			,setR_randcoef
+						 			 			,setR_sign
+						 			 			,clockResetR.CLID_T
+						 			|}) |]
+						 ((During)
+						  [[ share__ <- x__ | x__ <- {| share__,setL_rwCmd,setL_randcoef,setL_sign,clockResetL.CLID_T |} ]]
+						  [[set_rwCmd <- setR_rwCmd,set_randcoef <- setR_randcoef,set_sign <- setR_sign,clockReset.CLID_T <- clockResetR.CLID_T]]
+						 )
+						)[[setL_rwCmd <- set_rwCmd,setL_randcoef <- set_randcoef,setL_sign <- set_sign,clockResetL.CLID_T <- clockReset.CLID_T]]
+						 [[setR_rwCmd <- set_rwCmd,setR_randcoef <- set_randcoef,setR_sign <- set_sign,clockResetR.CLID_T <- clockReset.CLID_T]]
+						)\{terminate} 
+					)
+					During 		= share__choice(([] e__ : enteredSS @ e__ -> SKIP))
+							 	  ; entered -> ((CRUN(enteredSS) ||| SKIP ; SStop) /\ interrupt -> share__choice(terminate -> SKIP))
+				within
+					Inactive [| {terminate} |> SKIP)
+				
+				Transitions(id__,cycle_RandomWalk_RandomWalk,
+						    const_RandomWalk_lv,
+						    const_RandomWalk_av,
+						    const_RandomWalk_pi,
+						    const_RandomWalk_v_randcoef) = ((let
+					Trans = share__choice(get_randcoef?randcoef -> get_CLID_T?T -> TimeOut_1(
+						 (share__ -> SKIP
+						 [] dbisim((true)&(internal__!NID_i0 -> SKIP ;  ((((SKIP)[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; Turn::enter -> SKIP))))
+						 [] dbisim(((T>=randcoef))&(endexec__.NID_Turn -> startexec_action -> SKIP ;  share__choice(exit -> SKIP) ; ((let 
+						 	X = share__choice(exited -> SKIP [] endexec -> Y)
+						 	Y = share__choice(exited -> SKIP [] startexec -> X)
+						  within
+						  	X) ; ((share__choice(get_rwCmd?rwCmd -> true & (registerWrite!o_rwCmd!update_Vec2_x(rwCmd,0) -> SKIP));share__choice(share__choice(get_rwCmd?rwCmd -> true & (share__choice(set_rwCmd!update_Vec2_y(rwCmd,0) -> SKIP))));share__choice(get_rwCmd?rwCmd -> registerWrite.o_RWMove.rwCmd -> SKIP);share__choice(clockReset.CLID_T -> SKIP);share__choice(true & (share__choice(set_randcoef!randomcoef() -> SKIP)));share__choice(true & (share__choice(set_sign!random_sign() -> SKIP))))[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; Move_Forward::enter -> SKIP)))
+						 [] dbisim(((T>=randcoef))&(endexec__.NID_Move_Forward -> startexec_action -> SKIP ;  share__choice(exit -> SKIP) ; ((let 
+						 	X = share__choice(exited -> SKIP [] endexec -> Y)
+						 	Y = share__choice(exited -> SKIP [] startexec -> X)
+						  within
+						  	X) ; ((share__choice(share__choice(get_rwCmd?rwCmd -> true & (share__choice(set_rwCmd!update_Vec2_x(rwCmd,0) -> SKIP))));share__choice(share__choice(get_rwCmd?rwCmd -> true & (share__choice(set_rwCmd!update_Vec2_y(rwCmd,0) -> SKIP))));share__choice(get_rwCmd?rwCmd -> registerWrite.o_RWMove.rwCmd -> SKIP);share__choice(clockReset.CLID_T -> SKIP);share__choice(true & (share__choice(set_randcoef!randomcoef() -> SKIP))))[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; Turn::enter -> SKIP)))
+						 [] dbisim(((T<randcoef))&(endexec__.NID_Move_Forward -> startexec_action -> SKIP ;  share__choice(exit -> SKIP) ; ((let 
+						 	X = share__choice(exited -> SKIP [] endexec -> Y)
+						 	Y = share__choice(exited -> SKIP [] startexec -> X)
+						  within
+						  	X) ; ((SKIP)[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; Move_Forward::enter -> SKIP)))
+						 [] dbisim(((T<randcoef))&(endexec__.NID_Turn -> startexec_action -> SKIP ;  share__choice(exit -> SKIP) ; ((let 
+						 	X = share__choice(exited -> SKIP [] endexec -> Y)
+						 	Y = share__choice(exited -> SKIP [] startexec -> X)
+						  within
+						  	X) ; ((SKIP)[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; Turn::enter -> SKIP)))
+						 []
+						 (exit -> SKIP ; share__choice(exited -> terminate -> SKIP))
+						 []
+						 terminate -> SKIP
+						 []
+						 (endexec -> SKIP ; share__choice(startexec -> SKIP))
+						 )
+					,SKIP);Trans
+					)
+				within
+					Trans [|{terminate}|> SKIP
+				)
+				)
+				
+				
+				-- Clocks
+				Clock_CLID_Turn(id__,x__,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef) = 
+					TimeOut_1(
+						Turn::entered -> Clock_CLID_Turn(id__,0,
+								          const_RandomWalk_lv,
+								          const_RandomWalk_av,
+								          const_RandomWalk_pi,
+								          const_RandomWalk_v_randcoef)
+						[]
+						get_CLID_Turn!x__ -> Clock_CLID_Turn(id__,x__,
+								          const_RandomWalk_lv,
+								          const_RandomWalk_av,
+								          const_RandomWalk_pi,
+								          const_RandomWalk_v_randcoef)
+						[]
+						terminate -> SKIP,Clock_CLID_Turn(id__,clock_type_plus(x__,1,CLID_Turn_clock_type(id__,
+								          const_RandomWalk_lv,
+								          const_RandomWalk_av,
+								          const_RandomWalk_pi,
+								          const_RandomWalk_v_randcoef)),
+								          const_RandomWalk_lv,
+								          const_RandomWalk_av,
+								          const_RandomWalk_pi,
+								          const_RandomWalk_v_randcoef))
+				Clock_CLID_Move_Forward(id__,x__,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef) = 
+					TimeOut_1(
+						Move_Forward::entered -> Clock_CLID_Move_Forward(id__,0,
+								          const_RandomWalk_lv,
+								          const_RandomWalk_av,
+								          const_RandomWalk_pi,
+								          const_RandomWalk_v_randcoef)
+						[]
+						get_CLID_Move_Forward!x__ -> Clock_CLID_Move_Forward(id__,x__,
+								          const_RandomWalk_lv,
+								          const_RandomWalk_av,
+								          const_RandomWalk_pi,
+								          const_RandomWalk_v_randcoef)
+						[]
+						terminate -> SKIP,Clock_CLID_Move_Forward(id__,clock_type_plus(x__,1,CLID_Move_Forward_clock_type(id__,
+								          const_RandomWalk_lv,
+								          const_RandomWalk_av,
+								          const_RandomWalk_pi,
+								          const_RandomWalk_v_randcoef)),
+								          const_RandomWalk_lv,
+								          const_RandomWalk_av,
+								          const_RandomWalk_pi,
+								          const_RandomWalk_v_randcoef))
+				
+				StateClocks(id__,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef) = dbisim(Clock_CLID_Turn(id__,0,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef))
+				[| { terminate } |] (
+				dbisim(Clock_CLID_Move_Forward(id__,0,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef))
+				)
+				
+				stateClockSync = {|get_CLID_Turn,Turn::entered,get_CLID_Move_Forward,Move_Forward::entered|}
+			}
+		
+		endmodule
+		----------------------------------------------------------------------
+		
+		
+		----------------------------------------------------------------------
+		-- State: Wait
+		module Wait
+		
+		enterSS = {}
+		
+		enteredSS = {}
+		
+		exports
+		
+			--  Declarations
+			channel endexec__ : NIDS
+			
+			
+			channel enter, entered, interrupt
+			channel enteredL, enteredR
+			
+							
+			
+			--channel increment__
+			
+			
+			--	Nodes
+			-- declaring all nodes
+			
+			
+			Timed(OneStep) {
+				--	Rule: behaviours(Node)
+				--  Note that FDR has problems with efficiently compiling the process below
+				-- 	if using a different recursion pattern.
+				D__(id__,cycle_RandomWalk_RandomWalk,
+						    const_RandomWalk_lv,
+						    const_RandomWalk_av,
+						    const_RandomWalk_pi,
+						    const_RandomWalk_v_randcoef) = 
+				dbisim(let
+					-- IMPLEMENTATION NOTE: 
+					-- The following should be defined as: Inactive = share__choice(Activation [] Termination),
+					-- however FDR struggles with that form in certain cases. So we use the exception operator
+					-- instead to 'terminate'.
+					
+					Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+					
+					Termination = terminate -> SKIP
+					
+					Active 		= SKIP ; 
+							 	  Behaviour ; 
+							 	  share__choice(exit -> SKIP) ; SKIP ; 
+							 	  share__choice(exited -> SKIP) ; Inactive
+				
+					Behaviour 	= entered -> During
+					During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+				within
+					Inactive [| {terminate} |> SKIP)
+					
+				VS_O__(id__,cycle_RandomWalk_RandomWalk,
+						    const_RandomWalk_lv,
+						    const_RandomWalk_av,
+						    const_RandomWalk_pi,
+						    const_RandomWalk_v_randcoef) = 
+				dbisim(let
+					Inactive 	= share__choice(enter -> SKIP [] terminate -> SKIP) ; Active
+					
+					Termination = terminate -> SKIP
+					
+					Active 		= SKIP ; 
+							 	  Behaviour ; 
+							 	  share__choice(exit -> SKIP) ; SKIP ; 
+							 	  share__choice(exited -> SKIP) ; Inactive
+				
+					Behaviour 	= entered -> During
+					During 		= ((SKIP ; SStop) /\ interrupt -> SKIP)
+				within
+					Inactive [| {terminate} |> SKIP)
+				
+				
+				-- Clocks
+				
+				StateClocks(id__,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef) = terminate -> SKIP
+				
+				stateClockSync = {||}
+			}
+		
+		endmodule
+		----------------------------------------------------------------------
+		
+		-- END of Nodes --
+		
+		Timed(OneStep) {
+		-- Operation calls --
+		-- Only the undefined operations are declared here.
+		-- If the state machine is in isolation, all required operations will be undefined.
+		-- If it is in the context of a controller, the required operations not provided by the
+		-- controller will be declared here, and the defined operations will be defined in the
+		-- context of the Controller module, and therefore within scope of the state machine module.
+		
+		-- END of Operation calls --
+	
+		datatype SOutputEvents = SOutput_RWMove
+		
+		cycle(cycle_RandomWalk_RandomWalk) =
+			let
+				project(o_RWMove.x__) = SOutput_RWMove
+		
+				Cycle =
+					Deadline(
+						(registerRead.i_EnableClusterWatch?x__ -> SKIP
+							||| registerRead.i_DisableClusterWatch?x__ -> SKIP);
+						startexec -> CollectOutputs(SOutputEvents),0);
+					TimeOut_1(terminate -> SKIP,WAIT(cycle_RandomWalk_RandomWalk-1);Cycle)
+				
+				CollectOutputs(sout) =
+					(registerWrite?outp:{ outp | outc <- inter(sout,SOutputEvents), outp <- RegisterDataOutput,project(outp) == outc} -> CollectOutputs(diff(sout,{project(outp)}))
+						[]
+					endexec -> SKIP
+					)
+			within
+				Cycle
+		
+		-- STM processes
+		STM(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = -- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
+		(
+			cycle(cycle_RandomWalk_RandomWalk)
+			[| {| endexec,registerRead,registerWrite,startexec,terminate |} |]
+			( 
+				(
+					(
+						(startexec -> IteratedStateful(id__,cycle_RandomWalk_RandomWalk,
+								    const_RandomWalk_lv,
+								    const_RandomWalk_av,
+								    const_RandomWalk_pi,
+								    const_RandomWalk_v_randcoef) \ {terminate}) 
+						[| {share__} |]
+						SKIP
+					) ; 
+					(let
+						Ending = endexec -> (startexec -> Ending [] terminate -> SKIP)
+					 within
+					 	Ending
+					)
+				)
+				[| union(sharedVarSync,{terminate}) |]
+				dbisim(sharedVarMemory(id__,cycle_RandomWalk_RandomWalk,
+						    const_RandomWalk_lv,
+						    const_RandomWalk_av,
+						    const_RandomWalk_pi,
+						    const_RandomWalk_v_randcoef))
+			)\sharedVarHide
+		)\{startexec}
+		
+		STM_VS_O(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = -- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
+		(
+			cycle(cycle_RandomWalk_RandomWalk)
+			[| {| endexec,registerRead,registerWrite,startexec,terminate |} |]
+			( 
+				(
+					(
+						(startexec -> IteratedStateful_VS_O(id__,cycle_RandomWalk_RandomWalk,
+								    const_RandomWalk_lv,
+								    const_RandomWalk_av,
+								    const_RandomWalk_pi,
+								    const_RandomWalk_v_randcoef) \ {terminate}) 
+						[| {share__} |]
+						SKIP
+					) ; 
+					(let
+						Ending = endexec -> (startexec -> Ending [] terminate -> SKIP)
+					 within
+					 	Ending
+					)
+				)
+				[| union(sharedVarSync,{terminate}) |]
+				dbisim(sharedVarMemory(id__,cycle_RandomWalk_RandomWalk,
+						    const_RandomWalk_lv,
+						    const_RandomWalk_av,
+						    const_RandomWalk_pi,
+						    const_RandomWalk_v_randcoef))
+			)\sharedVarHide
+		)\{startexec}
+		
+		-- Transitions
+		Transitions(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = ((let
+			Trans = share__choice(get_EnableClusterWatch?EnableClusterWatch -> get_DisableClusterWatch?DisableClusterWatch -> TimeOut_1(
+				 (share__ -> SKIP
+				 [] dbisim((true)&(internal__!NID_i0 -> SKIP ;  ((((SKIP)[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; Wait::enter -> SKIP))))
+				 [] dbisim(((not (member(EnableClusterWatch,{true}))))&(endexec__.NID_Wait -> startexec_action -> SKIP ;  share__choice(exit -> SKIP) ; ((let 
+				 	X = share__choice(exited -> SKIP [] endexec -> Y)
+				 	Y = share__choice(exited -> SKIP [] startexec -> X)
+				  within
+				  	X) ; ((SKIP)[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; Wait::enter -> SKIP)))
+				 [] dbisim((member(EnableClusterWatch,{true}))&(internal__!NID_Wait -> SKIP ;  share__choice(exit -> SKIP) ; ((let 
+				 	X = share__choice(exited -> SKIP [] endexec -> Y)
+				 	Y = share__choice(exited -> SKIP [] startexec -> X)
+				  within
+				  	X) ; ((endexec -> startexec -> SKIP)[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; Wander::enter -> SKIP)))
+				 [] dbisim((member(DisableClusterWatch,{true}))&(endexec__.NID_Wander -> startexec_action -> SKIP ;  share__choice(exit -> SKIP) ; ((let 
+				 	X = share__choice(exited -> SKIP [] endexec -> Y)
+				 	Y = share__choice(exited -> SKIP [] startexec -> X)
+				  within
+				  	X) ; ((share__choice(share__choice(get_rwCmd?rwCmd -> true & (share__choice(set_rwCmd!update_Vec2_x(rwCmd,0) -> SKIP))));share__choice(share__choice(get_rwCmd?rwCmd -> true & (share__choice(set_rwCmd!update_Vec2_y(rwCmd,0) -> SKIP))));share__choice(get_rwCmd?rwCmd -> registerWrite.o_RWMove.rwCmd -> SKIP))[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; Wait::enter -> SKIP)))
+				 []
+				 (exit -> SKIP ; share__choice(exited -> terminate -> SKIP))
+				 []
+				 terminate -> SKIP
+				 []
+				 (endexec -> SKIP ; share__choice(startexec -> SKIP))
+				 )
+			,SKIP);Trans
+			)
+		within
+			Trans [|{terminate}|> SKIP
+		)
+		)
+		
+		-- Stateful
+		-- RULE: Stateful(stm:StateMachineBody) : CSPProcess
+		
+		-- Named process definitions
+		MachineBody(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = 
+			dbisim((
+			let
+				finalNodesEntered = {||}
+			within
+				(dbisim((dbisim((let
+					-- IMPLEMENTATION NOTE:
+					-- Here the 'enter' channel set is calculated explicitly because of the use of CSPM 
+					-- modules for defining the semantics of each node.
+					enterSS = {|
+					i0::enter,
+					Wander::enter,
+					Wait::enter
+					|}
+					hideSet = union(enterSS,{|exit,exited,internal__|})
+				within 
+					((let
+						-- IMPLEMENTATION NOTE: the channel set 'enter' is calculated explicitly
+						-- because CSPM modules are used for the semantics of Node.
+						flowevts = union(enterSS,{|exit,exited|})
+						transSync = {|internal__.NID_i0,endexec__.NID_Wait,internal__.NID_Wait,endexec__.NID_Wander|}
+					within
+						((
+						 (((-- RULE composeNodes(nc:NodeContainer)^nops : CSPProcess
+						   i0::D__(id__,cycle_RandomWalk_RandomWalk,
+						   		    const_RandomWalk_lv,
+						   		    const_RandomWalk_av,
+						   		    const_RandomWalk_pi,
+						   		    const_RandomWalk_v_randcoef)
+						   [| { share__, terminate } |] (
+						   Wander::D__(id__,cycle_RandomWalk_RandomWalk,
+						   		    const_RandomWalk_lv,
+						   		    const_RandomWalk_av,
+						   		    const_RandomWalk_pi,
+						   		    const_RandomWalk_v_randcoef)
+						   [| { share__, terminate } |] (
+						   Wait::D__(id__,cycle_RandomWalk_RandomWalk,
+						   		    const_RandomWalk_lv,
+						   		    const_RandomWalk_av,
+						   		    const_RandomWalk_pi,
+						   		    const_RandomWalk_v_randcoef)
+						   )
+						   )
+						 )
+						 [[Wander::interrupt <- x__ | x__ <- {|interrupt,endexec__.NID_Wander|}]]
+						 [[Wait::interrupt <- x__ | x__ <- {|interrupt,endexec__.NID_Wait,internal__.NID_Wait|}]]
+						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
+						 )
+						  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
+						 )
+						 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
+						|}) |]
+						 ((i0::enter -> Transitions(id__,cycle_RandomWalk_RandomWalk,
+						 		    const_RandomWalk_lv,
+						 		    const_RandomWalk_av,
+						 		    const_RandomWalk_pi,
+						 		    const_RandomWalk_v_randcoef))
+						  [[ share__ <- x__ | x__ <- {| share__ |} ]]
+						 )
+						)
+						)
+					)
+					 \ hideSet)
+					[[ endexec__.x____  <- endexec | x____ <- NIDS ]]
+					[[ endexec_action <- endexec ]]
+					[[ startexec_action <- startexec ]]
+				)
+				)
+				 [| union(stateClockSync,{terminate}) |]
+				 StateClocks(id__,
+				 		          const_RandomWalk_lv,
+				 		          const_RandomWalk_av,
+				 		          const_RandomWalk_pi,
+				 		          const_RandomWalk_v_randcoef)
+				)\diff(stateClockSync,enteredSS))
+				 [| {| interrupt |} |] SKIP)
+			)
+			)
+		
+		Behaviour(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = 
+			dbisim((let
+				stateClockSync = {|get_CLID_Wait,Wait::entered,get_CLID_Wander,Wander::entered|}
+			 within
+				(MachineBody(id__,cycle_RandomWalk_RandomWalk,
+						    const_RandomWalk_lv,
+						    const_RandomWalk_av,
+						    const_RandomWalk_pi,
+						    const_RandomWalk_v_randcoef) [| union(stateClockSync,{terminate}) |] StateClocks(id__,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef)) \ union(stateClockSync,enteredSS)
+			)
+			)
+		
+		IteratedBehaviour(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = 
+			dbisim((let
+				stateClockSync = {|get_CLID_Wait,Wait::entered,get_CLID_Wander,Wander::entered|}
+			 within
+				(dbisim(
+					sbisim(
+						dbisim(
+							sbisim(
+								MachineBody(id__,cycle_RandomWalk_RandomWalk,
+										    const_RandomWalk_lv,
+										    const_RandomWalk_av,
+										    const_RandomWalk_pi,
+										    const_RandomWalk_v_randcoef)
+								[| {|get_CLID_Wander,Wander::entered,terminate|} |]
+								dbisim(Clock_CLID_Wander(id__,0,
+										          const_RandomWalk_lv,
+										          const_RandomWalk_av,
+										          const_RandomWalk_pi,
+										          const_RandomWalk_v_randcoef))
+							)\{|get_CLID_Wander|}
+						)
+						[| {|get_CLID_Wait,Wait::entered,terminate|} |]
+						dbisim(Clock_CLID_Wait(id__,0,
+								          const_RandomWalk_lv,
+								          const_RandomWalk_av,
+								          const_RandomWalk_pi,
+								          const_RandomWalk_v_randcoef))
+					)\{|get_CLID_Wait|}
+				)
+				) \ union(stateClockSync,enteredSS)
+			)
+			)
+		
+		Stateful(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = 
+			((let
+				getsetLocalChannels = {|get_randcoef,set_randcoef,
+				get_sign,set_sign,
+				get_rwCmd,set_rwCmd|}
+				clockSync = {|get_CLID_T,clockReset.CLID_T|}
+			within
+				(Behaviour(id__,cycle_RandomWalk_RandomWalk,
+						    const_RandomWalk_lv,
+						    const_RandomWalk_av,
+						    const_RandomWalk_pi,
+						    const_RandomWalk_v_randcoef) 
+				 [| union(union(getsetLocalChannels,clockSync),{terminate}) |] 
+				 (varMemory(id__,cycle_RandomWalk_RandomWalk,
+				 		    const_RandomWalk_lv,
+				 		    const_RandomWalk_av,
+				 		    const_RandomWalk_pi,
+				 		    const_RandomWalk_v_randcoef) [| {terminate} |] Clocks(id__,
+				 		          const_RandomWalk_lv,
+				 		          const_RandomWalk_av,
+				 		          const_RandomWalk_pi,
+				 		          const_RandomWalk_v_randcoef))
+			 	)\union(getsetLocalChannels,clockSync)
+			)
+			)
+		
+		IteratedStateful(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) =
+			(dbisim(
+				sbisim(
+					dbisim(
+						sbisim(
+							dbisim(
+								sbisim(
+									dbisim(
+										sbisim(
+											IteratedBehaviour(id__,cycle_RandomWalk_RandomWalk,
+													    const_RandomWalk_lv,
+													    const_RandomWalk_av,
+													    const_RandomWalk_pi,
+													    const_RandomWalk_v_randcoef)
+											[| {|get_CLID_T,clockReset.CLID_T,terminate|} |]
+											dbisim(Clock_CLID_T(id__,0,
+													          const_RandomWalk_lv,
+													          const_RandomWalk_av,
+													          const_RandomWalk_pi,
+													          const_RandomWalk_v_randcoef))
+										)\{|get_CLID_T,clockReset.CLID_T|}
+									)
+									[| {|get_rwCmd,set_rwCmd,terminate|} |]
+									Memory_rwCmd((0,0))
+								)\{|get_rwCmd,set_rwCmd|}
+							)
+							[| {|get_sign,set_sign,terminate|} |]
+							Memory_sign(1)
+						)\{|get_sign,set_sign|}
+					)
+					[| {|get_randcoef,set_randcoef,terminate|} |]
+					Memory_randcoef(const_RandomWalk_v_randcoef)
+				)\{|get_randcoef,set_randcoef|}
+			)
+			)
+		
+		-- Visible counterparts
+		MachineBody_VS_O(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = 
+			dbisim((
+			let
+				finalNodesEntered = {||}
+			within
+				(dbisim((dbisim((let
+					-- IMPLEMENTATION NOTE:
+					-- Here the 'enter' channel set is calculated explicitly because of the use of CSPM 
+					-- modules for defining the semantics of each node.
+					enterSS = {|
+					i0::enter,
+					Wander::enter,
+					Wait::enter
+					|}
+					hideSet = union(enterSS,{|exit,exited,internal__|})
+				within 
+					((let
+						-- IMPLEMENTATION NOTE: the channel set 'enter' is calculated explicitly
+						-- because CSPM modules are used for the semantics of Node.
+						flowevts = union(enterSS,{|exit,exited|})
+						transSync = {|internal__.NID_i0,endexec__.NID_Wait,internal__.NID_Wait,endexec__.NID_Wander|}
+					within
+						((
+						 (((-- RULE composeNodes(nc:NodeContainer)^nops : CSPProcess
+						   i0::VS_O__(id__,cycle_RandomWalk_RandomWalk,
+						   		    const_RandomWalk_lv,
+						   		    const_RandomWalk_av,
+						   		    const_RandomWalk_pi,
+						   		    const_RandomWalk_v_randcoef)
+						   [| { share__, terminate } |] (
+						   Wander::VS_O__(id__,cycle_RandomWalk_RandomWalk,
+						   		    const_RandomWalk_lv,
+						   		    const_RandomWalk_av,
+						   		    const_RandomWalk_pi,
+						   		    const_RandomWalk_v_randcoef)
+						   [| { share__, terminate } |] (
+						   Wait::VS_O__(id__,cycle_RandomWalk_RandomWalk,
+						   		    const_RandomWalk_lv,
+						   		    const_RandomWalk_av,
+						   		    const_RandomWalk_pi,
+						   		    const_RandomWalk_v_randcoef)
+						   )
+						   )
+						 )
+						 [[Wander::interrupt <- x__ | x__ <- {|interrupt,endexec__.NID_Wander|}]]
+						 [[Wait::interrupt <- x__ | x__ <- {|interrupt,endexec__.NID_Wait,internal__.NID_Wait|}]]
+						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
+						 )
+						  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
+						 )
+						 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
+						|}) |]
+						 ((i0::enter -> Transitions(id__,cycle_RandomWalk_RandomWalk,
+						 		    const_RandomWalk_lv,
+						 		    const_RandomWalk_av,
+						 		    const_RandomWalk_pi,
+						 		    const_RandomWalk_v_randcoef))
+						  [[ share__ <- x__ | x__ <- {| share__ |} ]]
+						 )
+						)
+						)
+					)
+					 \ hideSet)
+					[[ endexec__.x____  <- endexec | x____ <- NIDS ]]
+					[[ endexec_action <- endexec ]]
+					[[ startexec_action <- startexec ]]
+				)
+				)
+				 [| union(stateClockSync,{terminate}) |]
+				 StateClocks(id__,
+				 		          const_RandomWalk_lv,
+				 		          const_RandomWalk_av,
+				 		          const_RandomWalk_pi,
+				 		          const_RandomWalk_v_randcoef)
+				)\diff(stateClockSync,enteredSS))
+				 [| {| interrupt |} |] SKIP)
+			)
+			)
+		
+		Behaviour_VS_O(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = 
+			dbisim((let
+				stateClockSync = {|get_CLID_Wait,Wait::entered,get_CLID_Wander,Wander::entered|}
+			 within
+				(MachineBody_VS_O(id__,cycle_RandomWalk_RandomWalk,
+						    const_RandomWalk_lv,
+						    const_RandomWalk_av,
+						    const_RandomWalk_pi,
+						    const_RandomWalk_v_randcoef) [| union(stateClockSync,{terminate}) |] StateClocks(id__,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef)) \ diff(union(stateClockSync,enteredSS),enteredSS)
+			)
+			)
+		
+		IteratedBehaviour_VS_O(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = 
+			dbisim((let
+				stateClockSync = {|get_CLID_Wait,Wait::entered,get_CLID_Wander,Wander::entered|}
+			 within
+				(dbisim(
+					sbisim(
+						dbisim(
+							sbisim(
+								MachineBody_VS_O(id__,cycle_RandomWalk_RandomWalk,
+										    const_RandomWalk_lv,
+										    const_RandomWalk_av,
+										    const_RandomWalk_pi,
+										    const_RandomWalk_v_randcoef)
+								[| {|get_CLID_Wander,Wander::entered,terminate|} |]
+								dbisim(Clock_CLID_Wander(id__,0,
+										          const_RandomWalk_lv,
+										          const_RandomWalk_av,
+										          const_RandomWalk_pi,
+										          const_RandomWalk_v_randcoef))
+							)\{|get_CLID_Wander|}
+						)
+						[| {|get_CLID_Wait,Wait::entered,terminate|} |]
+						dbisim(Clock_CLID_Wait(id__,0,
+								          const_RandomWalk_lv,
+								          const_RandomWalk_av,
+								          const_RandomWalk_pi,
+								          const_RandomWalk_v_randcoef))
+					)\{|get_CLID_Wait|}
+				)
+				) \ diff(union(stateClockSync,enteredSS),enteredSS)
+			)
+			)
+		
+		Stateful_VS_O(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = 
+			dbisim((let
+				getsetLocalChannels = {|get_randcoef,set_randcoef,
+				get_sign,set_sign,
+				get_rwCmd,set_rwCmd|}
+				clockSync = {|get_CLID_T,clockReset.CLID_T|}
+			within
+				(Behaviour_VS_O(id__,cycle_RandomWalk_RandomWalk,
+						    const_RandomWalk_lv,
+						    const_RandomWalk_av,
+						    const_RandomWalk_pi,
+						    const_RandomWalk_v_randcoef) 
+				 [| union(union(getsetLocalChannels,clockSync),{terminate}) |] 
+				 (varMemory(id__,cycle_RandomWalk_RandomWalk,
+				 		    const_RandomWalk_lv,
+				 		    const_RandomWalk_av,
+				 		    const_RandomWalk_pi,
+				 		    const_RandomWalk_v_randcoef) [| {terminate} |] Clocks(id__,
+				 		          const_RandomWalk_lv,
+				 		          const_RandomWalk_av,
+				 		          const_RandomWalk_pi,
+				 		          const_RandomWalk_v_randcoef))
+			 	)\union(getsetLocalChannels,clockSync)
+			)
+			)
+		
+		IteratedStateful_VS_O(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) =
+			(dbisim(
+				sbisim(
+					dbisim(
+						sbisim(
+							dbisim(
+								sbisim(
+									dbisim(
+										sbisim(
+											IteratedBehaviour_VS_O(id__,cycle_RandomWalk_RandomWalk,
+													    const_RandomWalk_lv,
+													    const_RandomWalk_av,
+													    const_RandomWalk_pi,
+													    const_RandomWalk_v_randcoef)
+											[| {|get_CLID_T,clockReset.CLID_T,terminate|} |]
+											dbisim(Clock_CLID_T(id__,0,
+													          const_RandomWalk_lv,
+													          const_RandomWalk_av,
+													          const_RandomWalk_pi,
+													          const_RandomWalk_v_randcoef))
+										)\{|get_CLID_T,clockReset.CLID_T|}
+									)
+									[| {|get_rwCmd,set_rwCmd,terminate|} |]
+									Memory_rwCmd((0,0))
+								)\{|get_rwCmd,set_rwCmd|}
+							)
+							[| {|get_sign,set_sign,terminate|} |]
+							Memory_sign(1)
+						)\{|get_sign,set_sign|}
+					)
+					[| {|get_randcoef,set_randcoef,terminate|} |]
+					Memory_randcoef(const_RandomWalk_v_randcoef)
+				)\{|get_randcoef,set_randcoef|}
+			)
+			)
+		
+		-- END
+		
+		-- Memory
+		-- Memory variables
+		Memory_randcoef(randcoef) =
+			get_randcoef!randcoef -> Memory_randcoef(randcoef)
+			[]
+			set_randcoef?x__ -> Memory_randcoef(x__)
+			[]
+			terminate -> SKIP
+		Memory_sign(sign) =
+			get_sign!sign -> Memory_sign(sign)
+			[]
+			set_sign?x__ -> Memory_sign(x__)
+			[]
+			terminate -> SKIP
+		Memory_rwCmd(rwCmd) =
+			get_rwCmd!rwCmd -> Memory_rwCmd(rwCmd)
+			[]
+			set_rwCmd?x__ -> Memory_rwCmd(x__)
+			[]
+			terminate -> SKIP
+		
+		-- varMemory process
+		varMemory(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = Memory_randcoef(const_RandomWalk_v_randcoef)
+		[| { terminate } |] (
+		Memory_sign(1)
+		[| { terminate } |] (
+		Memory_rwCmd((0,0))
+		)
+		)
+		
+		getsetLocalChannels = {|get_randcoef,set_randcoef,get_sign,set_sign,get_rwCmd,set_rwCmd|}
+		
+		-- Definition of the behaviour of state machines (default, optimised, visible, visible and optimised)
+		FVS__(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = STM_VS_O(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) \ localClockResets
+		D__(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = timed_priority(STM(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) \ union(internal_events,localClockResets))
+		O__(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = dbisim(D__(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef))
+		VS__(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = FVS__(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef)
+		VS_O__(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = dbisim(FVS__(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef))
+		HEXT__(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = O__(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) [|shared_variable_events|] SKIP
+		FVS_C__(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = dbisim(timed_priority(STM(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) \ internal_events))
+		HUP__(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = timed_priority(O__(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) [|{share__}|] SKIP)
+		
+		-- Clocks
+		Clock_CLID_T(id__,x__,
+				          const_RandomWalk_lv,
+				          const_RandomWalk_av,
+				          const_RandomWalk_pi,
+				          const_RandomWalk_v_randcoef) = 
+			TimeOut_1(
+				clockReset.CLID_T -> Clock_CLID_T(id__,0,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef)
+				[]
+				get_CLID_T!x__ -> Clock_CLID_T(id__,x__,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef)
+				[]
+				terminate -> SKIP,Clock_CLID_T(id__,clock_type_plus(x__,1,CLID_T_clock_type(id__,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef)),
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef))
+		
+		Clocks(id__,
+				          const_RandomWalk_lv,
+				          const_RandomWalk_av,
+				          const_RandomWalk_pi,
+				          const_RandomWalk_v_randcoef) = dbisim(Clock_CLID_T(id__,0,
+				          const_RandomWalk_lv,
+				          const_RandomWalk_av,
+				          const_RandomWalk_pi,
+				          const_RandomWalk_v_randcoef))
+		
+		clockSync = {|get_CLID_T,clockReset.CLID_T|}
+		
+		Clock_CLID_Wait(id__,x__,
+				          const_RandomWalk_lv,
+				          const_RandomWalk_av,
+				          const_RandomWalk_pi,
+				          const_RandomWalk_v_randcoef) = 
+			TimeOut_1(
+				Wait::entered -> Clock_CLID_Wait(id__,0,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef)
+				[]
+				get_CLID_Wait!x__ -> Clock_CLID_Wait(id__,x__,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef)
+				[]
+				terminate -> SKIP,Clock_CLID_Wait(id__,clock_type_plus(x__,1,CLID_Wait_clock_type(id__,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef)),
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef))
+		Clock_CLID_Wander(id__,x__,
+				          const_RandomWalk_lv,
+				          const_RandomWalk_av,
+				          const_RandomWalk_pi,
+				          const_RandomWalk_v_randcoef) = 
+			TimeOut_1(
+				Wander::entered -> Clock_CLID_Wander(id__,0,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef)
+				[]
+				get_CLID_Wander!x__ -> Clock_CLID_Wander(id__,x__,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef)
+				[]
+				terminate -> SKIP,Clock_CLID_Wander(id__,clock_type_plus(x__,1,CLID_Wander_clock_type(id__,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef)),
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef))
+		
+		StateClocks(id__,
+				          const_RandomWalk_lv,
+				          const_RandomWalk_av,
+				          const_RandomWalk_pi,
+				          const_RandomWalk_v_randcoef) = dbisim(Clock_CLID_Wait(id__,0,
+				          const_RandomWalk_lv,
+				          const_RandomWalk_av,
+				          const_RandomWalk_pi,
+				          const_RandomWalk_v_randcoef))
+		[| { terminate } |] (
+		dbisim(Clock_CLID_Wander(id__,0,
+				          const_RandomWalk_lv,
+				          const_RandomWalk_av,
+				          const_RandomWalk_pi,
+				          const_RandomWalk_v_randcoef))
+		)
+		
+		stateClockSync = {|get_CLID_Wait,Wait::entered,get_CLID_Wander,Wander::entered|}
+		
+		
+		-- Shared memory
+		-- Shared memory variables
+		
+		Memory_EnableClusterWatch(x__) = (
+			get_EnableClusterWatch!x__ -> Memory_EnableClusterWatch(x__)
+			[]
+			registerRead.i_EnableClusterWatch?x__ -> Memory_EnableClusterWatch(x__)
+			[]
+			terminate -> SKIP
+		)
+		Memory_DisableClusterWatch(x__) = (
+			get_DisableClusterWatch!x__ -> Memory_DisableClusterWatch(x__)
+			[]
+			registerRead.i_DisableClusterWatch?x__ -> Memory_DisableClusterWatch(x__)
+			[]
+			terminate -> SKIP
+		)
+		
+		-- sharedVarMemory process
+		sharedVarMemory(id__,cycle_RandomWalk_RandomWalk,
+				    const_RandomWalk_lv,
+				    const_RandomWalk_av,
+				    const_RandomWalk_pi,
+				    const_RandomWalk_v_randcoef) = (
+		 (terminate -> SKIP
+		 )
+		 [| { terminate } |]
+		 (Memory_EnableClusterWatch(false)
+		 [| { terminate } |] (
+		 Memory_DisableClusterWatch(false)
+		 )
+		 )
+		)
+		
+		sharedVarSync = union({|get_EnableClusterWatch,
+		get_DisableClusterWatch|},
+			  {||}
+			 )
+		
+		sharedVarHide = union({|get_EnableClusterWatch,
+		get_DisableClusterWatch|},
+			  {||}
+			 )
+		
+		}
+endmodule
