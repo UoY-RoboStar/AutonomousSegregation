@@ -1,7 +1,7 @@
 
 --
 -- RoboSim generator version 3.0.0.202603091039
--- Automatically generated on 06-05-2026 18:18:09
+-- Automatically generated on 21-05-2026 17:21:20
 --
 
 module MoveManager
@@ -78,9 +78,9 @@ exports
 	channel startexec, startexec_action
 	
 	-- declaring registerRead/Write datatypes
-	datatype RegisterDataInput = i_RWMove.Bool.Vec2
+	datatype RegisterDataInput = i_OAMove.Bool.Vec2
+		| i_RWMove.Bool.Vec2
 		| i_CCMove.Bool.Vec2
-		| i_OAMove.Bool.Vec2
 	
 	
 	datatype RegisterDataOutput = o_NOAMove.Vec2
@@ -92,9 +92,9 @@ exports
 	o_move|}
 		
 	nametype RegisterInputs = {|
+	i_OAMove,
 	i_RWMove,
-	i_CCMove,
-	i_OAMove|}
+	i_CCMove|}
 	
 	channel registerRead 	: RegisterDataInput
 	channel registerWrite 	: RegisterDataOutput
@@ -247,9 +247,9 @@ exports
 		
 				Cycle =
 					Deadline(
-						(registerRead.i_RWMove?x__ -> SKIP
-							||| registerRead.i_CCMove?x__ -> SKIP
-							||| registerRead.i_OAMove?x__ -> SKIP);
+						(registerRead.i_OAMove?x__ -> SKIP
+							||| registerRead.i_RWMove?x__ -> SKIP
+							||| registerRead.i_CCMove?x__ -> SKIP);
 						startexec -> CollectOutputs(SOutputEvents),0);
 					TimeOut_1(terminate -> SKIP,WAIT(cycle_MoveManager_MoveManager-1);Cycle)
 				
@@ -308,7 +308,7 @@ exports
 		
 		-- Transitions
 		Transitions(id__,cycle_MoveManager_MoveManager) = ((let
-			Trans = share__choice(get_OAMove?OAMove -> get_RWMove?RWMove -> get_CCMove?CCMove -> TimeOut_1(
+			Trans = share__choice(get_CCMove?CCMove -> get_RWMove?RWMove -> get_OAMove?OAMove -> TimeOut_1(
 				 (share__ -> SKIP
 				 [] dbisim(((((member(RWMove,{true.cmd | cmd <- Vec2}) and member(RWMove,{true.NOAcmd | NOAcmd <- Vec2})) and (not (member(OAMove,{true.x__ | x__ <- Vec2})))) and (not (member(CCMove,{true.x__ | x__ <- Vec2})))))&(endexec__.NID_MoveHandler -> startexec_action -> SKIP ; get_RWMove?b__?x__ -> set_cmd!x__ -> SKIP;
 				 

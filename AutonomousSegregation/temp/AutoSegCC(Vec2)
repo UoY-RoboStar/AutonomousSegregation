@@ -15,11 +15,6 @@ interface IClusterWatch {
 	event DisableClusterWatch
 }
 
-datatype Vec2 {
-    x: real
-    y: real
-}
-
 interface ITargetWatchFromCC {
 	event EnableTargetWatch: Vec2
 	event DisableTargetWatch
@@ -106,7 +101,10 @@ datatype ClusterData {
        centroid: Vec2
 } 
 
-
+datatype Vec2 {
+    x: real
+    y: real
+}
 
 type C_ID 
 

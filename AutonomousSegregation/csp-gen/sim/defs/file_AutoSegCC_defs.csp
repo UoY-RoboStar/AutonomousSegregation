@@ -1,10 +1,15 @@
 
 --
 -- RoboSim generator version 3.0.0.202603091039
--- Automatically generated on 06-05-2026 18:18:09
+-- Automatically generated on 21-05-2026 17:21:20
 --
 
 -- data definitions used by platform:/resource/AutonomousSegregationCC/AutoSegCC.rst
+nametype Vec2 = (core_real,core_real)
+Vec2_x((x,y)) = x
+update_Vec2_x((x,y),v__) = (v__,y)
+Vec2_y((x,y)) = y
+update_Vec2_y((x,y),v__) = (x,v__)
 nametype ObjectData = (core_nat,C_ID,core_nat,Vec2,core_real,core_real)
 ObjectData_objectID((objectID,clusterID,graphOrder,position,positionx,positiony)) = objectID
 update_ObjectData_objectID((objectID,clusterID,graphOrder,position,positionx,positiony),v__) = (v__,clusterID,graphOrder,position,positionx,positiony)
@@ -27,11 +32,6 @@ ClusterData_clusterType((clusterID,clusterSize,clusterType,centroid)) = clusterT
 update_ClusterData_clusterType((clusterID,clusterSize,clusterType,centroid),v__) = (clusterID,clusterSize,v__,centroid)
 ClusterData_centroid((clusterID,clusterSize,clusterType,centroid)) = centroid
 update_ClusterData_centroid((clusterID,clusterSize,clusterType,centroid),v__) = (clusterID,clusterSize,clusterType,v__)
-nametype Vec2 = (core_real,core_real)
-Vec2_x((x,y)) = x
-update_Vec2_x((x,y),v__) = (v__,y)
-Vec2_y((x,y)) = y
-update_Vec2_y((x,y),v__) = (x,v__)
 
 pre_randomnat() = true
 pre_randomcoef() = true
