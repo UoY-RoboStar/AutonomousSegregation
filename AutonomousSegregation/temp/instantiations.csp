@@ -1,0 +1,208 @@
+-- generate CacheCons_sim_sqrt
+CacheCons_sim_sqrt(v) = 0
+
+-- generate const_CacheCons_sim_RandomWalk_av
+const_CacheCons_sim_RandomWalk_av = 0
+
+-- generate CacheCons_sim_calculate_turn_angle
+CacheCons_sim_calculate_turn_angle(x1,x2) = 0
+
+-- generate const_CacheCons_sim_ObstacleAvoidance_v_lv
+const_CacheCons_sim_ObstacleAvoidance_v_lv = 0
+
+-- generate const_CacheCons_sim_ObstacleAvoidance_v_closest_angle
+const_CacheCons_sim_ObstacleAvoidance_v_closest_angle = 0
+
+-- generate const_CacheCons_sim_CacheConsC_stm_ref5_pi
+const_CacheCons_sim_CacheConsC_stm_ref5_pi = 0
+
+-- generate const_CacheCons_sim_RandomWalk_v_randcoef
+const_CacheCons_sim_RandomWalk_v_randcoef = 0
+
+-- generate cycle_CacheCons_sim_CacheCons_CacheCons
+cycle_CacheCons_sim_CacheCons_CacheCons = 1
+
+-- generate CacheCons_sim_L2
+CacheCons_sim_L2(x) = 0
+
+-- generate cycle_CacheCons_sim_CacheConsC_CacheConsC
+cycle_CacheCons_sim_CacheConsC_CacheConsC = 1
+
+-- generate cycle_CacheCons_sim_CachePointAssignment_CachePointAssignment
+cycle_CacheCons_sim_CachePointAssignment_CachePointAssignment = 1
+
+-- generate cycle_CacheCons_sim_TargetWatch_TargetWatch
+cycle_CacheCons_sim_TargetWatch_TargetWatch = 1
+
+-- generate Plus
+Plus(e1,e2,T) = if member(e1+e2,T) then e1+e2 else e1
+
+-- generate const_CacheCons_sim_CacheConsC_stm_ref5_lv
+const_CacheCons_sim_CacheConsC_stm_ref5_lv = 0
+
+-- generate CacheCons_sim_randcoef
+CacheCons_sim_randcoef() = 0
+-- CYCLE DEFINITIONS
+
+-- generate --
+
+-- MODULE CONSTANTS
+
+-- CONTROLLER CONSTANTS
+
+-- STATEMACHINE CONSTANTS
+
+-- generate nat not
+nametype core_nat = {0..2}
+
+-- generate const_CacheCons_sim_CacheConsC_stm_ref2_v_av
+const_CacheCons_sim_CacheConsC_stm_ref2_v_av = 0
+
+-- generate core_clock_type
+nametype core_clock_type = {0..10}
+
+-- BASIC FUNCTIONS
+
+-- generate const_CacheCons_sim_CacheConsC_stm_ref5_v_randcoef
+const_CacheCons_sim_CacheConsC_stm_ref5_v_randcoef = 0
+
+-- generate CacheCons_sim_randomnat
+CacheCons_sim_randomnat() = 0
+
+-- generate real not
+nametype core_real = { -2..2}
+
+-- VECTOR TYPES AND OPERATIONS
+
+
+-- CLOCKS
+
+-- generate CacheCons_sim_randnat
+CacheCons_sim_randnat() = 0
+
+-- generate const_CacheCons_sim_CacheConsC_stm_ref2_min_range
+const_CacheCons_sim_CacheConsC_stm_ref2_min_range = 0
+
+-- generate const_CacheCons_sim_CacheConsC_stm_ref2_max_range
+const_CacheCons_sim_CacheConsC_stm_ref2_max_range = 0
+
+-- generate cycle_CacheCons_sim_CacheConsS_CacheConsS
+cycle_CacheCons_sim_CacheConsS_CacheConsS = 1
+
+-- generate const_CacheCons_sim_RandomWalk_lv
+const_CacheCons_sim_RandomWalk_lv = 0
+
+-- generate Modulus
+Modulus(e1,e2,T) = if member(e1%e2,T) then e1%e2 else e1
+
+-- generate CacheCons_sim_random_sign
+CacheCons_sim_random_sign() = 0
+
+-- generate CacheCons_sim_randomcoef
+CacheCons_sim_randomcoef() = 0
+
+-- generate cycle_CacheCons_sim_RandomWalk_RandomWalk
+cycle_CacheCons_sim_RandomWalk_RandomWalk = 1
+
+-- generate Minus
+Minus(e1,e2,T) = if member(e1-e2,T) then e1-e2 else e1
+
+-- generate const_CacheCons_sim_RandomWalk_pi
+const_CacheCons_sim_RandomWalk_pi = 0
+
+-- generate string
+nametype core_string = LSeq(Char,2)
+
+-- generate const_CacheCons_sim_CacheConsC_stm_ref5_av
+const_CacheCons_sim_CacheConsC_stm_ref5_av = 0
+
+-- generate cycle_CacheCons_sim_ObstacleAvoidance_ObstacleAvoidance
+cycle_CacheCons_sim_ObstacleAvoidance_ObstacleAvoidance = 1
+
+-- generate const_CacheCons_sim_CacheConsC_stm_ref2_v_lv
+const_CacheCons_sim_CacheConsC_stm_ref2_v_lv = 0
+
+-- OPERATION CONSTANTS
+
+-- BASIC TYPES
+
+-- generate -- OPERATION BOUNDS
+
+-- MODULE CONSTANTS
+
+-- CONTROLLER CONSTANTS
+
+-- STATEMACHINE CONSTANTS
+
+-- generate cycle_CacheCons_sim_MoveManager_MoveManager
+cycle_CacheCons_sim_MoveManager_MoveManager = 1
+
+-- generate const_CacheCons_sim_CacheConsC_stm_ref2_v_closest_distance
+const_CacheCons_sim_CacheConsC_stm_ref2_v_closest_distance = 0
+
+-- generate CacheCons_sim_abs
+CacheCons_sim_abs(x) = 0
+
+-- generate CacheCons_sim_angle_between
+CacheCons_sim_angle_between(x1,x2) = 0
+
+-- generate const_CacheCons_sim_CacheConsC_stm_ref2_DISTANCE
+const_CacheCons_sim_CacheConsC_stm_ref2_DISTANCE = 0
+
+-- generate CacheCons_sim_unit
+CacheCons_sim_unit(x) = (0,0)
+
+-- generate const_CacheCons_sim_ObstacleAvoidance_DISTANCE
+const_CacheCons_sim_ObstacleAvoidance_DISTANCE = 0
+
+-- generate const_CacheCons_sim_ObstacleAvoidance_pi
+const_CacheCons_sim_ObstacleAvoidance_pi = 0
+
+-- generate const_CacheCons_sim_TargetWatch_ObjectThreshold
+const_CacheCons_sim_TargetWatch_ObjectThreshold = 0
+
+-- generate const_CacheCons_sim_CacheConsC_stm_ref4_ObjectThreshold
+const_CacheCons_sim_CacheConsC_stm_ref4_ObjectThreshold = 0
+
+-- generate const_CacheCons_sim_ObstacleAvoidance_v_closest_distance
+const_CacheCons_sim_ObstacleAvoidance_v_closest_distance = 0
+
+-- generate CacheCons_sim_distance
+CacheCons_sim_distance(x1,x2) = 0
+
+-- generate const_CacheCons_sim_CacheConsC_stm_ref2_pi
+const_CacheCons_sim_CacheConsC_stm_ref2_pi = 0
+
+-- generate int not
+nametype core_int = { -2..2}
+
+-- generate Div
+Div(e1,e2,T) = if member(e1/e2,T) then e1/e2 else e1
+
+-- generate const_CacheCons_sim_ObstacleAvoidance_max_range
+const_CacheCons_sim_ObstacleAvoidance_max_range = 0
+
+-- generate Neg
+Neg(e1,T) = if member(-e1,T) then -e1 else e1
+
+-- generate const_CacheCons_sim_ObstacleAvoidance_min_range
+const_CacheCons_sim_ObstacleAvoidance_min_range = 0
+
+-- generate boolean
+nametype core_boolean = Bool
+
+-- generate Mult
+Mult(e1,e2,T) = if member(e1*e2,T) then e1*e2 else e1
+
+-- generate CacheCons_sim_acos
+CacheCons_sim_acos(x) = 0
+
+-- generate const_CacheCons_sim_ObstacleAvoidance_v_av
+const_CacheCons_sim_ObstacleAvoidance_v_av = 0
+
+-- generate CacheCons_sim_dot
+CacheCons_sim_dot(x1,x2) = 0
+
+-- generate const_CacheCons_sim_CacheConsC_stm_ref2_v_closest_angle
+const_CacheCons_sim_CacheConsC_stm_ref2_v_closest_angle = 0
+

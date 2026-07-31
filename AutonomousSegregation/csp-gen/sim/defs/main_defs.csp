@@ -1,16 +1,16 @@
 
 --
--- RoboSim generator version 3.0.0.202603091039
--- Automatically generated on 21-05-2026 17:21:20
+-- RoboSim generator version 3.1.0.202607201720
+-- Automatically generated on 31-07-2026 17:19:47
 --
 
--- data definitions used by platform:/resource/AutonomousSegregationCC/AutoSegCC.rst
+-- data definitions used by platform:/resource/Autonomous_Segregation/main.rst
 nametype Vec2 = (core_real,core_real)
 Vec2_x((x,y)) = x
 update_Vec2_x((x,y),v__) = (v__,y)
 Vec2_y((x,y)) = y
 update_Vec2_y((x,y),v__) = (x,v__)
-nametype ObjectData = (core_nat,C_ID,core_nat,Vec2,core_real,core_real)
+nametype ObjectData = (core_nat,core_nat,core_nat,Vec2,core_real,core_real)
 ObjectData_objectID((objectID,clusterID,graphOrder,position,positionx,positiony)) = objectID
 update_ObjectData_objectID((objectID,clusterID,graphOrder,position,positionx,positiony),v__) = (v__,clusterID,graphOrder,position,positionx,positiony)
 ObjectData_clusterID((objectID,clusterID,graphOrder,position,positionx,positiony)) = clusterID
@@ -23,7 +23,7 @@ ObjectData_positionx((objectID,clusterID,graphOrder,position,positionx,positiony
 update_ObjectData_positionx((objectID,clusterID,graphOrder,position,positionx,positiony),v__) = (objectID,clusterID,graphOrder,position,v__,positiony)
 ObjectData_positiony((objectID,clusterID,graphOrder,position,positionx,positiony)) = positiony
 update_ObjectData_positiony((objectID,clusterID,graphOrder,position,positionx,positiony),v__) = (objectID,clusterID,graphOrder,position,positionx,v__)
-nametype ClusterData = (C_ID,core_nat,core_nat,Vec2)
+nametype ClusterData = (core_nat,core_nat,core_nat,Vec2)
 ClusterData_clusterID((clusterID,clusterSize,clusterType,centroid)) = clusterID
 update_ClusterData_clusterID((clusterID,clusterSize,clusterType,centroid),v__) = (v__,clusterSize,clusterType,centroid)
 ClusterData_clusterSize((clusterID,clusterSize,clusterType,centroid)) = clusterSize
