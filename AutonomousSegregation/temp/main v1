@@ -104,7 +104,6 @@ interface ICurrentTypeTW {
     event CurrentTypeTW : nat
 }
 
-
 controller CacheConsC {
     uses ObstacleEvents uses IStatus uses IVisibleClustersCC uses IVisibleClustersCA uses IVisibleClustersTW uses ICoord requires Move requires IObjectOps sref stm_ref0 = CacheConsS
     sref stm_ref5 = RandomWalk

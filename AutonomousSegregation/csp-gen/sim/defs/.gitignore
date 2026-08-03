@@ -1,0 +1,15 @@
+/CacheConsC.csp
+/CacheConsM.csp
+/CacheConsS.csp
+/CacheConsS_coreassertions.csp
+/CachePointAssignment.csp
+/CachePointAssignment_coreassertions.csp
+/MoveManager.csp
+/MoveManager_coreassertions.csp
+/ObstacleAvoidance.csp
+/ObstacleAvoidance_coreassertions.csp
+/RandomWalk.csp
+/RandomWalk_coreassertions.csp
+/TargetWatch.csp
+/TargetWatch_coreassertions.csp
+/_.csp

@@ -1,7 +1,7 @@
 
 --
 -- RoboSim generator version 3.1.0.202607201720
--- Automatically generated on 31-07-2026 17:19:47
+-- Automatically generated on 31-07-2026 17:42:01
 --
 
 module CachePointAssignment
@@ -72,12 +72,21 @@ exports
 	localClockResets = {||}
 	
 	
+	channel get_CLID_UpdateCache : core_clock_type 
 	channel get_CLID_CalculateL : core_clock_type 
 	channel get_CLID_UpdateCurrentCache : core_clock_type 
 	channel get_CLID_DetectCluster : core_clock_type 
 	channel get_CLID_DecideNewCachePoint : core_clock_type 
-	channel get_CLID_UpdateCache : core_clock_type 
 	--channel increment__
+	
+	CLID_UpdateCache_clock_type(id__) = 
+		let
+			max = (clock_type_max(Union({
+	{}
+	}))+1)
+		ctype = {0..max}
+	within
+		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
 	CLID_CalculateL_clock_type(id__) = 
 		let
@@ -115,15 +124,6 @@ exports
 	within
 		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
-	CLID_UpdateCache_clock_type(id__) = 
-		let
-			max = (clock_type_max(Union({
-	{}
-	}))+1)
-		ctype = {0..max}
-	within
-		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
-	
 	
 	
 	-- RoboSim-specific declarations
@@ -136,13 +136,13 @@ exports
 		| i_CurrentTypeCA.Bool.core_nat
 	
 	
-	datatype RegisterDataOutput = o_CachePointsCC.LSeq(ClusterData,2)
-		| o_CachePointsTW.LSeq(ClusterData,2)
+	datatype RegisterDataOutput = o_CachePointsTW.LSeq(ClusterData,2)
+		| o_CachePointsCC.LSeq(ClusterData,2)
 	
 	
 	nametype RegisterOutputs = {|
-	o_CachePointsCC,
-	o_CachePointsTW|}
+	o_CachePointsTW,
+	o_CachePointsCC|}
 		
 	nametype RegisterInputs = {|
 	i_VisibleClustersCA,
@@ -230,7 +230,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= share__choice(get_counter?counter -> share__choice(get_data?data -> share__choice(get_L?L -> true&(if (ClusterData_clusterSize(access_((tuple3_2(data)), counter))>ClusterData_clusterSize(L)) then (share__choice(share__choice(get_counter?counter -> share__choice(get_data?data -> counter <= length((tuple3_2(data)))&counter >= 1 & (share__choice(set_L!access_((tuple3_2(data)), counter) -> SKIP))))))else SKIP)))) ; 
+					Active 		= share__choice(get_data?data -> share__choice(get_L?L -> share__choice(get_counter?counter -> true&(if (ClusterData_clusterSize(access_((tuple3_2(data)), counter))>ClusterData_clusterSize(L)) then (share__choice(share__choice(get_data?data -> share__choice(get_counter?counter -> counter <= length((tuple3_2(data)))&counter >= 1 & (share__choice(set_L!access_((tuple3_2(data)), counter) -> SKIP))))))else SKIP)))) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
 							 	  share__choice(exited -> SKIP) ; Inactive
@@ -246,7 +246,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= share__choice(get_counter?counter -> share__choice(get_data?data -> share__choice(get_L?L -> true&(if (ClusterData_clusterSize(access_((tuple3_2(data)), counter))>ClusterData_clusterSize(L)) then (share__choice(share__choice(get_counter?counter -> share__choice(get_data?data -> counter <= length((tuple3_2(data)))&counter >= 1 & (share__choice(set_L!access_((tuple3_2(data)), counter) -> SKIP))))))else SKIP)))) ; 
+					Active 		= share__choice(get_data?data -> share__choice(get_L?L -> share__choice(get_counter?counter -> true&(if (ClusterData_clusterSize(access_((tuple3_2(data)), counter))>ClusterData_clusterSize(L)) then (share__choice(share__choice(get_data?data -> share__choice(get_counter?counter -> counter <= length((tuple3_2(data)))&counter >= 1 & (share__choice(set_L!access_((tuple3_2(data)), counter) -> SKIP))))))else SKIP)))) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
 							 	  share__choice(exited -> SKIP) ; Inactive
@@ -388,7 +388,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= share__choice(share__choice(get_m?m -> share__choice(get_L?L -> (ClusterData_clusterType(L) <= length(m))&(ClusterData_clusterType(L) >= 1) & (share__choice(set_m!update_(m,L,ClusterData_clusterType(L)) -> SKIP))))) ; 
+					Active 		= share__choice(share__choice(get_L?L -> share__choice(get_m?m -> (ClusterData_clusterType(L) <= length(m))&(ClusterData_clusterType(L) >= 1) & (share__choice(set_m!update_(m,L,ClusterData_clusterType(L)) -> SKIP))))) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
 							 	  share__choice(exited -> SKIP) ; Inactive
@@ -404,7 +404,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= share__choice(share__choice(get_m?m -> share__choice(get_L?L -> (ClusterData_clusterType(L) <= length(m))&(ClusterData_clusterType(L) >= 1) & (share__choice(set_m!update_(m,L,ClusterData_clusterType(L)) -> SKIP))))) ; 
+					Active 		= share__choice(share__choice(get_L?L -> share__choice(get_m?m -> (ClusterData_clusterType(L) <= length(m))&(ClusterData_clusterType(L) >= 1) & (share__choice(set_m!update_(m,L,ClusterData_clusterType(L)) -> SKIP))))) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
 							 	  share__choice(exited -> SKIP) ; Inactive
@@ -467,7 +467,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= share__choice(get_counter?counter -> share__choice(get_data?data -> share__choice(get_j?j -> true&(if (ClusterData_clusterType(access_((tuple3_2(data)), counter))==j) then (share__choice(get_counter?counter -> share__choice(get_m?m -> share__choice(get_j?j -> share__choice(get_data?data -> true&(if (ClusterData_clusterSize(access_(m, j))<ClusterData_clusterSize(access_((tuple3_2(data)), counter))) then (share__choice(share__choice(get_counter?counter -> share__choice(get_data?data -> share__choice(get_m?m -> share__choice(get_j?j -> (j <= length(m))&(j >= 1)&counter <= length((tuple3_2(data)))&counter >= 1 & (share__choice(set_m!update_(m,access_((tuple3_2(data)), counter),j) -> SKIP))))))))else SKIP))))))else SKIP)))) ; 
+					Active 		= share__choice(get_data?data -> share__choice(get_j?j -> share__choice(get_counter?counter -> true&(if (ClusterData_clusterType(access_((tuple3_2(data)), counter))==j) then (share__choice(get_data?data -> share__choice(get_m?m -> share__choice(get_j?j -> share__choice(get_counter?counter -> true&(if (ClusterData_clusterSize(access_(m, j))<ClusterData_clusterSize(access_((tuple3_2(data)), counter))) then (share__choice(share__choice(get_data?data -> share__choice(get_m?m -> share__choice(get_j?j -> share__choice(get_counter?counter -> (j <= length(m))&(j >= 1)&counter <= length((tuple3_2(data)))&counter >= 1 & (share__choice(set_m!update_(m,access_((tuple3_2(data)), counter),j) -> SKIP))))))))else SKIP))))))else SKIP)))) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
 							 	  share__choice(exited -> SKIP) ; Inactive
@@ -483,7 +483,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= share__choice(get_counter?counter -> share__choice(get_data?data -> share__choice(get_j?j -> true&(if (ClusterData_clusterType(access_((tuple3_2(data)), counter))==j) then (share__choice(get_counter?counter -> share__choice(get_m?m -> share__choice(get_j?j -> share__choice(get_data?data -> true&(if (ClusterData_clusterSize(access_(m, j))<ClusterData_clusterSize(access_((tuple3_2(data)), counter))) then (share__choice(share__choice(get_counter?counter -> share__choice(get_data?data -> share__choice(get_m?m -> share__choice(get_j?j -> (j <= length(m))&(j >= 1)&counter <= length((tuple3_2(data)))&counter >= 1 & (share__choice(set_m!update_(m,access_((tuple3_2(data)), counter),j) -> SKIP))))))))else SKIP))))))else SKIP)))) ; 
+					Active 		= share__choice(get_data?data -> share__choice(get_j?j -> share__choice(get_counter?counter -> true&(if (ClusterData_clusterType(access_((tuple3_2(data)), counter))==j) then (share__choice(get_data?data -> share__choice(get_m?m -> share__choice(get_j?j -> share__choice(get_counter?counter -> true&(if (ClusterData_clusterSize(access_(m, j))<ClusterData_clusterSize(access_((tuple3_2(data)), counter))) then (share__choice(share__choice(get_data?data -> share__choice(get_m?m -> share__choice(get_j?j -> share__choice(get_counter?counter -> (j <= length(m))&(j >= 1)&counter <= length((tuple3_2(data)))&counter >= 1 & (share__choice(set_m!update_(m,access_((tuple3_2(data)), counter),j) -> SKIP))))))))else SKIP))))))else SKIP)))) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
 							 	  share__choice(exited -> SKIP) ; Inactive
@@ -595,13 +595,13 @@ exports
 		
 		-- END of Operation calls --
 	
-		datatype SOutputEvents = SOutput_CachePointsCC
-			| SOutput_CachePointsTW
+		datatype SOutputEvents = SOutput_CachePointsTW
+			| SOutput_CachePointsCC
 		
 		cycle(cycle_CachePointAssignment_CachePointAssignment) =
 			let
-				project(o_CachePointsCC.x__) = SOutput_CachePointsCC
 				project(o_CachePointsTW.x__) = SOutput_CachePointsTW
+				project(o_CachePointsCC.x__) = SOutput_CachePointsCC
 		
 				Cycle =
 					Deadline(
@@ -665,7 +665,7 @@ exports
 		
 		-- Transitions
 		Transitions(id__,cycle_CachePointAssignment_CachePointAssignment) = ((let
-			Trans = share__choice(get_counter?counter -> get_VisibleClustersCA?VisibleClustersCA -> get_data?data -> get_CurrentTypeCA?CurrentTypeCA -> get_m?m -> get_L?L -> TimeOut_1(
+			Trans = share__choice(get_data?data -> get_CurrentTypeCA?CurrentTypeCA -> get_L?L -> get_m?m -> get_counter?counter -> get_VisibleClustersCA?VisibleClustersCA -> TimeOut_1(
 				 (share__ -> SKIP
 				 [] dbisim((member(VisibleClustersCA,{true.data | data <- {(x0__,x1__,x2__) | x0__ <- core_nat,x1__ <- LSeq(ClusterData,2),x2__ <- LSeq(ObjectData,2)}}))&(internal__!NID_DetectCluster -> SKIP ; get_VisibleClustersCA?b__?x__ -> set_data!x__ -> SKIP
 				 ; share__choice(exit -> SKIP) ; ((let 
@@ -786,18 +786,18 @@ exports
 						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 						 )
 						  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
-						  [[set_counter <- setL_counter,set_data <- setL_data,set_m <- setL_m,set_L <- setL_L]]
+						  [[set_data <- setL_data,set_L <- setL_L,set_m <- setL_m,set_counter <- setL_counter]]
 						 )
 						 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
-						 			,setL_counter
 						 			,setL_data
-						 			,setL_m
 						 			,setL_L
+						 			,setL_m
+						 			,setL_counter
 						|}) |]
 						 ((i0::enter -> Transitions(id__,cycle_CachePointAssignment_CachePointAssignment))
-						  [[ share__ <- x__ | x__ <- {| share__,setL_counter,setL_data,setL_m,setL_L |} ]]
+						  [[ share__ <- x__ | x__ <- {| share__,setL_data,setL_L,setL_m,setL_counter |} ]]
 						 )
-						)[[setL_counter <- set_counter,setL_data <- set_data,setL_m <- set_m,setL_L <- set_L]]
+						)[[setL_data <- set_data,setL_L <- set_L,setL_m <- set_m,setL_counter <- set_counter]]
 						)
 					)
 					 \ hideSet)
@@ -815,7 +815,7 @@ exports
 		
 		Behaviour(id__,cycle_CachePointAssignment_CachePointAssignment) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_CalculateL,CalculateL::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_DetectCluster,DetectCluster::entered,get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,get_CLID_UpdateCache,UpdateCache::entered|}
+				stateClockSync = {|get_CLID_UpdateCache,UpdateCache::entered,get_CLID_CalculateL,CalculateL::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_DetectCluster,DetectCluster::entered,get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered|}
 			 within
 				(MachineBody(id__,cycle_CachePointAssignment_CachePointAssignment) [| union(stateClockSync,{terminate}) |] StateClocks(id__)) \ union(stateClockSync,enteredSS)
 			)
@@ -823,7 +823,7 @@ exports
 		
 		IteratedBehaviour(id__,cycle_CachePointAssignment_CachePointAssignment) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_CalculateL,CalculateL::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_DetectCluster,DetectCluster::entered,get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,get_CLID_UpdateCache,UpdateCache::entered|}
+				stateClockSync = {|get_CLID_UpdateCache,UpdateCache::entered,get_CLID_CalculateL,CalculateL::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_DetectCluster,DetectCluster::entered,get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -836,25 +836,25 @@ exports
 												dbisim(
 													sbisim(
 														MachineBody(id__,cycle_CachePointAssignment_CachePointAssignment)
-														[| {|get_CLID_UpdateCache,UpdateCache::entered,terminate|} |]
-														dbisim(Clock_CLID_UpdateCache(id__,0))
-													)\{|get_CLID_UpdateCache|}
+														[| {|get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,terminate|} |]
+														dbisim(Clock_CLID_DecideNewCachePoint(id__,0))
+													)\{|get_CLID_DecideNewCachePoint|}
 												)
-												[| {|get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,terminate|} |]
-												dbisim(Clock_CLID_DecideNewCachePoint(id__,0))
-											)\{|get_CLID_DecideNewCachePoint|}
+												[| {|get_CLID_DetectCluster,DetectCluster::entered,terminate|} |]
+												dbisim(Clock_CLID_DetectCluster(id__,0))
+											)\{|get_CLID_DetectCluster|}
 										)
-										[| {|get_CLID_DetectCluster,DetectCluster::entered,terminate|} |]
-										dbisim(Clock_CLID_DetectCluster(id__,0))
-									)\{|get_CLID_DetectCluster|}
+										[| {|get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,terminate|} |]
+										dbisim(Clock_CLID_UpdateCurrentCache(id__,0))
+									)\{|get_CLID_UpdateCurrentCache|}
 								)
-								[| {|get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,terminate|} |]
-								dbisim(Clock_CLID_UpdateCurrentCache(id__,0))
-							)\{|get_CLID_UpdateCurrentCache|}
+								[| {|get_CLID_CalculateL,CalculateL::entered,terminate|} |]
+								dbisim(Clock_CLID_CalculateL(id__,0))
+							)\{|get_CLID_CalculateL|}
 						)
-						[| {|get_CLID_CalculateL,CalculateL::entered,terminate|} |]
-						dbisim(Clock_CLID_CalculateL(id__,0))
-					)\{|get_CLID_CalculateL|}
+						[| {|get_CLID_UpdateCache,UpdateCache::entered,terminate|} |]
+						dbisim(Clock_CLID_UpdateCache(id__,0))
+					)\{|get_CLID_UpdateCache|}
 				)
 				) \ union(stateClockSync,enteredSS)
 			)
@@ -963,18 +963,18 @@ exports
 						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 						 )
 						  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
-						  [[set_counter <- setL_counter,set_data <- setL_data,set_m <- setL_m,set_L <- setL_L]]
+						  [[set_data <- setL_data,set_L <- setL_L,set_m <- setL_m,set_counter <- setL_counter]]
 						 )
 						 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
-						 			,setL_counter
 						 			,setL_data
-						 			,setL_m
 						 			,setL_L
+						 			,setL_m
+						 			,setL_counter
 						|}) |]
 						 ((i0::enter -> Transitions(id__,cycle_CachePointAssignment_CachePointAssignment))
-						  [[ share__ <- x__ | x__ <- {| share__,setL_counter,setL_data,setL_m,setL_L |} ]]
+						  [[ share__ <- x__ | x__ <- {| share__,setL_data,setL_L,setL_m,setL_counter |} ]]
 						 )
-						)[[setL_counter <- set_counter,setL_data <- set_data,setL_m <- set_m,setL_L <- set_L]]
+						)[[setL_data <- set_data,setL_L <- set_L,setL_m <- set_m,setL_counter <- set_counter]]
 						)
 					)
 					 \ hideSet)
@@ -992,7 +992,7 @@ exports
 		
 		Behaviour_VS_O(id__,cycle_CachePointAssignment_CachePointAssignment) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_CalculateL,CalculateL::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_DetectCluster,DetectCluster::entered,get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,get_CLID_UpdateCache,UpdateCache::entered|}
+				stateClockSync = {|get_CLID_UpdateCache,UpdateCache::entered,get_CLID_CalculateL,CalculateL::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_DetectCluster,DetectCluster::entered,get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered|}
 			 within
 				(MachineBody_VS_O(id__,cycle_CachePointAssignment_CachePointAssignment) [| union(stateClockSync,{terminate}) |] StateClocks(id__)) \ diff(union(stateClockSync,enteredSS),enteredSS)
 			)
@@ -1000,7 +1000,7 @@ exports
 		
 		IteratedBehaviour_VS_O(id__,cycle_CachePointAssignment_CachePointAssignment) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_CalculateL,CalculateL::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_DetectCluster,DetectCluster::entered,get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,get_CLID_UpdateCache,UpdateCache::entered|}
+				stateClockSync = {|get_CLID_UpdateCache,UpdateCache::entered,get_CLID_CalculateL,CalculateL::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_DetectCluster,DetectCluster::entered,get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -1013,25 +1013,25 @@ exports
 												dbisim(
 													sbisim(
 														MachineBody_VS_O(id__,cycle_CachePointAssignment_CachePointAssignment)
-														[| {|get_CLID_UpdateCache,UpdateCache::entered,terminate|} |]
-														dbisim(Clock_CLID_UpdateCache(id__,0))
-													)\{|get_CLID_UpdateCache|}
+														[| {|get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,terminate|} |]
+														dbisim(Clock_CLID_DecideNewCachePoint(id__,0))
+													)\{|get_CLID_DecideNewCachePoint|}
 												)
-												[| {|get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,terminate|} |]
-												dbisim(Clock_CLID_DecideNewCachePoint(id__,0))
-											)\{|get_CLID_DecideNewCachePoint|}
+												[| {|get_CLID_DetectCluster,DetectCluster::entered,terminate|} |]
+												dbisim(Clock_CLID_DetectCluster(id__,0))
+											)\{|get_CLID_DetectCluster|}
 										)
-										[| {|get_CLID_DetectCluster,DetectCluster::entered,terminate|} |]
-										dbisim(Clock_CLID_DetectCluster(id__,0))
-									)\{|get_CLID_DetectCluster|}
+										[| {|get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,terminate|} |]
+										dbisim(Clock_CLID_UpdateCurrentCache(id__,0))
+									)\{|get_CLID_UpdateCurrentCache|}
 								)
-								[| {|get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,terminate|} |]
-								dbisim(Clock_CLID_UpdateCurrentCache(id__,0))
-							)\{|get_CLID_UpdateCurrentCache|}
+								[| {|get_CLID_CalculateL,CalculateL::entered,terminate|} |]
+								dbisim(Clock_CLID_CalculateL(id__,0))
+							)\{|get_CLID_CalculateL|}
 						)
-						[| {|get_CLID_CalculateL,CalculateL::entered,terminate|} |]
-						dbisim(Clock_CLID_CalculateL(id__,0))
-					)\{|get_CLID_CalculateL|}
+						[| {|get_CLID_UpdateCache,UpdateCache::entered,terminate|} |]
+						dbisim(Clock_CLID_UpdateCache(id__,0))
+					)\{|get_CLID_UpdateCache|}
 				)
 				) \ diff(union(stateClockSync,enteredSS),enteredSS)
 			)
@@ -1155,6 +1155,13 @@ exports
 		
 		clockSync = {||}
 		
+		Clock_CLID_UpdateCache(id__,x__) = 
+			TimeOut_1(
+				UpdateCache::entered -> Clock_CLID_UpdateCache(id__,0)
+				[]
+				get_CLID_UpdateCache!x__ -> Clock_CLID_UpdateCache(id__,x__)
+				[]
+				terminate -> SKIP,Clock_CLID_UpdateCache(id__,clock_type_plus(x__,1,CLID_UpdateCache_clock_type(id__))))
 		Clock_CLID_CalculateL(id__,x__) = 
 			TimeOut_1(
 				CalculateL::entered -> Clock_CLID_CalculateL(id__,0)
@@ -1183,29 +1190,22 @@ exports
 				get_CLID_DecideNewCachePoint!x__ -> Clock_CLID_DecideNewCachePoint(id__,x__)
 				[]
 				terminate -> SKIP,Clock_CLID_DecideNewCachePoint(id__,clock_type_plus(x__,1,CLID_DecideNewCachePoint_clock_type(id__))))
-		Clock_CLID_UpdateCache(id__,x__) = 
-			TimeOut_1(
-				UpdateCache::entered -> Clock_CLID_UpdateCache(id__,0)
-				[]
-				get_CLID_UpdateCache!x__ -> Clock_CLID_UpdateCache(id__,x__)
-				[]
-				terminate -> SKIP,Clock_CLID_UpdateCache(id__,clock_type_plus(x__,1,CLID_UpdateCache_clock_type(id__))))
 		
-		StateClocks(id__) = dbisim(Clock_CLID_CalculateL(id__,0))
+		StateClocks(id__) = dbisim(Clock_CLID_UpdateCache(id__,0))
+		[| { terminate } |] (
+		dbisim(Clock_CLID_CalculateL(id__,0))
 		[| { terminate } |] (
 		dbisim(Clock_CLID_UpdateCurrentCache(id__,0))
 		[| { terminate } |] (
 		dbisim(Clock_CLID_DetectCluster(id__,0))
 		[| { terminate } |] (
 		dbisim(Clock_CLID_DecideNewCachePoint(id__,0))
-		[| { terminate } |] (
-		dbisim(Clock_CLID_UpdateCache(id__,0))
 		)
 		)
 		)
 		)
 		
-		stateClockSync = {|get_CLID_CalculateL,CalculateL::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_DetectCluster,DetectCluster::entered,get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,get_CLID_UpdateCache,UpdateCache::entered|}
+		stateClockSync = {|get_CLID_UpdateCache,UpdateCache::entered,get_CLID_CalculateL,CalculateL::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_DetectCluster,DetectCluster::entered,get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered|}
 		
 		
 		-- Shared memory

@@ -157,6 +157,7 @@ const_CacheCons_sim_ObstacleAvoidance_v_closest_distance = 0
 
 -- generate calculate_turn_angle
 calculate_turn_angle(x1,x2) = 0
+-- CYCLE DEFINITIONS
 
 -- generate CacheCons_sim_distance
 CacheCons_sim_distance(x1,x2) = 0
@@ -249,7 +250,6 @@ CacheCons_sim_randomnat() = 0
 
 -- generate acos
 acos(x) = 0
--- CYCLE DEFINITIONS
 
 -- generate const_CacheCons_sim_CacheConsC_stm_ref2_max_range
 const_CacheCons_sim_CacheConsC_stm_ref2_max_range = 0

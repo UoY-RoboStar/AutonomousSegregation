@@ -13,7 +13,10 @@
     <semanticResources>test-gen/sim/Autonomous_Segregation_ObstacleAvoidance.rtspec</semanticResources>
     <semanticResources>test-gen/sim/Autonomous_Segregation_stm_ref4.rtspec</semanticResources>
     <semanticResources>test-gen/sim/Autonomous_Segregation_stm_ref2.rtspec</semanticResources>
+    <semanticResources>test-gen/sim/Autonomous_Segregation_stm_ref3.rtspec</semanticResources>
+    <semanticResources>test-gen/sim/Autonomous_Segregation_stm_ref1.rtspec</semanticResources>
     <semanticResources>test-gen/sim/Autonomous_Segregation_stm_ref5.rtspec</semanticResources>
+    <semanticResources>test-gen/sim/Autonomous_Segregation_CacheConsC.rtspec</semanticResources>
     <ownedViews xmi:type="viewpoint:DView" uid="_rJMjUIzWEfGRqYCrIGPD4A">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/circus.robocalc.robosim.graphical/description/robosim.odesign#//@ownedViewpoints[name='RoboSimID']"/>
       <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_rS0ZYIzWEfGRqYCrIGPD4A" name="main" repPath="#_rSxWEIzWEfGRqYCrIGPD4A" changeId="d339471e-f3c0-42dc-bfd0-0313ae0670ae">

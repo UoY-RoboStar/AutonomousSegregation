@@ -1,7 +1,7 @@
 
 --
 -- RoboSim generator version 3.1.0.202607201720
--- Automatically generated on 31-07-2026 17:19:47
+-- Automatically generated on 31-07-2026 17:42:01
 --
 
 module MoveManager
@@ -78,9 +78,9 @@ exports
 	channel startexec, startexec_action
 	
 	-- declaring registerRead/Write datatypes
-	datatype RegisterDataInput = i_RWMove.Bool.Vec2
-		| i_CCMove.Bool.Vec2
+	datatype RegisterDataInput = i_CCMove.Bool.Vec2
 		| i_OAMove.Bool.Vec2
+		| i_RWMove.Bool.Vec2
 	
 	
 	datatype RegisterDataOutput = o_move.Vec2
@@ -92,9 +92,9 @@ exports
 	o_NOAMove|}
 		
 	nametype RegisterInputs = {|
-	i_RWMove,
 	i_CCMove,
-	i_OAMove|}
+	i_OAMove,
+	i_RWMove|}
 	
 	channel registerRead 	: RegisterDataInput
 	channel registerWrite 	: RegisterDataOutput
@@ -247,9 +247,9 @@ exports
 		
 				Cycle =
 					Deadline(
-						(registerRead.i_RWMove?x__ -> SKIP
-							||| registerRead.i_CCMove?x__ -> SKIP
-							||| registerRead.i_OAMove?x__ -> SKIP);
+						(registerRead.i_CCMove?x__ -> SKIP
+							||| registerRead.i_OAMove?x__ -> SKIP
+							||| registerRead.i_RWMove?x__ -> SKIP);
 						startexec -> CollectOutputs(SOutputEvents),0);
 					TimeOut_1(terminate -> SKIP,WAIT(cycle_MoveManager_MoveManager-1);Cycle)
 				
