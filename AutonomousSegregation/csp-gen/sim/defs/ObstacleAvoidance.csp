@@ -1,7 +1,7 @@
 
 --
--- RoboSim generator version 3.1.0.202607201720
--- Automatically generated on 31-07-2026 17:42:01
+-- RoboSim generator version 3.1.0.202608041342
+-- Automatically generated on 22-09-2026 12:29:01
 --
 
 module ObstacleAvoidance
@@ -139,8 +139,8 @@ exports
 	channel startexec, startexec_action
 	
 	-- declaring registerRead/Write datatypes
-	datatype RegisterDataInput = i_DisableOA.Bool
-		| i_closestDistance.Bool.core_real
+	datatype RegisterDataInput = i_closestDistance.Bool.core_real
+		| i_DisableOA.Bool
 		| i_closestAngle.Bool.core_real
 		| i_EnableOA.Bool
 		| i_NOAMove.Bool.Vec2
@@ -153,8 +153,8 @@ exports
 	o_OAMove|}
 		
 	nametype RegisterInputs = {|
-	i_DisableOA,
 	i_closestDistance,
+	i_DisableOA,
 	i_closestAngle,
 	i_EnableOA,
 	i_NOAMove|}
@@ -227,7 +227,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= share__choice(share__choice(get_oaCmd?oaCmd -> share__choice(get_av?av -> true & (share__choice(set_oaCmd!update_Vec2_x(oaCmd,av) -> SKIP)))));share__choice(share__choice(get_oaCmd?oaCmd -> share__choice(get_lv?lv -> true & (share__choice(set_oaCmd!update_Vec2_y(oaCmd,lv) -> SKIP)))));share__choice(get_oaCmd?oaCmd -> registerWrite.o_OAMove.oaCmd -> SKIP) ; 
+					Active 		= share__choice(share__choice(get_av?av -> share__choice(get_oaCmd?oaCmd -> true & (share__choice(set_oaCmd!update_Vec2_x(oaCmd,av) -> SKIP)))));share__choice(share__choice(get_lv?lv -> share__choice(get_oaCmd?oaCmd -> true & (share__choice(set_oaCmd!update_Vec2_y(oaCmd,lv) -> SKIP)))));share__choice(get_oaCmd?oaCmd -> registerWrite.o_OAMove.oaCmd -> SKIP) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
 							 	  share__choice(exited -> SKIP) ; Inactive
@@ -251,7 +251,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= share__choice(share__choice(get_oaCmd?oaCmd -> share__choice(get_av?av -> true & (share__choice(set_oaCmd!update_Vec2_x(oaCmd,av) -> SKIP)))));share__choice(share__choice(get_oaCmd?oaCmd -> share__choice(get_lv?lv -> true & (share__choice(set_oaCmd!update_Vec2_y(oaCmd,lv) -> SKIP)))));share__choice(get_oaCmd?oaCmd -> registerWrite.o_OAMove.oaCmd -> SKIP) ; 
+					Active 		= share__choice(share__choice(get_av?av -> share__choice(get_oaCmd?oaCmd -> true & (share__choice(set_oaCmd!update_Vec2_x(oaCmd,av) -> SKIP)))));share__choice(share__choice(get_lv?lv -> share__choice(get_oaCmd?oaCmd -> true & (share__choice(set_oaCmd!update_Vec2_y(oaCmd,lv) -> SKIP)))));share__choice(get_oaCmd?oaCmd -> registerWrite.o_OAMove.oaCmd -> SKIP) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
 							 	  share__choice(exited -> SKIP) ; Inactive
@@ -640,8 +640,8 @@ exports
 		
 				Cycle =
 					Deadline(
-						(registerRead.i_DisableOA?x__ -> SKIP
-							||| registerRead.i_closestDistance?x__ -> SKIP
+						(registerRead.i_closestDistance?x__ -> SKIP
+							||| registerRead.i_DisableOA?x__ -> SKIP
 							||| registerRead.i_closestAngle?x__ -> SKIP
 							||| registerRead.i_EnableOA?x__ -> SKIP
 							||| registerRead.i_NOAMove?x__ -> SKIP);
@@ -666,42 +666,60 @@ exports
 				    const_ObstacleAvoidance_v_closest_distance,
 				    const_ObstacleAvoidance_v_av,
 				    const_ObstacleAvoidance_v_lv) = -- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
-		(
-			cycle(cycle_ObstacleAvoidance_ObstacleAvoidance)
-			[| {| endexec,registerRead,registerWrite,startexec,terminate |} |]
-			( 
-				(
-					(
-						(startexec -> IteratedStateful(id__,cycle_ObstacleAvoidance_ObstacleAvoidance,
-								    const_ObstacleAvoidance_pi,
-								    const_ObstacleAvoidance_DISTANCE,
-								    const_ObstacleAvoidance_min_range,
-								    const_ObstacleAvoidance_max_range,
-								    const_ObstacleAvoidance_v_closest_angle,
-								    const_ObstacleAvoidance_v_closest_distance,
-								    const_ObstacleAvoidance_v_av,
-								    const_ObstacleAvoidance_v_lv) \ {terminate}) 
-						[| {share__} |]
-						SKIP
-					) ; 
-					(let
-						Ending = endexec -> (startexec -> Ending [] terminate -> SKIP)
-					 within
-					 	Ending
-					)
+		dbisim(
+			sbisim(
+				dbisim(
+					sbisim(
+						dbisim(
+							sbisim(
+								dbisim(
+									sbisim(
+										dbisim(
+											sbisim(
+												(
+													cycle(cycle_ObstacleAvoidance_ObstacleAvoidance)
+													[| {| endexec,registerWrite,startexec,terminate |} |]
+													(
+														(
+															(startexec -> IteratedStateful(id__,cycle_ObstacleAvoidance_ObstacleAvoidance,
+																	    const_ObstacleAvoidance_pi,
+																	    const_ObstacleAvoidance_DISTANCE,
+																	    const_ObstacleAvoidance_min_range,
+																	    const_ObstacleAvoidance_max_range,
+																	    const_ObstacleAvoidance_v_closest_angle,
+																	    const_ObstacleAvoidance_v_closest_distance,
+																	    const_ObstacleAvoidance_v_av,
+																	    const_ObstacleAvoidance_v_lv) \ {terminate}) 
+															[| {share__} |]
+															SKIP
+														) ; 
+														(let
+															Ending = endexec -> (startexec -> Ending [] terminate -> SKIP)
+														 within
+														 	Ending
+														)
+													)
+												)\{startexec}
+												[| {|get_NOAMove,registerRead.i_NOAMove,terminate|} |]
+												Memory_NOAMove(false.(0,0))
+											)\{|get_NOAMove|}
+										)
+										[| {|get_DisableOA,registerRead.i_DisableOA,terminate|} |]
+										Memory_DisableOA(false)
+									)\{|get_DisableOA|}
+								)
+								[| {|get_EnableOA,registerRead.i_EnableOA,terminate|} |]
+								Memory_EnableOA(false)
+							)\{|get_EnableOA|}
+						)
+						[| {|get_closestAngle,registerRead.i_closestAngle,terminate|} |]
+						Memory_closestAngle(false.0)
+					)\{|get_closestAngle|}
 				)
-				[| union(sharedVarSync,{terminate}) |]
-				dbisim(sharedVarMemory(id__,cycle_ObstacleAvoidance_ObstacleAvoidance,
-						    const_ObstacleAvoidance_pi,
-						    const_ObstacleAvoidance_DISTANCE,
-						    const_ObstacleAvoidance_min_range,
-						    const_ObstacleAvoidance_max_range,
-						    const_ObstacleAvoidance_v_closest_angle,
-						    const_ObstacleAvoidance_v_closest_distance,
-						    const_ObstacleAvoidance_v_av,
-						    const_ObstacleAvoidance_v_lv))
-			)\sharedVarHide
-		)\{startexec}
+				[| {|get_closestDistance,registerRead.i_closestDistance,terminate|} |]
+				Memory_closestDistance(false.0)
+			)\{|get_closestDistance|}
+		)
 		
 		STM_VS_O(id__,cycle_ObstacleAvoidance_ObstacleAvoidance,
 				    const_ObstacleAvoidance_pi,
@@ -712,42 +730,60 @@ exports
 				    const_ObstacleAvoidance_v_closest_distance,
 				    const_ObstacleAvoidance_v_av,
 				    const_ObstacleAvoidance_v_lv) = -- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
-		(
-			cycle(cycle_ObstacleAvoidance_ObstacleAvoidance)
-			[| {| endexec,registerRead,registerWrite,startexec,terminate |} |]
-			( 
-				(
-					(
-						(startexec -> IteratedStateful_VS_O(id__,cycle_ObstacleAvoidance_ObstacleAvoidance,
-								    const_ObstacleAvoidance_pi,
-								    const_ObstacleAvoidance_DISTANCE,
-								    const_ObstacleAvoidance_min_range,
-								    const_ObstacleAvoidance_max_range,
-								    const_ObstacleAvoidance_v_closest_angle,
-								    const_ObstacleAvoidance_v_closest_distance,
-								    const_ObstacleAvoidance_v_av,
-								    const_ObstacleAvoidance_v_lv) \ {terminate}) 
-						[| {share__} |]
-						SKIP
-					) ; 
-					(let
-						Ending = endexec -> (startexec -> Ending [] terminate -> SKIP)
-					 within
-					 	Ending
-					)
+		dbisim(
+			sbisim(
+				dbisim(
+					sbisim(
+						dbisim(
+							sbisim(
+								dbisim(
+									sbisim(
+										dbisim(
+											sbisim(
+												(
+													cycle(cycle_ObstacleAvoidance_ObstacleAvoidance)
+													[| {| endexec,registerWrite,startexec,terminate |} |]
+													(
+														(
+															(startexec -> IteratedStateful_VS_O(id__,cycle_ObstacleAvoidance_ObstacleAvoidance,
+																	    const_ObstacleAvoidance_pi,
+																	    const_ObstacleAvoidance_DISTANCE,
+																	    const_ObstacleAvoidance_min_range,
+																	    const_ObstacleAvoidance_max_range,
+																	    const_ObstacleAvoidance_v_closest_angle,
+																	    const_ObstacleAvoidance_v_closest_distance,
+																	    const_ObstacleAvoidance_v_av,
+																	    const_ObstacleAvoidance_v_lv) \ {terminate}) 
+															[| {share__} |]
+															SKIP
+														) ; 
+														(let
+															Ending = endexec -> (startexec -> Ending [] terminate -> SKIP)
+														 within
+														 	Ending
+														)
+													)
+												)\{startexec}
+												[| {|get_NOAMove,registerRead.i_NOAMove,terminate|} |]
+												Memory_NOAMove(false.(0,0))
+											)\{|get_NOAMove|}
+										)
+										[| {|get_DisableOA,registerRead.i_DisableOA,terminate|} |]
+										Memory_DisableOA(false)
+									)\{|get_DisableOA|}
+								)
+								[| {|get_EnableOA,registerRead.i_EnableOA,terminate|} |]
+								Memory_EnableOA(false)
+							)\{|get_EnableOA|}
+						)
+						[| {|get_closestAngle,registerRead.i_closestAngle,terminate|} |]
+						Memory_closestAngle(false.0)
+					)\{|get_closestAngle|}
 				)
-				[| union(sharedVarSync,{terminate}) |]
-				dbisim(sharedVarMemory(id__,cycle_ObstacleAvoidance_ObstacleAvoidance,
-						    const_ObstacleAvoidance_pi,
-						    const_ObstacleAvoidance_DISTANCE,
-						    const_ObstacleAvoidance_min_range,
-						    const_ObstacleAvoidance_max_range,
-						    const_ObstacleAvoidance_v_closest_angle,
-						    const_ObstacleAvoidance_v_closest_distance,
-						    const_ObstacleAvoidance_v_av,
-						    const_ObstacleAvoidance_v_lv))
-			)\sharedVarHide
-		)\{startexec}
+				[| {|get_closestDistance,registerRead.i_closestDistance,terminate|} |]
+				Memory_closestDistance(false.0)
+			)\{|get_closestDistance|}
+		)
 		
 		-- Transitions
 		Transitions(id__,cycle_ObstacleAvoidance_ObstacleAvoidance,
@@ -759,7 +795,7 @@ exports
 				    const_ObstacleAvoidance_v_closest_distance,
 				    const_ObstacleAvoidance_v_av,
 				    const_ObstacleAvoidance_v_lv) = ((let
-			Trans = share__choice(get_closestAngle?closestAngle -> get_DisableOA?DisableOA -> get_NOAMove?NOAMove -> get_closest_distance?closest_distance -> get_closestDistance?closestDistance -> get_EnableOA?EnableOA -> get_closest_angle?closest_angle -> TimeOut_1(
+			Trans = share__choice(get_closestDistance?closestDistance -> get_DisableOA?DisableOA -> get_EnableOA?EnableOA -> get_closest_angle?closest_angle -> get_closest_distance?closest_distance -> get_NOAMove?NOAMove -> get_closestAngle?closestAngle -> TimeOut_1(
 				 (share__ -> SKIP
 				 [] dbisim((member(DisableOA,{true}))&(endexec__.NID_OAEnabled -> startexec_action -> SKIP ;  share__choice(exit -> SKIP) ; ((let 
 				 	X = share__choice(exited -> SKIP [] endexec -> Y)
@@ -935,11 +971,11 @@ exports
 						 [[j3::interrupt <- x__ | x__ <- {|internal__.NID_j3,internal__.NID_j3|}]]
 						 )
 						  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
-						  [[set_closest_distance <- setL_closest_distance,set_closest_angle <- setL_closest_angle]]
+						  [[set_closest_angle <- setL_closest_angle,set_closest_distance <- setL_closest_distance]]
 						 )
 						 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
-						 			,setL_closest_distance
 						 			,setL_closest_angle
+						 			,setL_closest_distance
 						|}) |]
 						 ((i1::enter -> Transitions(id__,cycle_ObstacleAvoidance_ObstacleAvoidance,
 						 		    const_ObstacleAvoidance_pi,
@@ -950,9 +986,9 @@ exports
 						 		    const_ObstacleAvoidance_v_closest_distance,
 						 		    const_ObstacleAvoidance_v_av,
 						 		    const_ObstacleAvoidance_v_lv))
-						  [[ share__ <- x__ | x__ <- {| share__,setL_closest_distance,setL_closest_angle |} ]]
+						  [[ share__ <- x__ | x__ <- {| share__,setL_closest_angle,setL_closest_distance |} ]]
 						 )
-						)[[setL_closest_distance <- set_closest_distance,setL_closest_angle <- set_closest_angle]]
+						)[[setL_closest_angle <- set_closest_angle,setL_closest_distance <- set_closest_distance]]
 						)
 					)
 					 \ hideSet)
@@ -1309,11 +1345,11 @@ exports
 						 [[j3::interrupt <- x__ | x__ <- {|internal__.NID_j3,internal__.NID_j3|}]]
 						 )
 						  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
-						  [[set_closest_distance <- setL_closest_distance,set_closest_angle <- setL_closest_angle]]
+						  [[set_closest_angle <- setL_closest_angle,set_closest_distance <- setL_closest_distance]]
 						 )
 						 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
-						 			,setL_closest_distance
 						 			,setL_closest_angle
+						 			,setL_closest_distance
 						|}) |]
 						 ((i1::enter -> Transitions(id__,cycle_ObstacleAvoidance_ObstacleAvoidance,
 						 		    const_ObstacleAvoidance_pi,
@@ -1324,9 +1360,9 @@ exports
 						 		    const_ObstacleAvoidance_v_closest_distance,
 						 		    const_ObstacleAvoidance_v_av,
 						 		    const_ObstacleAvoidance_v_lv))
-						  [[ share__ <- x__ | x__ <- {| share__,setL_closest_distance,setL_closest_angle |} ]]
+						  [[ share__ <- x__ | x__ <- {| share__,setL_closest_angle,setL_closest_distance |} ]]
 						 )
-						)[[setL_closest_distance <- set_closest_distance,setL_closest_angle <- set_closest_angle]]
+						)[[setL_closest_angle <- set_closest_angle,setL_closest_distance <- set_closest_distance]]
 						)
 					)
 					 \ hideSet)

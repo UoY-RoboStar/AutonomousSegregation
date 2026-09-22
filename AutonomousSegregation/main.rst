@@ -63,6 +63,7 @@ interface IStatus {
 }
 
 interface IObjectOps {
+	PickUpObject ( )
     DepositObject ( )
 }
 
@@ -344,7 +345,7 @@ stm CacheConsS {
                 entry $ DisableOA ; if angle > 0 then moveCmd . x = TARGET_AV * av ; moveCmd . y = 0 ; $ CCMove ! moveCmd end ; if angle < 0 then moveCmd . x = - TARGET_AV * av ; moveCmd . y = 0 ; $ CCMove ! moveCmd end
             }
             state LinearMoveToTarget {
-                entry # T ; moveCmd . x = 0 ; moveCmd . y = lv ; $ CCMove ! moveCmd
+                entry # T ; moveCmd . x = 0 ; moveCmd . y = lv ; $ CCMove ! moveCmd ; $ PickUpObject ( )
             }
             initial i0
             transition t0 {
@@ -364,6 +365,8 @@ stm CacheConsS {
                 from LinearMoveToTarget
                 to LinearMoveToTarget
                 exec
+                condition not $ ObjectCarried
+    			action $ PickUpObject ( )
             }
             transition t3 {
                 from TurnToTarget

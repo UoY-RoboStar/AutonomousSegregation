@@ -1,8 +1,8 @@
 -- generate nat not
-nametype core_nat = {0..2}
+nametype core_nat = {0..1}
 
 -- generate real not
-nametype core_real = { -2..2}
+nametype core_real = { -1..1}
 
 -- VECTOR TYPES AND OPERATIONS
 
@@ -10,7 +10,7 @@ nametype core_real = { -2..2}
 -- CLOCKS
 
 -- generate int not
-nametype core_int = { -2..2}
+nametype core_int = { -1..1}
 
 -- generate const_ObstacleAvoidance_max_range
 const_ObstacleAvoidance_max_range = 0
@@ -151,13 +151,13 @@ const_CacheCons_sim_TargetWatch_ObjectThreshold = 0
 
 -- generate L2
 L2(x) = 0
+-- CYCLE DEFINITIONS
 
 -- generate const_CacheCons_sim_ObstacleAvoidance_v_closest_distance
 const_CacheCons_sim_ObstacleAvoidance_v_closest_distance = 0
 
 -- generate calculate_turn_angle
 calculate_turn_angle(x1,x2) = 0
--- CYCLE DEFINITIONS
 
 -- generate CacheCons_sim_distance
 CacheCons_sim_distance(x1,x2) = 0

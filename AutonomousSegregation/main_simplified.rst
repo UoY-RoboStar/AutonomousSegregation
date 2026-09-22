@@ -7,9 +7,7 @@ datatype ObjectData {
 	objectID : nat 
 	clusterID : nat 
 	graphOrder : nat 
-	position : Vec2 
-	positionx : real 
-	positiony : real
+	position : Vec2
 } 
 
 
@@ -24,11 +22,20 @@ interface IVisibleClustersCC {
 }
 
 interface IVisibleClustersCA {
-    event VisibleClustersCA : nat * Seq( ClusterData ) * Seq( ObjectData )
+    // Narrowed: CachePointAssignment (the only consumer) only ever reads
+    // data[1] (the count) and data[2] (Seq(ClusterData)) -- it never reads
+    // a Seq(ObjectData) part, so that dimension was pure dead weight in
+    // its state space.
+    event VisibleClustersCA : nat * Seq( ClusterData )
 }
 
 interface IVisibleClustersTW {
-    event VisibleClustersTW : nat * Seq( ClusterData ) * Seq( ObjectData )
+    // Narrowed: TargetWatch (the only consumer) only ever reads data[1]
+    // (the count) and what was data[3] (Seq(ObjectData)) -- it never reads
+    // a Seq(ClusterData) part, so that dimension was pure dead weight in
+    // its state space. See TargetWatch's `data` var and CalculateTargetObject
+    // below for the corresponding index renumbering (data[3] -> data[2]).
+    event VisibleClustersTW : nat * Seq( ObjectData )
 }
 
 interface IClusterWatch {
@@ -63,6 +70,7 @@ interface IStatus {
 }
 
 interface IObjectOps {
+	PickUpObject ( )
     DepositObject ( )
 }
 
@@ -103,6 +111,7 @@ interface ICurrentTypeCA {
 interface ICurrentTypeTW {
     event CurrentTypeTW : nat
 }
+
 
 controller CacheConsC {
     uses ObstacleEvents uses IStatus uses IVisibleClustersCC uses IVisibleClustersCA uses IVisibleClustersTW uses ICoord requires Move requires IObjectOps sref stm_ref0 = CacheConsS
@@ -165,9 +174,6 @@ stm CacheConsS {
     var rightObject : nat = 0
     var rightObjectx : real = 0
     var rightObjecty : real = 0
-    var targetObjectID : nat = 0
-    var targetObjectx : real = 0
-    var targetObjecty : real = 0
     var targetPosition : Vec2
     var targetObject : Vec2
     var ct : nat = 1
@@ -207,10 +213,13 @@ stm CacheConsS {
         state ChooseTargetPosition {
             initial i0
             state CalcLeftObject {
-                entry if ( data [ 3 ] ) [ counter ] . clusterID == SmallestVisibleCluster . clusterID /\ ( data [ 3 ] ) [ counter ] . positionx < leftObjectx then leftObjectx = ( data [ 3 ] ) [ counter ] . positionx ; leftObjecty = ( data [ 3 ] ) [ counter ] . positiony ; leftObject = ( data [ 3 ] ) [ counter ] . objectID end
+                // Was ".positionx"/".positiony" -- ObjectData no longer has
+                // those redundant flat fields, use the Vec2 "position" field
+                // directly (see datatype ObjectData above).
+                entry if ( data [ 3 ] ) [ counter ] . clusterID == SmallestVisibleCluster . clusterID /\ ( data [ 3 ] ) [ counter ] . position . x < leftObjectx then leftObjectx = ( data [ 3 ] ) [ counter ] . position . x ; leftObjecty = ( data [ 3 ] ) [ counter ] . position . y ; leftObject = ( data [ 3 ] ) [ counter ] . objectID end
             }
             state CalcRightObject {
-                entry if ( data [ 3 ] ) [ counter ] . clusterID == SmallestVisibleCluster . clusterID /\ ( data [ 3 ] ) [ counter ] . positionx > rightObjectx then rightObjectx = ( data [ 3 ] ) [ counter ] . positionx ; rightObjecty = ( data [ 3 ] ) [ counter ] . positiony ; rightObject = ( data [ 3 ] ) [ counter ] . objectID end
+                entry if ( data [ 3 ] ) [ counter ] . clusterID == SmallestVisibleCluster . clusterID /\ ( data [ 3 ] ) [ counter ] . position . x > rightObjectx then rightObjectx = ( data [ 3 ] ) [ counter ] . position . x ; rightObjecty = ( data [ 3 ] ) [ counter ] . position . y ; rightObject = ( data [ 3 ] ) [ counter ] . objectID end
             }
             state ChooseLeftObject {
                 entry targetPosition . x = leftObjectx ; targetPosition . y = leftObjecty ; done = true
@@ -343,7 +352,7 @@ stm CacheConsS {
                 entry $ DisableOA ; if angle > 0 then moveCmd . x = TARGET_AV * av ; moveCmd . y = 0 ; $ CCMove ! moveCmd end ; if angle < 0 then moveCmd . x = - TARGET_AV * av ; moveCmd . y = 0 ; $ CCMove ! moveCmd end
             }
             state LinearMoveToTarget {
-                entry # T ; moveCmd . x = 0 ; moveCmd . y = lv ; $ CCMove ! moveCmd
+                entry # T ; moveCmd . x = 0 ; moveCmd . y = lv ; $ CCMove ! moveCmd ; $ PickUpObject ( )
             }
             initial i0
             transition t0 {
@@ -363,6 +372,8 @@ stm CacheConsS {
                 from LinearMoveToTarget
                 to LinearMoveToTarget
                 exec
+                condition not $ ObjectCarried
+    			action $ PickUpObject ( )
             }
             transition t3 {
                 from TurnToTarget
@@ -709,7 +720,7 @@ stm CachePointAssignment {
     var j : nat
     var counter : nat = 1
     var L : ClusterData
-    var data : nat * Seq( ClusterData ) * Seq( ObjectData )
+    var data : nat * Seq( ClusterData )
     var m : Seq( ClusterData )
     input context { uses IVisibleClustersCA uses ICurrentTypeCA }
     output context { uses ICachePointsCC uses ICachePointsTW }
@@ -793,7 +804,7 @@ stm TargetWatch {
     var closestTargetObject : ObjectData
     var closestTargetObjectPosition : Vec2
     var counter : nat = 0
-    var data : nat * Seq( ClusterData ) * Seq( ObjectData )
+    var data : nat * Seq( ObjectData )
     var done : boolean = false
     var validObject : boolean = true
     var targetType : nat
@@ -810,7 +821,9 @@ stm TargetWatch {
             entry closestTargetObjectPosition = closestTargetObject . position
         }
         state CalculateTargetObject {
-            entry if distance ( ( data [ 3 ] ) [ counter ] . position , targetObjectxy ) < distance ( closestTargetObject . position , targetObjectxy ) then closestTargetObject = ( data [ 3 ] ) [ counter ] end
+            // data is now `nat * Seq(ObjectData)`, so the object sequence
+            // that used to be data[3] is data[2].
+            entry if distance ( ( data [ 2 ] ) [ counter ] . position , targetObjectxy ) < distance ( closestTargetObject . position , targetObjectxy ) then closestTargetObject = ( data [ 2 ] ) [ counter ] end
         }
         initial i0
         state WaitForDisableTargetWatch {
@@ -955,7 +968,13 @@ stm RandomWalk {
     }
 }
 
-function randomnat ( ) : nat { } 
+// --- Simplified: removed randomnat(), angle_between(), unit(), dot(), L2(),
+// acos(), the function randcoef() (which confusingly shared its name with
+// the unrelated `randcoef` variable in CacheConsS/RandomWalk), and randnat().
+// None of these were called anywhere by any of the six state machines above
+// -- angle_between/unit/dot/L2/acos formed one dead call chain, and
+// randomnat/randcoef/randnat were each standalone dead stubs. sqrt is kept
+// since distance() and abs() both still depend on it.
 
 function randomcoef ( ) : real { } 
 
@@ -968,36 +987,13 @@ function distance ( x1 : Vec2 , x2 : Vec2 ) : real {
     postcondition result == sqrt ( ( x2 . x - x1 . x ) * ( x2 . x - x1 . x ) + ( x2 . y - x1 . y ) * ( x2 . y - x1 . y ) ) 
 }
 
-function L2 ( x : Vec2 ) : real { 
-    postcondition result == sqrt ( ( x . x * x . x + x . y * x . y ) )
-} 
-
-function dot ( x1 : Vec2 , x2 : Vec2 ) : real { 
-    postcondition result == x1 . x * x2 . x + x1 . y * x2 . y
-} 
-
-function unit ( x : Vec2 ) : Vec2 { 
-    postcondition result . x == x . x / L2 ( x ) 
-    postcondition result . y == x . y / L2 ( x )
-} 
-
-function angle_between ( x1 : Vec2 , x2 : Vec2 ) : real { 
-    postcondition result == acos ( dot ( unit ( x1 ) , unit ( x2 ) ) )
-} 
-
 function calculate_turn_angle ( x1 : Vec2 , x2 : Vec2 ) : real { 
     postcondition result == 0
 } 
-function acos ( x : real ) : real { } 
 function abs ( x : real ) : real { 
     postcondition result == sqrt ( x * x )
 } 
-function randcoef ( ) : real { 
-    postcondition 0 <= result <= 1
-} 
-function randnat ( ) : real { 
-    postcondition 0 <= result <= 6
-} function random_sign ( ) : nat { 
+function random_sign ( ) : nat { 
     postcondition result == 1
 } 
 

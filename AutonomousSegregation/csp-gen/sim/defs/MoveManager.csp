@@ -1,7 +1,7 @@
 
 --
--- RoboSim generator version 3.1.0.202607201720
--- Automatically generated on 31-07-2026 17:42:01
+-- RoboSim generator version 3.1.0.202608041342
+-- Automatically generated on 22-09-2026 12:29:01
 --
 
 module MoveManager
@@ -78,8 +78,8 @@ exports
 	channel startexec, startexec_action
 	
 	-- declaring registerRead/Write datatypes
-	datatype RegisterDataInput = i_CCMove.Bool.Vec2
-		| i_OAMove.Bool.Vec2
+	datatype RegisterDataInput = i_OAMove.Bool.Vec2
+		| i_CCMove.Bool.Vec2
 		| i_RWMove.Bool.Vec2
 	
 	
@@ -92,8 +92,8 @@ exports
 	o_NOAMove|}
 		
 	nametype RegisterInputs = {|
-	i_CCMove,
 	i_OAMove,
+	i_CCMove,
 	i_RWMove|}
 	
 	channel registerRead 	: RegisterDataInput
@@ -247,8 +247,8 @@ exports
 		
 				Cycle =
 					Deadline(
-						(registerRead.i_CCMove?x__ -> SKIP
-							||| registerRead.i_OAMove?x__ -> SKIP
+						(registerRead.i_OAMove?x__ -> SKIP
+							||| registerRead.i_CCMove?x__ -> SKIP
 							||| registerRead.i_RWMove?x__ -> SKIP);
 						startexec -> CollectOutputs(SOutputEvents),0);
 					TimeOut_1(terminate -> SKIP,WAIT(cycle_MoveManager_MoveManager-1);Cycle)
@@ -263,52 +263,80 @@ exports
 		
 		-- STM processes
 		STM(id__,cycle_MoveManager_MoveManager) = -- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
-		(
-			cycle(cycle_MoveManager_MoveManager)
-			[| {| endexec,registerRead,registerWrite,startexec,terminate |} |]
-			( 
-				(
-					(
-						(startexec -> IteratedStateful(id__,cycle_MoveManager_MoveManager) \ {terminate}) 
-						[| {share__} |]
-						SKIP
-					) ; 
-					(let
-						Ending = endexec -> (startexec -> Ending [] terminate -> SKIP)
-					 within
-					 	Ending
-					)
+		dbisim(
+			sbisim(
+				dbisim(
+					sbisim(
+						dbisim(
+							sbisim(
+								(
+									cycle(cycle_MoveManager_MoveManager)
+									[| {| endexec,registerWrite,startexec,terminate |} |]
+									(
+										(
+											(startexec -> IteratedStateful(id__,cycle_MoveManager_MoveManager) \ {terminate}) 
+											[| {share__} |]
+											SKIP
+										) ; 
+										(let
+											Ending = endexec -> (startexec -> Ending [] terminate -> SKIP)
+										 within
+										 	Ending
+										)
+									)
+								)\{startexec}
+								[| {|get_RWMove,registerRead.i_RWMove,terminate|} |]
+								Memory_RWMove(false.(0,0))
+							)\{|get_RWMove|}
+						)
+						[| {|get_OAMove,registerRead.i_OAMove,terminate|} |]
+						Memory_OAMove(false.(0,0))
+					)\{|get_OAMove|}
 				)
-				[| union(sharedVarSync,{terminate}) |]
-				dbisim(sharedVarMemory(id__,cycle_MoveManager_MoveManager))
-			)\sharedVarHide
-		)\{startexec}
+				[| {|get_CCMove,registerRead.i_CCMove,terminate|} |]
+				Memory_CCMove(false.(0,0))
+			)\{|get_CCMove|}
+		)
 		
 		STM_VS_O(id__,cycle_MoveManager_MoveManager) = -- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
-		(
-			cycle(cycle_MoveManager_MoveManager)
-			[| {| endexec,registerRead,registerWrite,startexec,terminate |} |]
-			( 
-				(
-					(
-						(startexec -> IteratedStateful_VS_O(id__,cycle_MoveManager_MoveManager) \ {terminate}) 
-						[| {share__} |]
-						SKIP
-					) ; 
-					(let
-						Ending = endexec -> (startexec -> Ending [] terminate -> SKIP)
-					 within
-					 	Ending
-					)
+		dbisim(
+			sbisim(
+				dbisim(
+					sbisim(
+						dbisim(
+							sbisim(
+								(
+									cycle(cycle_MoveManager_MoveManager)
+									[| {| endexec,registerWrite,startexec,terminate |} |]
+									(
+										(
+											(startexec -> IteratedStateful_VS_O(id__,cycle_MoveManager_MoveManager) \ {terminate}) 
+											[| {share__} |]
+											SKIP
+										) ; 
+										(let
+											Ending = endexec -> (startexec -> Ending [] terminate -> SKIP)
+										 within
+										 	Ending
+										)
+									)
+								)\{startexec}
+								[| {|get_RWMove,registerRead.i_RWMove,terminate|} |]
+								Memory_RWMove(false.(0,0))
+							)\{|get_RWMove|}
+						)
+						[| {|get_OAMove,registerRead.i_OAMove,terminate|} |]
+						Memory_OAMove(false.(0,0))
+					)\{|get_OAMove|}
 				)
-				[| union(sharedVarSync,{terminate}) |]
-				dbisim(sharedVarMemory(id__,cycle_MoveManager_MoveManager))
-			)\sharedVarHide
-		)\{startexec}
+				[| {|get_CCMove,registerRead.i_CCMove,terminate|} |]
+				Memory_CCMove(false.(0,0))
+			)\{|get_CCMove|}
+		)
 		
 		-- Transitions
 		Transitions(id__,cycle_MoveManager_MoveManager) = ((let
-			Trans = share__choice(get_OAMove?OAMove -> get_RWMove?RWMove -> get_CCMove?CCMove -> TimeOut_1(
+			Trans = share__choice(get_OAMove?OAMove -> get_CCMove?CCMove -> get_RWMove?RWMove -> TimeOut_1(
 				 (share__ -> SKIP
 				 [] dbisim(((((member(RWMove,{true.cmd | cmd <- Vec2}) and member(RWMove,{true.NOAcmd | NOAcmd <- Vec2})) and (not (member(OAMove,{true.x__ | x__ <- Vec2})))) and (not (member(CCMove,{true.x__ | x__ <- Vec2})))))&(endexec__.NID_MoveHandler -> startexec_action -> SKIP ; get_RWMove?b__?x__ -> set_cmd!x__ -> SKIP;
 				 

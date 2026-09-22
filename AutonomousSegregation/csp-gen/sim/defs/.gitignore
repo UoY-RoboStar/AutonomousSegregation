@@ -13,3 +13,14 @@
 /TargetWatch.csp
 /TargetWatch_coreassertions.csp
 /_.csp
+/core_defs.csp
+/core_timed_defs.csp
+/function_toolkit_defs.csp
+/main_defs.csp
+/relation_toolkit_defs.csp
+/robochart_defs.csp
+/sequence_toolkit_defs.csp
+/set_toolkit_defs.csp
+/state_defs.csp
+/state_timed_defs.csp
+/main_simplified_defs.csp

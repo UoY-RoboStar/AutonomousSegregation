@@ -1,7 +1,7 @@
 
 --
--- RoboSim generator version 3.1.0.202607201720
--- Automatically generated on 31-07-2026 17:42:01
+-- RoboSim generator version 3.1.0.202608041342
+-- Automatically generated on 22-09-2026 12:29:01
 --
 
 module CachePointAssignment
@@ -72,14 +72,14 @@ exports
 	localClockResets = {||}
 	
 	
-	channel get_CLID_UpdateCache : core_clock_type 
-	channel get_CLID_CalculateL : core_clock_type 
-	channel get_CLID_UpdateCurrentCache : core_clock_type 
-	channel get_CLID_DetectCluster : core_clock_type 
 	channel get_CLID_DecideNewCachePoint : core_clock_type 
+	channel get_CLID_UpdateCache : core_clock_type 
+	channel get_CLID_UpdateCurrentCache : core_clock_type 
+	channel get_CLID_CalculateL : core_clock_type 
+	channel get_CLID_DetectCluster : core_clock_type 
 	--channel increment__
 	
-	CLID_UpdateCache_clock_type(id__) = 
+	CLID_DecideNewCachePoint_clock_type(id__) = 
 		let
 			max = (clock_type_max(Union({
 	{}
@@ -88,7 +88,7 @@ exports
 	within
 		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
-	CLID_CalculateL_clock_type(id__) = 
+	CLID_UpdateCache_clock_type(id__) = 
 		let
 			max = (clock_type_max(Union({
 	{}
@@ -106,7 +106,7 @@ exports
 	within
 		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
-	CLID_DetectCluster_clock_type(id__) = 
+	CLID_CalculateL_clock_type(id__) = 
 		let
 			max = (clock_type_max(Union({
 	{}
@@ -115,7 +115,7 @@ exports
 	within
 		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
-	CLID_DecideNewCachePoint_clock_type(id__) = 
+	CLID_DetectCluster_clock_type(id__) = 
 		let
 			max = (clock_type_max(Union({
 	{}
@@ -467,7 +467,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= share__choice(get_data?data -> share__choice(get_j?j -> share__choice(get_counter?counter -> true&(if (ClusterData_clusterType(access_((tuple3_2(data)), counter))==j) then (share__choice(get_data?data -> share__choice(get_m?m -> share__choice(get_j?j -> share__choice(get_counter?counter -> true&(if (ClusterData_clusterSize(access_(m, j))<ClusterData_clusterSize(access_((tuple3_2(data)), counter))) then (share__choice(share__choice(get_data?data -> share__choice(get_m?m -> share__choice(get_j?j -> share__choice(get_counter?counter -> (j <= length(m))&(j >= 1)&counter <= length((tuple3_2(data)))&counter >= 1 & (share__choice(set_m!update_(m,access_((tuple3_2(data)), counter),j) -> SKIP))))))))else SKIP))))))else SKIP)))) ; 
+					Active 		= share__choice(get_data?data -> share__choice(get_j?j -> share__choice(get_counter?counter -> true&(if (ClusterData_clusterType(access_((tuple3_2(data)), counter))==j) then (share__choice(get_data?data -> share__choice(get_j?j -> share__choice(get_counter?counter -> share__choice(get_m?m -> true&(if (ClusterData_clusterSize(access_(m, j))<ClusterData_clusterSize(access_((tuple3_2(data)), counter))) then (share__choice(share__choice(get_data?data -> share__choice(get_j?j -> share__choice(get_counter?counter -> share__choice(get_m?m -> (j <= length(m))&(j >= 1)&counter <= length((tuple3_2(data)))&counter >= 1 & (share__choice(set_m!update_(m,access_((tuple3_2(data)), counter),j) -> SKIP))))))))else SKIP))))))else SKIP)))) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
 							 	  share__choice(exited -> SKIP) ; Inactive
@@ -483,7 +483,7 @@ exports
 					
 					Termination = terminate -> SKIP
 					
-					Active 		= share__choice(get_data?data -> share__choice(get_j?j -> share__choice(get_counter?counter -> true&(if (ClusterData_clusterType(access_((tuple3_2(data)), counter))==j) then (share__choice(get_data?data -> share__choice(get_m?m -> share__choice(get_j?j -> share__choice(get_counter?counter -> true&(if (ClusterData_clusterSize(access_(m, j))<ClusterData_clusterSize(access_((tuple3_2(data)), counter))) then (share__choice(share__choice(get_data?data -> share__choice(get_m?m -> share__choice(get_j?j -> share__choice(get_counter?counter -> (j <= length(m))&(j >= 1)&counter <= length((tuple3_2(data)))&counter >= 1 & (share__choice(set_m!update_(m,access_((tuple3_2(data)), counter),j) -> SKIP))))))))else SKIP))))))else SKIP)))) ; 
+					Active 		= share__choice(get_data?data -> share__choice(get_j?j -> share__choice(get_counter?counter -> true&(if (ClusterData_clusterType(access_((tuple3_2(data)), counter))==j) then (share__choice(get_data?data -> share__choice(get_j?j -> share__choice(get_counter?counter -> share__choice(get_m?m -> true&(if (ClusterData_clusterSize(access_(m, j))<ClusterData_clusterSize(access_((tuple3_2(data)), counter))) then (share__choice(share__choice(get_data?data -> share__choice(get_j?j -> share__choice(get_counter?counter -> share__choice(get_m?m -> (j <= length(m))&(j >= 1)&counter <= length((tuple3_2(data)))&counter >= 1 & (share__choice(set_m!update_(m,access_((tuple3_2(data)), counter),j) -> SKIP))))))))else SKIP))))))else SKIP)))) ; 
 							 	  Behaviour ; 
 							 	  share__choice(exit -> SKIP) ; SKIP ; 
 							 	  share__choice(exited -> SKIP) ; Inactive
@@ -620,52 +620,68 @@ exports
 		
 		-- STM processes
 		STM(id__,cycle_CachePointAssignment_CachePointAssignment) = -- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
-		(
-			cycle(cycle_CachePointAssignment_CachePointAssignment)
-			[| {| endexec,registerRead,registerWrite,startexec,terminate |} |]
-			( 
-				(
-					(
-						(startexec -> IteratedStateful(id__,cycle_CachePointAssignment_CachePointAssignment) \ {terminate}) 
-						[| {share__} |]
-						SKIP
-					) ; 
-					(let
-						Ending = endexec -> (startexec -> Ending [] terminate -> SKIP)
-					 within
-					 	Ending
-					)
+		dbisim(
+			sbisim(
+				dbisim(
+					sbisim(
+						(
+							cycle(cycle_CachePointAssignment_CachePointAssignment)
+							[| {| endexec,registerWrite,startexec,terminate |} |]
+							(
+								(
+									(startexec -> IteratedStateful(id__,cycle_CachePointAssignment_CachePointAssignment) \ {terminate}) 
+									[| {share__} |]
+									SKIP
+								) ; 
+								(let
+									Ending = endexec -> (startexec -> Ending [] terminate -> SKIP)
+								 within
+								 	Ending
+								)
+							)
+						)\{startexec}
+						[| {|get_CurrentTypeCA,registerRead.i_CurrentTypeCA,terminate|} |]
+						Memory_CurrentTypeCA(false.0)
+					)\{|get_CurrentTypeCA|}
 				)
-				[| union(sharedVarSync,{terminate}) |]
-				dbisim(sharedVarMemory(id__,cycle_CachePointAssignment_CachePointAssignment))
-			)\sharedVarHide
-		)\{startexec}
+				[| {|get_VisibleClustersCA,registerRead.i_VisibleClustersCA,terminate|} |]
+				Memory_VisibleClustersCA(false.(0,<>,<>))
+			)\{|get_VisibleClustersCA|}
+		)
 		
 		STM_VS_O(id__,cycle_CachePointAssignment_CachePointAssignment) = -- RULE: [[stm:StateMachineDef]]_STM^nops : CSPProcess
-		(
-			cycle(cycle_CachePointAssignment_CachePointAssignment)
-			[| {| endexec,registerRead,registerWrite,startexec,terminate |} |]
-			( 
-				(
-					(
-						(startexec -> IteratedStateful_VS_O(id__,cycle_CachePointAssignment_CachePointAssignment) \ {terminate}) 
-						[| {share__} |]
-						SKIP
-					) ; 
-					(let
-						Ending = endexec -> (startexec -> Ending [] terminate -> SKIP)
-					 within
-					 	Ending
-					)
+		dbisim(
+			sbisim(
+				dbisim(
+					sbisim(
+						(
+							cycle(cycle_CachePointAssignment_CachePointAssignment)
+							[| {| endexec,registerWrite,startexec,terminate |} |]
+							(
+								(
+									(startexec -> IteratedStateful_VS_O(id__,cycle_CachePointAssignment_CachePointAssignment) \ {terminate}) 
+									[| {share__} |]
+									SKIP
+								) ; 
+								(let
+									Ending = endexec -> (startexec -> Ending [] terminate -> SKIP)
+								 within
+								 	Ending
+								)
+							)
+						)\{startexec}
+						[| {|get_CurrentTypeCA,registerRead.i_CurrentTypeCA,terminate|} |]
+						Memory_CurrentTypeCA(false.0)
+					)\{|get_CurrentTypeCA|}
 				)
-				[| union(sharedVarSync,{terminate}) |]
-				dbisim(sharedVarMemory(id__,cycle_CachePointAssignment_CachePointAssignment))
-			)\sharedVarHide
-		)\{startexec}
+				[| {|get_VisibleClustersCA,registerRead.i_VisibleClustersCA,terminate|} |]
+				Memory_VisibleClustersCA(false.(0,<>,<>))
+			)\{|get_VisibleClustersCA|}
+		)
 		
 		-- Transitions
 		Transitions(id__,cycle_CachePointAssignment_CachePointAssignment) = ((let
-			Trans = share__choice(get_data?data -> get_CurrentTypeCA?CurrentTypeCA -> get_L?L -> get_m?m -> get_counter?counter -> get_VisibleClustersCA?VisibleClustersCA -> TimeOut_1(
+			Trans = share__choice(get_data?data -> get_CurrentTypeCA?CurrentTypeCA -> get_L?L -> get_counter?counter -> get_VisibleClustersCA?VisibleClustersCA -> get_m?m -> TimeOut_1(
 				 (share__ -> SKIP
 				 [] dbisim((member(VisibleClustersCA,{true.data | data <- {(x0__,x1__,x2__) | x0__ <- core_nat,x1__ <- LSeq(ClusterData,2),x2__ <- LSeq(ObjectData,2)}}))&(internal__!NID_DetectCluster -> SKIP ; get_VisibleClustersCA?b__?x__ -> set_data!x__ -> SKIP
 				 ; share__choice(exit -> SKIP) ; ((let 
@@ -786,18 +802,18 @@ exports
 						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 						 )
 						  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
-						  [[set_data <- setL_data,set_L <- setL_L,set_m <- setL_m,set_counter <- setL_counter]]
+						  [[set_data <- setL_data,set_L <- setL_L,set_counter <- setL_counter,set_m <- setL_m]]
 						 )
 						 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
 						 			,setL_data
 						 			,setL_L
-						 			,setL_m
 						 			,setL_counter
+						 			,setL_m
 						|}) |]
 						 ((i0::enter -> Transitions(id__,cycle_CachePointAssignment_CachePointAssignment))
-						  [[ share__ <- x__ | x__ <- {| share__,setL_data,setL_L,setL_m,setL_counter |} ]]
+						  [[ share__ <- x__ | x__ <- {| share__,setL_data,setL_L,setL_counter,setL_m |} ]]
 						 )
-						)[[setL_data <- set_data,setL_L <- set_L,setL_m <- set_m,setL_counter <- set_counter]]
+						)[[setL_data <- set_data,setL_L <- set_L,setL_counter <- set_counter,setL_m <- set_m]]
 						)
 					)
 					 \ hideSet)
@@ -815,7 +831,7 @@ exports
 		
 		Behaviour(id__,cycle_CachePointAssignment_CachePointAssignment) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_UpdateCache,UpdateCache::entered,get_CLID_CalculateL,CalculateL::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_DetectCluster,DetectCluster::entered,get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered|}
+				stateClockSync = {|get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,get_CLID_UpdateCache,UpdateCache::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_CalculateL,CalculateL::entered,get_CLID_DetectCluster,DetectCluster::entered|}
 			 within
 				(MachineBody(id__,cycle_CachePointAssignment_CachePointAssignment) [| union(stateClockSync,{terminate}) |] StateClocks(id__)) \ union(stateClockSync,enteredSS)
 			)
@@ -823,7 +839,7 @@ exports
 		
 		IteratedBehaviour(id__,cycle_CachePointAssignment_CachePointAssignment) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_UpdateCache,UpdateCache::entered,get_CLID_CalculateL,CalculateL::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_DetectCluster,DetectCluster::entered,get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered|}
+				stateClockSync = {|get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,get_CLID_UpdateCache,UpdateCache::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_CalculateL,CalculateL::entered,get_CLID_DetectCluster,DetectCluster::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -836,25 +852,25 @@ exports
 												dbisim(
 													sbisim(
 														MachineBody(id__,cycle_CachePointAssignment_CachePointAssignment)
-														[| {|get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,terminate|} |]
-														dbisim(Clock_CLID_DecideNewCachePoint(id__,0))
-													)\{|get_CLID_DecideNewCachePoint|}
+														[| {|get_CLID_DetectCluster,DetectCluster::entered,terminate|} |]
+														dbisim(Clock_CLID_DetectCluster(id__,0))
+													)\{|get_CLID_DetectCluster|}
 												)
-												[| {|get_CLID_DetectCluster,DetectCluster::entered,terminate|} |]
-												dbisim(Clock_CLID_DetectCluster(id__,0))
-											)\{|get_CLID_DetectCluster|}
+												[| {|get_CLID_CalculateL,CalculateL::entered,terminate|} |]
+												dbisim(Clock_CLID_CalculateL(id__,0))
+											)\{|get_CLID_CalculateL|}
 										)
 										[| {|get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,terminate|} |]
 										dbisim(Clock_CLID_UpdateCurrentCache(id__,0))
 									)\{|get_CLID_UpdateCurrentCache|}
 								)
-								[| {|get_CLID_CalculateL,CalculateL::entered,terminate|} |]
-								dbisim(Clock_CLID_CalculateL(id__,0))
-							)\{|get_CLID_CalculateL|}
+								[| {|get_CLID_UpdateCache,UpdateCache::entered,terminate|} |]
+								dbisim(Clock_CLID_UpdateCache(id__,0))
+							)\{|get_CLID_UpdateCache|}
 						)
-						[| {|get_CLID_UpdateCache,UpdateCache::entered,terminate|} |]
-						dbisim(Clock_CLID_UpdateCache(id__,0))
-					)\{|get_CLID_UpdateCache|}
+						[| {|get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,terminate|} |]
+						dbisim(Clock_CLID_DecideNewCachePoint(id__,0))
+					)\{|get_CLID_DecideNewCachePoint|}
 				)
 				) \ union(stateClockSync,enteredSS)
 			)
@@ -963,18 +979,18 @@ exports
 						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 						 )
 						  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
-						  [[set_data <- setL_data,set_L <- setL_L,set_m <- setL_m,set_counter <- setL_counter]]
+						  [[set_data <- setL_data,set_L <- setL_L,set_counter <- setL_counter,set_m <- setL_m]]
 						 )
 						 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
 						 			,setL_data
 						 			,setL_L
-						 			,setL_m
 						 			,setL_counter
+						 			,setL_m
 						|}) |]
 						 ((i0::enter -> Transitions(id__,cycle_CachePointAssignment_CachePointAssignment))
-						  [[ share__ <- x__ | x__ <- {| share__,setL_data,setL_L,setL_m,setL_counter |} ]]
+						  [[ share__ <- x__ | x__ <- {| share__,setL_data,setL_L,setL_counter,setL_m |} ]]
 						 )
-						)[[setL_data <- set_data,setL_L <- set_L,setL_m <- set_m,setL_counter <- set_counter]]
+						)[[setL_data <- set_data,setL_L <- set_L,setL_counter <- set_counter,setL_m <- set_m]]
 						)
 					)
 					 \ hideSet)
@@ -992,7 +1008,7 @@ exports
 		
 		Behaviour_VS_O(id__,cycle_CachePointAssignment_CachePointAssignment) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_UpdateCache,UpdateCache::entered,get_CLID_CalculateL,CalculateL::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_DetectCluster,DetectCluster::entered,get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered|}
+				stateClockSync = {|get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,get_CLID_UpdateCache,UpdateCache::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_CalculateL,CalculateL::entered,get_CLID_DetectCluster,DetectCluster::entered|}
 			 within
 				(MachineBody_VS_O(id__,cycle_CachePointAssignment_CachePointAssignment) [| union(stateClockSync,{terminate}) |] StateClocks(id__)) \ diff(union(stateClockSync,enteredSS),enteredSS)
 			)
@@ -1000,7 +1016,7 @@ exports
 		
 		IteratedBehaviour_VS_O(id__,cycle_CachePointAssignment_CachePointAssignment) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_UpdateCache,UpdateCache::entered,get_CLID_CalculateL,CalculateL::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_DetectCluster,DetectCluster::entered,get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered|}
+				stateClockSync = {|get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,get_CLID_UpdateCache,UpdateCache::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_CalculateL,CalculateL::entered,get_CLID_DetectCluster,DetectCluster::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -1013,25 +1029,25 @@ exports
 												dbisim(
 													sbisim(
 														MachineBody_VS_O(id__,cycle_CachePointAssignment_CachePointAssignment)
-														[| {|get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,terminate|} |]
-														dbisim(Clock_CLID_DecideNewCachePoint(id__,0))
-													)\{|get_CLID_DecideNewCachePoint|}
+														[| {|get_CLID_DetectCluster,DetectCluster::entered,terminate|} |]
+														dbisim(Clock_CLID_DetectCluster(id__,0))
+													)\{|get_CLID_DetectCluster|}
 												)
-												[| {|get_CLID_DetectCluster,DetectCluster::entered,terminate|} |]
-												dbisim(Clock_CLID_DetectCluster(id__,0))
-											)\{|get_CLID_DetectCluster|}
+												[| {|get_CLID_CalculateL,CalculateL::entered,terminate|} |]
+												dbisim(Clock_CLID_CalculateL(id__,0))
+											)\{|get_CLID_CalculateL|}
 										)
 										[| {|get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,terminate|} |]
 										dbisim(Clock_CLID_UpdateCurrentCache(id__,0))
 									)\{|get_CLID_UpdateCurrentCache|}
 								)
-								[| {|get_CLID_CalculateL,CalculateL::entered,terminate|} |]
-								dbisim(Clock_CLID_CalculateL(id__,0))
-							)\{|get_CLID_CalculateL|}
+								[| {|get_CLID_UpdateCache,UpdateCache::entered,terminate|} |]
+								dbisim(Clock_CLID_UpdateCache(id__,0))
+							)\{|get_CLID_UpdateCache|}
 						)
-						[| {|get_CLID_UpdateCache,UpdateCache::entered,terminate|} |]
-						dbisim(Clock_CLID_UpdateCache(id__,0))
-					)\{|get_CLID_UpdateCache|}
+						[| {|get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,terminate|} |]
+						dbisim(Clock_CLID_DecideNewCachePoint(id__,0))
+					)\{|get_CLID_DecideNewCachePoint|}
 				)
 				) \ diff(union(stateClockSync,enteredSS),enteredSS)
 			)
@@ -1155,34 +1171,6 @@ exports
 		
 		clockSync = {||}
 		
-		Clock_CLID_UpdateCache(id__,x__) = 
-			TimeOut_1(
-				UpdateCache::entered -> Clock_CLID_UpdateCache(id__,0)
-				[]
-				get_CLID_UpdateCache!x__ -> Clock_CLID_UpdateCache(id__,x__)
-				[]
-				terminate -> SKIP,Clock_CLID_UpdateCache(id__,clock_type_plus(x__,1,CLID_UpdateCache_clock_type(id__))))
-		Clock_CLID_CalculateL(id__,x__) = 
-			TimeOut_1(
-				CalculateL::entered -> Clock_CLID_CalculateL(id__,0)
-				[]
-				get_CLID_CalculateL!x__ -> Clock_CLID_CalculateL(id__,x__)
-				[]
-				terminate -> SKIP,Clock_CLID_CalculateL(id__,clock_type_plus(x__,1,CLID_CalculateL_clock_type(id__))))
-		Clock_CLID_UpdateCurrentCache(id__,x__) = 
-			TimeOut_1(
-				UpdateCurrentCache::entered -> Clock_CLID_UpdateCurrentCache(id__,0)
-				[]
-				get_CLID_UpdateCurrentCache!x__ -> Clock_CLID_UpdateCurrentCache(id__,x__)
-				[]
-				terminate -> SKIP,Clock_CLID_UpdateCurrentCache(id__,clock_type_plus(x__,1,CLID_UpdateCurrentCache_clock_type(id__))))
-		Clock_CLID_DetectCluster(id__,x__) = 
-			TimeOut_1(
-				DetectCluster::entered -> Clock_CLID_DetectCluster(id__,0)
-				[]
-				get_CLID_DetectCluster!x__ -> Clock_CLID_DetectCluster(id__,x__)
-				[]
-				terminate -> SKIP,Clock_CLID_DetectCluster(id__,clock_type_plus(x__,1,CLID_DetectCluster_clock_type(id__))))
 		Clock_CLID_DecideNewCachePoint(id__,x__) = 
 			TimeOut_1(
 				DecideNewCachePoint::entered -> Clock_CLID_DecideNewCachePoint(id__,0)
@@ -1190,22 +1178,50 @@ exports
 				get_CLID_DecideNewCachePoint!x__ -> Clock_CLID_DecideNewCachePoint(id__,x__)
 				[]
 				terminate -> SKIP,Clock_CLID_DecideNewCachePoint(id__,clock_type_plus(x__,1,CLID_DecideNewCachePoint_clock_type(id__))))
+		Clock_CLID_UpdateCache(id__,x__) = 
+			TimeOut_1(
+				UpdateCache::entered -> Clock_CLID_UpdateCache(id__,0)
+				[]
+				get_CLID_UpdateCache!x__ -> Clock_CLID_UpdateCache(id__,x__)
+				[]
+				terminate -> SKIP,Clock_CLID_UpdateCache(id__,clock_type_plus(x__,1,CLID_UpdateCache_clock_type(id__))))
+		Clock_CLID_UpdateCurrentCache(id__,x__) = 
+			TimeOut_1(
+				UpdateCurrentCache::entered -> Clock_CLID_UpdateCurrentCache(id__,0)
+				[]
+				get_CLID_UpdateCurrentCache!x__ -> Clock_CLID_UpdateCurrentCache(id__,x__)
+				[]
+				terminate -> SKIP,Clock_CLID_UpdateCurrentCache(id__,clock_type_plus(x__,1,CLID_UpdateCurrentCache_clock_type(id__))))
+		Clock_CLID_CalculateL(id__,x__) = 
+			TimeOut_1(
+				CalculateL::entered -> Clock_CLID_CalculateL(id__,0)
+				[]
+				get_CLID_CalculateL!x__ -> Clock_CLID_CalculateL(id__,x__)
+				[]
+				terminate -> SKIP,Clock_CLID_CalculateL(id__,clock_type_plus(x__,1,CLID_CalculateL_clock_type(id__))))
+		Clock_CLID_DetectCluster(id__,x__) = 
+			TimeOut_1(
+				DetectCluster::entered -> Clock_CLID_DetectCluster(id__,0)
+				[]
+				get_CLID_DetectCluster!x__ -> Clock_CLID_DetectCluster(id__,x__)
+				[]
+				terminate -> SKIP,Clock_CLID_DetectCluster(id__,clock_type_plus(x__,1,CLID_DetectCluster_clock_type(id__))))
 		
-		StateClocks(id__) = dbisim(Clock_CLID_UpdateCache(id__,0))
+		StateClocks(id__) = dbisim(Clock_CLID_DecideNewCachePoint(id__,0))
 		[| { terminate } |] (
-		dbisim(Clock_CLID_CalculateL(id__,0))
+		dbisim(Clock_CLID_UpdateCache(id__,0))
 		[| { terminate } |] (
 		dbisim(Clock_CLID_UpdateCurrentCache(id__,0))
 		[| { terminate } |] (
-		dbisim(Clock_CLID_DetectCluster(id__,0))
+		dbisim(Clock_CLID_CalculateL(id__,0))
 		[| { terminate } |] (
-		dbisim(Clock_CLID_DecideNewCachePoint(id__,0))
+		dbisim(Clock_CLID_DetectCluster(id__,0))
 		)
 		)
 		)
 		)
 		
-		stateClockSync = {|get_CLID_UpdateCache,UpdateCache::entered,get_CLID_CalculateL,CalculateL::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_DetectCluster,DetectCluster::entered,get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered|}
+		stateClockSync = {|get_CLID_DecideNewCachePoint,DecideNewCachePoint::entered,get_CLID_UpdateCache,UpdateCache::entered,get_CLID_UpdateCurrentCache,UpdateCurrentCache::entered,get_CLID_CalculateL,CalculateL::entered,get_CLID_DetectCluster,DetectCluster::entered|}
 		
 		
 		-- Shared memory
