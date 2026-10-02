@@ -1,7 +1,7 @@
 
 --
 -- RoboSim generator version 3.1.0.202608041342
--- Automatically generated on 01-10-2026 12:58:03
+-- Automatically generated on 02-10-2026 12:25:47
 --
 
 module RandomWalk
@@ -64,8 +64,8 @@ exports
 	
 	
 	channel get_CLID_T : core_clock_type 
-	channel get_CLID_Wander : core_clock_type 
 	channel get_CLID_Wait : core_clock_type 
+	channel get_CLID_Wander : core_clock_type 
 	--channel increment__
 	
 	CLID_T_clock_type(id__,
@@ -85,7 +85,7 @@ exports
 	within
 		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
-	CLID_Wander_clock_type(id__,
+	CLID_Wait_clock_type(id__,
 			          const_RandomWalk_lv,
 			          const_RandomWalk_av,
 			          const_RandomWalk_pi,
@@ -98,7 +98,7 @@ exports
 	within
 		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
-	CLID_Wait_clock_type(id__,
+	CLID_Wander_clock_type(id__,
 			          const_RandomWalk_lv,
 			          const_RandomWalk_av,
 			          const_RandomWalk_pi,
@@ -119,8 +119,8 @@ exports
 	channel startexec, startexec_action
 	
 	-- declaring registerRead/Write datatypes
-	datatype RegisterDataInput = i_EnableClusterWatch.Bool
-		| i_DisableClusterWatch.Bool
+	datatype RegisterDataInput = i_DisableClusterWatch.Bool
+		| i_EnableClusterWatch.Bool
 	
 	
 	datatype RegisterDataOutput = o_RWMove.Vec2
@@ -130,8 +130,8 @@ exports
 	o_RWMove|}
 		
 	nametype RegisterInputs = {|
-	i_EnableClusterWatch,
-	i_DisableClusterWatch|}
+	i_DisableClusterWatch,
+	i_EnableClusterWatch|}
 	
 	channel registerRead 	: RegisterDataInput
 	channel registerWrite 	: RegisterDataOutput
@@ -546,20 +546,20 @@ exports
 						 						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 						 						 )
 						 						  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
-						 						  [[set_randcoef <- setL_randcoef,clockReset.CLID_T <- clockResetL.CLID_T]]
+						 						  [[clockReset.CLID_T <- clockResetL.CLID_T,set_randcoef <- setL_randcoef]]
 						 						 )
 						 						 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
-						 						 			,setL_randcoef
 						 						 			,clockResetL.CLID_T
+						 						 			,setL_randcoef
 						 						|}) |]
 						 						 ((i0::enter -> Transitions(id__,cycle_RandomWalk_RandomWalk,
 						 						 		    const_RandomWalk_lv,
 						 						 		    const_RandomWalk_av,
 						 						 		    const_RandomWalk_pi,
 						 						 		    const_RandomWalk_v_randcoef))
-						 						  [[ share__ <- x__ | x__ <- {| share__,setL_randcoef,clockResetL.CLID_T |} ]]
+						 						  [[ share__ <- x__ | x__ <- {| share__,clockResetL.CLID_T,setL_randcoef |} ]]
 						 						 )
-						 						)[[setL_randcoef <- set_randcoef,clockResetL.CLID_T <- clockReset.CLID_T]]
+						 						)[[clockResetL.CLID_T <- clockReset.CLID_T,setL_randcoef <- set_randcoef]]
 						 						)
 						 					)
 						 					 \ hideSet)
@@ -584,25 +584,25 @@ exports
 						 	)\{|get_CLID_Turn|}
 						 )
 						 ))
-						  [[ share__ <- x__ | x__ <- {| share__,setR_sign,setR_randcoef,clockResetR.CLID_T,setR_rwCmd |} ]] 
-						  [[set_sign <- setL_sign,set_randcoef <- setL_randcoef,clockReset.CLID_T <- clockResetL.CLID_T,set_rwCmd <- setL_rwCmd]]
+						  [[ share__ <- x__ | x__ <- {| share__,clockResetR.CLID_T,setR_randcoef,setR_sign,setR_rwCmd |} ]] 
+						  [[clockReset.CLID_T <- clockResetL.CLID_T,set_randcoef <- setL_randcoef,set_sign <- setL_sign,set_rwCmd <- setL_rwCmd]]
 						 )
 						 [| union(union(enteredSS,{| interrupt, terminate |}),{|share__
-						 			,setL_sign
-						 			,setL_randcoef
 						 			,clockResetL.CLID_T
+						 			,setL_randcoef
+						 			,setL_sign
 						 			,setL_rwCmd
-						 			,setR_sign
+						 			,clockResetR.CLID_T
 						 			 			,setR_randcoef
-						 			 			,clockResetR.CLID_T
+						 			 			,setR_sign
 						 			 			,setR_rwCmd
 						 			|}) |]
 						 ((During)
-						  [[ share__ <- x__ | x__ <- {| share__,setL_sign,setL_randcoef,clockResetL.CLID_T,setL_rwCmd |} ]]
-						  [[set_sign <- setR_sign,set_randcoef <- setR_randcoef,clockReset.CLID_T <- clockResetR.CLID_T,set_rwCmd <- setR_rwCmd]]
+						  [[ share__ <- x__ | x__ <- {| share__,clockResetL.CLID_T,setL_randcoef,setL_sign,setL_rwCmd |} ]]
+						  [[clockReset.CLID_T <- clockResetR.CLID_T,set_randcoef <- setR_randcoef,set_sign <- setR_sign,set_rwCmd <- setR_rwCmd]]
 						 )
-						)[[setL_sign <- set_sign,setL_randcoef <- set_randcoef,clockResetL.CLID_T <- clockReset.CLID_T,setL_rwCmd <- set_rwCmd]]
-						 [[setR_sign <- set_sign,setR_randcoef <- set_randcoef,clockResetR.CLID_T <- clockReset.CLID_T,setR_rwCmd <- set_rwCmd]]
+						)[[clockResetL.CLID_T <- clockReset.CLID_T,setL_randcoef <- set_randcoef,setL_sign <- set_sign,setL_rwCmd <- set_rwCmd]]
+						 [[clockResetR.CLID_T <- clockReset.CLID_T,setR_randcoef <- set_randcoef,setR_sign <- set_sign,setR_rwCmd <- set_rwCmd]]
 						)\union(enteredSS,{terminate}) 
 					)
 					During 		= share__choice(([] e__ : enteredSS @ e__ -> SKIP))
@@ -676,20 +676,20 @@ exports
 						 						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 						 						 )
 						 						  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
-						 						  [[set_randcoef <- setL_randcoef,clockReset.CLID_T <- clockResetL.CLID_T]]
+						 						  [[clockReset.CLID_T <- clockResetL.CLID_T,set_randcoef <- setL_randcoef]]
 						 						 )
 						 						 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
-						 						 			,setL_randcoef
 						 						 			,clockResetL.CLID_T
+						 						 			,setL_randcoef
 						 						|}) |]
 						 						 ((i0::enter -> Transitions(id__,cycle_RandomWalk_RandomWalk,
 						 						 		    const_RandomWalk_lv,
 						 						 		    const_RandomWalk_av,
 						 						 		    const_RandomWalk_pi,
 						 						 		    const_RandomWalk_v_randcoef))
-						 						  [[ share__ <- x__ | x__ <- {| share__,setL_randcoef,clockResetL.CLID_T |} ]]
+						 						  [[ share__ <- x__ | x__ <- {| share__,clockResetL.CLID_T,setL_randcoef |} ]]
 						 						 )
-						 						)[[setL_randcoef <- set_randcoef,clockResetL.CLID_T <- clockReset.CLID_T]]
+						 						)[[clockResetL.CLID_T <- clockReset.CLID_T,setL_randcoef <- set_randcoef]]
 						 						)
 						 					)
 						 					 \ hideSet)
@@ -714,25 +714,25 @@ exports
 						 	)\{|get_CLID_Turn|}
 						 )
 						 ))
-						  [[ share__ <- x__ | x__ <- {| share__,setR_sign,setR_randcoef,clockResetR.CLID_T,setR_rwCmd |} ]] 
-						  [[set_sign <- setL_sign,set_randcoef <- setL_randcoef,clockReset.CLID_T <- clockResetL.CLID_T,set_rwCmd <- setL_rwCmd]]
+						  [[ share__ <- x__ | x__ <- {| share__,clockResetR.CLID_T,setR_randcoef,setR_sign,setR_rwCmd |} ]] 
+						  [[clockReset.CLID_T <- clockResetL.CLID_T,set_randcoef <- setL_randcoef,set_sign <- setL_sign,set_rwCmd <- setL_rwCmd]]
 						 )
 						 [| union(union(enteredSS,{| interrupt, terminate |}),{|share__
-						 			,setL_sign
-						 			,setL_randcoef
 						 			,clockResetL.CLID_T
+						 			,setL_randcoef
+						 			,setL_sign
 						 			,setL_rwCmd
-						 			,setR_sign
+						 			,clockResetR.CLID_T
 						 			 			,setR_randcoef
-						 			 			,clockResetR.CLID_T
+						 			 			,setR_sign
 						 			 			,setR_rwCmd
 						 			|}) |]
 						 ((During)
-						  [[ share__ <- x__ | x__ <- {| share__,setL_sign,setL_randcoef,clockResetL.CLID_T,setL_rwCmd |} ]]
-						  [[set_sign <- setR_sign,set_randcoef <- setR_randcoef,clockReset.CLID_T <- clockResetR.CLID_T,set_rwCmd <- setR_rwCmd]]
+						  [[ share__ <- x__ | x__ <- {| share__,clockResetL.CLID_T,setL_randcoef,setL_sign,setL_rwCmd |} ]]
+						  [[clockReset.CLID_T <- clockResetR.CLID_T,set_randcoef <- setR_randcoef,set_sign <- setR_sign,set_rwCmd <- setR_rwCmd]]
 						 )
-						)[[setL_sign <- set_sign,setL_randcoef <- set_randcoef,clockResetL.CLID_T <- clockReset.CLID_T,setL_rwCmd <- set_rwCmd]]
-						 [[setR_sign <- set_sign,setR_randcoef <- set_randcoef,clockResetR.CLID_T <- clockReset.CLID_T,setR_rwCmd <- set_rwCmd]]
+						)[[clockResetL.CLID_T <- clockReset.CLID_T,setL_randcoef <- set_randcoef,setL_sign <- set_sign,setL_rwCmd <- set_rwCmd]]
+						 [[clockResetR.CLID_T <- clockReset.CLID_T,setR_randcoef <- set_randcoef,setR_sign <- set_sign,setR_rwCmd <- set_rwCmd]]
 						)\{terminate} 
 					)
 					During 		= share__choice(([] e__ : enteredSS @ e__ -> SKIP))
@@ -745,7 +745,7 @@ exports
 						    const_RandomWalk_av,
 						    const_RandomWalk_pi,
 						    const_RandomWalk_v_randcoef) = ((let
-					Trans = share__choice(get_randcoef?randcoef -> get_CLID_T?T -> TimeOut_1(
+					Trans = share__choice(get_CLID_T?T -> get_randcoef?randcoef -> TimeOut_1(
 						 (share__ -> SKIP
 						 [] dbisim((true)&(internal__!NID_i0 -> SKIP ;  ((((SKIP)[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; Turn::enter -> SKIP))))
 						 [] dbisim(((T>=randcoef))&(endexec__.NID_Turn -> startexec_action -> SKIP ;  share__choice(exit -> SKIP) ; ((let 
@@ -973,8 +973,8 @@ exports
 		
 				Cycle =
 					Deadline(
-						(registerRead.i_EnableClusterWatch?x__ -> SKIP
-							||| registerRead.i_DisableClusterWatch?x__ -> SKIP);
+						(registerRead.i_DisableClusterWatch?x__ -> SKIP
+							||| registerRead.i_EnableClusterWatch?x__ -> SKIP);
 						startexec -> CollectOutputs(SOutputEvents),0);
 					TimeOut_1(terminate -> SKIP,WAIT(cycle_RandomWalk_RandomWalk-1);Cycle)
 				
@@ -1194,7 +1194,7 @@ exports
 				    const_RandomWalk_pi,
 				    const_RandomWalk_v_randcoef) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_Wander,Wander::entered,get_CLID_Wait,Wait::entered|}
+				stateClockSync = {|get_CLID_Wait,Wait::entered,get_CLID_Wander,Wander::entered|}
 			 within
 				(MachineBody(id__,cycle_RandomWalk_RandomWalk,
 						    const_RandomWalk_lv,
@@ -1214,7 +1214,7 @@ exports
 				    const_RandomWalk_pi,
 				    const_RandomWalk_v_randcoef) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_Wander,Wander::entered,get_CLID_Wait,Wait::entered|}
+				stateClockSync = {|get_CLID_Wait,Wait::entered,get_CLID_Wander,Wander::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -1225,21 +1225,21 @@ exports
 										    const_RandomWalk_av,
 										    const_RandomWalk_pi,
 										    const_RandomWalk_v_randcoef)
-								[| {|get_CLID_Wait,Wait::entered,terminate|} |]
-								dbisim(Clock_CLID_Wait(id__,0,
+								[| {|get_CLID_Wander,Wander::entered,terminate|} |]
+								dbisim(Clock_CLID_Wander(id__,0,
 										          const_RandomWalk_lv,
 										          const_RandomWalk_av,
 										          const_RandomWalk_pi,
 										          const_RandomWalk_v_randcoef))
-							)\{|get_CLID_Wait|}
+							)\{|get_CLID_Wander|}
 						)
-						[| {|get_CLID_Wander,Wander::entered,terminate|} |]
-						dbisim(Clock_CLID_Wander(id__,0,
+						[| {|get_CLID_Wait,Wait::entered,terminate|} |]
+						dbisim(Clock_CLID_Wait(id__,0,
 								          const_RandomWalk_lv,
 								          const_RandomWalk_av,
 								          const_RandomWalk_pi,
 								          const_RandomWalk_v_randcoef))
-					)\{|get_CLID_Wander|}
+					)\{|get_CLID_Wait|}
 				)
 				) \ union(stateClockSync,enteredSS)
 			)
@@ -1405,7 +1405,7 @@ exports
 				    const_RandomWalk_pi,
 				    const_RandomWalk_v_randcoef) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_Wander,Wander::entered,get_CLID_Wait,Wait::entered|}
+				stateClockSync = {|get_CLID_Wait,Wait::entered,get_CLID_Wander,Wander::entered|}
 			 within
 				(MachineBody_VS_O(id__,cycle_RandomWalk_RandomWalk,
 						    const_RandomWalk_lv,
@@ -1425,7 +1425,7 @@ exports
 				    const_RandomWalk_pi,
 				    const_RandomWalk_v_randcoef) = 
 			dbisim((let
-				stateClockSync = {|get_CLID_Wander,Wander::entered,get_CLID_Wait,Wait::entered|}
+				stateClockSync = {|get_CLID_Wait,Wait::entered,get_CLID_Wander,Wander::entered|}
 			 within
 				(dbisim(
 					sbisim(
@@ -1436,21 +1436,21 @@ exports
 										    const_RandomWalk_av,
 										    const_RandomWalk_pi,
 										    const_RandomWalk_v_randcoef)
-								[| {|get_CLID_Wait,Wait::entered,terminate|} |]
-								dbisim(Clock_CLID_Wait(id__,0,
+								[| {|get_CLID_Wander,Wander::entered,terminate|} |]
+								dbisim(Clock_CLID_Wander(id__,0,
 										          const_RandomWalk_lv,
 										          const_RandomWalk_av,
 										          const_RandomWalk_pi,
 										          const_RandomWalk_v_randcoef))
-							)\{|get_CLID_Wait|}
+							)\{|get_CLID_Wander|}
 						)
-						[| {|get_CLID_Wander,Wander::entered,terminate|} |]
-						dbisim(Clock_CLID_Wander(id__,0,
+						[| {|get_CLID_Wait,Wait::entered,terminate|} |]
+						dbisim(Clock_CLID_Wait(id__,0,
 								          const_RandomWalk_lv,
 								          const_RandomWalk_av,
 								          const_RandomWalk_pi,
 								          const_RandomWalk_v_randcoef))
-					)\{|get_CLID_Wander|}
+					)\{|get_CLID_Wait|}
 				)
 				) \ diff(union(stateClockSync,enteredSS),enteredSS)
 			)
@@ -1679,33 +1679,6 @@ exports
 		
 		clockSync = {|get_CLID_T,clockReset.CLID_T|}
 		
-		Clock_CLID_Wander(id__,x__,
-				          const_RandomWalk_lv,
-				          const_RandomWalk_av,
-				          const_RandomWalk_pi,
-				          const_RandomWalk_v_randcoef) = 
-			TimeOut_1(
-				Wander::entered -> Clock_CLID_Wander(id__,0,
-						          const_RandomWalk_lv,
-						          const_RandomWalk_av,
-						          const_RandomWalk_pi,
-						          const_RandomWalk_v_randcoef)
-				[]
-				get_CLID_Wander!x__ -> Clock_CLID_Wander(id__,x__,
-						          const_RandomWalk_lv,
-						          const_RandomWalk_av,
-						          const_RandomWalk_pi,
-						          const_RandomWalk_v_randcoef)
-				[]
-				terminate -> SKIP,Clock_CLID_Wander(id__,clock_type_plus(x__,1,CLID_Wander_clock_type(id__,
-						          const_RandomWalk_lv,
-						          const_RandomWalk_av,
-						          const_RandomWalk_pi,
-						          const_RandomWalk_v_randcoef)),
-						          const_RandomWalk_lv,
-						          const_RandomWalk_av,
-						          const_RandomWalk_pi,
-						          const_RandomWalk_v_randcoef))
 		Clock_CLID_Wait(id__,x__,
 				          const_RandomWalk_lv,
 				          const_RandomWalk_av,
@@ -1733,25 +1706,52 @@ exports
 						          const_RandomWalk_av,
 						          const_RandomWalk_pi,
 						          const_RandomWalk_v_randcoef))
+		Clock_CLID_Wander(id__,x__,
+				          const_RandomWalk_lv,
+				          const_RandomWalk_av,
+				          const_RandomWalk_pi,
+				          const_RandomWalk_v_randcoef) = 
+			TimeOut_1(
+				Wander::entered -> Clock_CLID_Wander(id__,0,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef)
+				[]
+				get_CLID_Wander!x__ -> Clock_CLID_Wander(id__,x__,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef)
+				[]
+				terminate -> SKIP,Clock_CLID_Wander(id__,clock_type_plus(x__,1,CLID_Wander_clock_type(id__,
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef)),
+						          const_RandomWalk_lv,
+						          const_RandomWalk_av,
+						          const_RandomWalk_pi,
+						          const_RandomWalk_v_randcoef))
 		
 		StateClocks(id__,
 				          const_RandomWalk_lv,
 				          const_RandomWalk_av,
 				          const_RandomWalk_pi,
-				          const_RandomWalk_v_randcoef) = dbisim(Clock_CLID_Wander(id__,0,
+				          const_RandomWalk_v_randcoef) = dbisim(Clock_CLID_Wait(id__,0,
 				          const_RandomWalk_lv,
 				          const_RandomWalk_av,
 				          const_RandomWalk_pi,
 				          const_RandomWalk_v_randcoef))
 		[| { terminate } |] (
-		dbisim(Clock_CLID_Wait(id__,0,
+		dbisim(Clock_CLID_Wander(id__,0,
 				          const_RandomWalk_lv,
 				          const_RandomWalk_av,
 				          const_RandomWalk_pi,
 				          const_RandomWalk_v_randcoef))
 		)
 		
-		stateClockSync = {|get_CLID_Wander,Wander::entered,get_CLID_Wait,Wait::entered|}
+		stateClockSync = {|get_CLID_Wait,Wait::entered,get_CLID_Wander,Wander::entered|}
 		
 		
 		-- Shared memory

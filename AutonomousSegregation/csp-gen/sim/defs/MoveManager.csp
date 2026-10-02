@@ -1,7 +1,7 @@
 
 --
 -- RoboSim generator version 3.1.0.202608041342
--- Automatically generated on 01-10-2026 12:58:03
+-- Automatically generated on 02-10-2026 12:25:47
 --
 
 module MoveManager
@@ -78,23 +78,23 @@ exports
 	channel startexec, startexec_action
 	
 	-- declaring registerRead/Write datatypes
-	datatype RegisterDataInput = i_CCMove.Bool.Vec2
+	datatype RegisterDataInput = i_OAMove.Bool.Vec2
 		| i_RWMove.Bool.Vec2
-		| i_OAMove.Bool.Vec2
+		| i_CCMove.Bool.Vec2
 	
 	
-	datatype RegisterDataOutput = o_move.Vec2
-		| o_NOAMove.Vec2
+	datatype RegisterDataOutput = o_NOAMove.Vec2
+		| o_move.Vec2
 	
 	
 	nametype RegisterOutputs = {|
-	o_move,
-	o_NOAMove|}
+	o_NOAMove,
+	o_move|}
 		
 	nametype RegisterInputs = {|
-	i_CCMove,
+	i_OAMove,
 	i_RWMove,
-	i_OAMove|}
+	i_CCMove|}
 	
 	channel registerRead 	: RegisterDataInput
 	channel registerWrite 	: RegisterDataOutput
@@ -237,19 +237,19 @@ exports
 		
 		-- END of Operation calls --
 	
-		datatype SOutputEvents = SOutput_move
-			| SOutput_NOAMove
+		datatype SOutputEvents = SOutput_NOAMove
+			| SOutput_move
 		
 		cycle(cycle_MoveManager_MoveManager) =
 			let
-				project(o_move.x__) = SOutput_move
 				project(o_NOAMove.x__) = SOutput_NOAMove
+				project(o_move.x__) = SOutput_move
 		
 				Cycle =
 					Deadline(
-						(registerRead.i_CCMove?x__ -> SKIP
+						(registerRead.i_OAMove?x__ -> SKIP
 							||| registerRead.i_RWMove?x__ -> SKIP
-							||| registerRead.i_OAMove?x__ -> SKIP);
+							||| registerRead.i_CCMove?x__ -> SKIP);
 						startexec -> CollectOutputs(SOutputEvents),0);
 					TimeOut_1(terminate -> SKIP,WAIT(cycle_MoveManager_MoveManager-1);Cycle)
 				
@@ -336,7 +336,7 @@ exports
 		
 		-- Transitions
 		Transitions(id__,cycle_MoveManager_MoveManager) = ((let
-			Trans = share__choice(get_RWMove?RWMove -> get_OAMove?OAMove -> get_CCMove?CCMove -> TimeOut_1(
+			Trans = share__choice(get_OAMove?OAMove -> get_CCMove?CCMove -> get_RWMove?RWMove -> TimeOut_1(
 				 (share__ -> SKIP
 				 [] dbisim((((member(RWMove,{true.cmd | cmd <- Vec2}) and (not (member(OAMove,{true.x__ | x__ <- Vec2})))) and (not (member(CCMove,{true.x__ | x__ <- Vec2})))))&(endexec__.NID_MoveHandler -> startexec_action -> SKIP ; get_RWMove?b__?x__ -> set_cmd!x__ -> SKIP
 				 ; share__choice(exit -> SKIP) ; ((let 

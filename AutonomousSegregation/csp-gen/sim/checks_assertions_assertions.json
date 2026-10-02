@@ -1,1 +1,62 @@
-[]
+[
+{ "name": "MoveManager is deterministic (A0) [failures divergences model]",
+  "type": "deterministic",
+  "negated": false 
+},
+{ "name": "MoveManager is deadlock free (A1) [failures divergences model]",
+  "type": "deadlock-free",
+  "negated": false 
+},
+{ "name": "MoveManager is divergence free (A2) [failures divergences model]",
+  "type": "divergence-free",
+  "negated": false 
+},
+{ "name": "ObstacleAvoidance is deterministic (A3) [failures divergences model]",
+  "type": "deterministic",
+  "negated": false 
+},
+{ "name": "ObstacleAvoidance is deadlock free (A4) [failures divergences model]",
+  "type": "deadlock-free",
+  "negated": false 
+},
+{ "name": "ObstacleAvoidance is divergence free (A5) [failures divergences model]",
+  "type": "divergence-free",
+  "negated": false 
+},
+{ "name": "RandomWalk is deterministic (A6) [failures divergences model]",
+  "type": "deterministic",
+  "negated": false 
+},
+{ "name": "RandomWalk is deadlock free (A7) [failures divergences model]",
+  "type": "deadlock-free",
+  "negated": false 
+},
+{ "name": "RandomWalk is divergence free (A8) [failures divergences model]",
+  "type": "divergence-free",
+  "negated": false 
+},
+{ "name": "TargetWatch is deterministic (A9) [failures divergences model]",
+  "type": "deterministic",
+  "negated": false 
+},
+{ "name": "TargetWatch is deadlock free (A10) [failures divergences model]",
+  "type": "deadlock-free",
+  "negated": false 
+},
+{ "name": "TargetWatch is divergence free (A11) [failures divergences model]",
+  "type": "divergence-free",
+  "negated": false 
+},
+{ "name": "CachePointAssignment is deterministic (A12) [failures divergences model]",
+  "type": "deterministic",
+  "negated": false 
+},
+{ "name": "CachePointAssignment is deadlock free (A13) [failures divergences model]",
+  "type": "deadlock-free",
+  "negated": false 
+},
+{ "name": "CachePointAssignment is divergence free (A14) [failures divergences model]",
+  "type": "divergence-free",
+  "negated": false 
+}
+			]

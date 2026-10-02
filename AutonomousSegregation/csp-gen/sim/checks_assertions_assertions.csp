@@ -1,15 +1,215 @@
 
 --
 -- RoboSim generator version 3.1.0.202608041342
--- Automatically generated on 02-10-2026 11:56:27
+-- Automatically generated on 02-10-2026 12:26:11
 --
 
 include "defs/state_timed_defs.csp"
 include "defs/robochart_defs.csp"
+include "defs/function_toolkit_defs.csp"
 include "defs/core_defs.csp"
 include "defs/core_timed_defs.csp"
+include "defs/main_defs.csp"
+include "defs/sequence_toolkit_defs.csp"
+include "defs/set_toolkit_defs.csp"
 include "instantiations.csp"
+include "defs/relation_toolkit_defs.csp"
+include "defs/_.csp"
 
 channel r__
 
+-- A0 - deterministic
+assert let 
+	cycle_MoveManager_MoveManager = 1
+	id__ = 0
+	
+	
+	
+within
+	MoveManager::D__(id__,cycle_MoveManager_MoveManager) :[deterministic] :[tau priority]: {tock}
+
+-- A1 - timed deadlock free
+assert prioritise(let 
+	cycle_MoveManager_MoveManager = 1
+	id__ = 0
+	
+	
+	
+within
+	MoveManager::D__(id__,cycle_MoveManager_MoveManager)[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]] :[tau priority]: {tock}
+
+-- A2 - divergence free
+assert let 
+	cycle_MoveManager_MoveManager = 1
+	id__ = 0
+	
+	
+	
+within
+	MoveManager::D__(id__,cycle_MoveManager_MoveManager) :[divergence free] :[tau priority]: {tock}
+
+-- A3 - deterministic
+assert let 
+	cycle_ObstacleAvoidance_ObstacleAvoidance = 1
+	id__ = 0
+	
+	
+	const_ObstacleAvoidance_pi = 3
+	
+within
+	ObstacleAvoidance::D__(id__,cycle_ObstacleAvoidance_ObstacleAvoidance,
+			    const_ObstacleAvoidance_pi,
+			    const_ObstacleAvoidance_DISTANCE,
+			    const_ObstacleAvoidance_min_range,
+			    const_ObstacleAvoidance_max_range,
+			    const_ObstacleAvoidance_v_closest_angle,
+			    const_ObstacleAvoidance_v_closest_distance,
+			    const_ObstacleAvoidance_v_av,
+			    const_ObstacleAvoidance_v_lv) :[deterministic] :[tau priority]: {tock}
+
+-- A4 - timed deadlock free
+assert prioritise(let 
+	cycle_ObstacleAvoidance_ObstacleAvoidance = 1
+	id__ = 0
+	
+	
+	const_ObstacleAvoidance_pi = 3
+	
+within
+	ObstacleAvoidance::D__(id__,cycle_ObstacleAvoidance_ObstacleAvoidance,
+			    const_ObstacleAvoidance_pi,
+			    const_ObstacleAvoidance_DISTANCE,
+			    const_ObstacleAvoidance_min_range,
+			    const_ObstacleAvoidance_max_range,
+			    const_ObstacleAvoidance_v_closest_angle,
+			    const_ObstacleAvoidance_v_closest_distance,
+			    const_ObstacleAvoidance_v_av,
+			    const_ObstacleAvoidance_v_lv)[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]] :[tau priority]: {tock}
+
+-- A5 - divergence free
+assert let 
+	cycle_ObstacleAvoidance_ObstacleAvoidance = 1
+	id__ = 0
+	
+	
+	const_ObstacleAvoidance_pi = 3
+	
+within
+	ObstacleAvoidance::D__(id__,cycle_ObstacleAvoidance_ObstacleAvoidance,
+			    const_ObstacleAvoidance_pi,
+			    const_ObstacleAvoidance_DISTANCE,
+			    const_ObstacleAvoidance_min_range,
+			    const_ObstacleAvoidance_max_range,
+			    const_ObstacleAvoidance_v_closest_angle,
+			    const_ObstacleAvoidance_v_closest_distance,
+			    const_ObstacleAvoidance_v_av,
+			    const_ObstacleAvoidance_v_lv) :[divergence free] :[tau priority]: {tock}
+
+-- A6 - deterministic
+assert let 
+	cycle_RandomWalk_RandomWalk = 1
+	id__ = 0
+	
+	
+	const_RandomWalk_pi = 3
+	
+within
+	RandomWalk::D__(id__,cycle_RandomWalk_RandomWalk,
+			    const_RandomWalk_lv,
+			    const_RandomWalk_av,
+			    const_RandomWalk_pi,
+			    const_RandomWalk_v_randcoef) :[deterministic] :[tau priority]: {tock}
+
+-- A7 - timed deadlock free
+assert prioritise(let 
+	cycle_RandomWalk_RandomWalk = 1
+	id__ = 0
+	
+	
+	const_RandomWalk_pi = 3
+	
+within
+	RandomWalk::D__(id__,cycle_RandomWalk_RandomWalk,
+			    const_RandomWalk_lv,
+			    const_RandomWalk_av,
+			    const_RandomWalk_pi,
+			    const_RandomWalk_v_randcoef)[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]] :[tau priority]: {tock}
+
+-- A8 - divergence free
+assert let 
+	cycle_RandomWalk_RandomWalk = 1
+	id__ = 0
+	
+	
+	const_RandomWalk_pi = 3
+	
+within
+	RandomWalk::D__(id__,cycle_RandomWalk_RandomWalk,
+			    const_RandomWalk_lv,
+			    const_RandomWalk_av,
+			    const_RandomWalk_pi,
+			    const_RandomWalk_v_randcoef) :[divergence free] :[tau priority]: {tock}
+
+-- A9 - deterministic
+assert let 
+	cycle_TargetWatch_TargetWatch = 1
+	id__ = 0
+	
+	
+	
+within
+	TargetWatch::D__(id__,cycle_TargetWatch_TargetWatch,
+			    const_TargetWatch_ObjectThreshold) :[deterministic] :[tau priority]: {tock}
+
+-- A10 - timed deadlock free
+assert prioritise(let 
+	cycle_TargetWatch_TargetWatch = 1
+	id__ = 0
+	
+	
+	
+within
+	TargetWatch::D__(id__,cycle_TargetWatch_TargetWatch,
+			    const_TargetWatch_ObjectThreshold)[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]] :[tau priority]: {tock}
+
+-- A11 - divergence free
+assert let 
+	cycle_TargetWatch_TargetWatch = 1
+	id__ = 0
+	
+	
+	
+within
+	TargetWatch::D__(id__,cycle_TargetWatch_TargetWatch,
+			    const_TargetWatch_ObjectThreshold) :[divergence free] :[tau priority]: {tock}
+
+-- A12 - deterministic
+assert let 
+	cycle_CachePointAssignment_CachePointAssignment = 1
+	id__ = 0
+	
+	
+	
+within
+	CachePointAssignment::D__(id__,cycle_CachePointAssignment_CachePointAssignment) :[deterministic] :[tau priority]: {tock}
+
+-- A13 - timed deadlock free
+assert prioritise(let 
+	cycle_CachePointAssignment_CachePointAssignment = 1
+	id__ = 0
+	
+	
+	
+within
+	CachePointAssignment::D__(id__,cycle_CachePointAssignment_CachePointAssignment)[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]] :[tau priority]: {tock}
+
+-- A14 - divergence free
+assert let 
+	cycle_CachePointAssignment_CachePointAssignment = 1
+	id__ = 0
+	
+	
+	
+within
+	CachePointAssignment::D__(id__,cycle_CachePointAssignment_CachePointAssignment) :[divergence free] :[tau priority]: {tock}
 
