@@ -1,7 +1,7 @@
 
 --
 -- RoboSim generator version 3.1.0.202608041342
--- Automatically generated on 22-09-2026 12:29:01
+-- Automatically generated on 01-10-2026 12:58:03
 --
 
 module TargetWatch
@@ -99,11 +99,11 @@ exports
 	channel startexec, startexec_action
 	
 	-- declaring registerRead/Write datatypes
-	datatype RegisterDataInput = i_EnableTargetWatch.Bool.Vec2
-		| i_CurrentTypeTW.Bool.core_nat
+	datatype RegisterDataInput = i_DisableTargetWatch.Bool
+		| i_EnableTargetWatch.Bool.Vec2
 		| i_VisibleClustersTW.Bool.{(x0__,x1__,x2__) | x0__ <- core_nat,x1__ <- LSeq(ClusterData,2),x2__ <- LSeq(ObjectData,2)}
-		| i_DisableTargetWatch.Bool
 		| i_CachePointsTW.Bool.LSeq(ClusterData,2)
+		| i_CurrentTypeTW.Bool.core_nat
 	
 	
 	datatype RegisterDataOutput = o_InvalidTarget
@@ -115,11 +115,11 @@ exports
 	o_TargetObject|}
 		
 	nametype RegisterInputs = {|
-	i_EnableTargetWatch,
-	i_CurrentTypeTW,
-	i_VisibleClustersTW,
 	i_DisableTargetWatch,
-	i_CachePointsTW|}
+	i_EnableTargetWatch,
+	i_VisibleClustersTW,
+	i_CachePointsTW,
+	i_CurrentTypeTW|}
 	
 	channel registerRead 	: RegisterDataInput
 	channel registerWrite 	: RegisterDataOutput
@@ -205,13 +205,13 @@ exports
 			
 			channel internal__ : NIDS
 			
-			channel get_CLID_WaitForDisableTargetWatch : core_clock_type 
+			channel get_CLID_CalculateTargetObject : core_clock_type 
 			channel get_CLID_ValidateTargetObject : core_clock_type 
 			channel get_CLID_PublishTargetObject : core_clock_type 
-			channel get_CLID_CalculateTargetObject : core_clock_type 
+			channel get_CLID_WaitForDisableTargetWatch : core_clock_type 
 			--channel increment__
 			
-			CLID_WaitForDisableTargetWatch_clock_type(id__,
+			CLID_CalculateTargetObject_clock_type(id__,
 					          const_TargetWatch_ObjectThreshold) = 
 				let
 					max = (clock_type_max(Union({
@@ -241,7 +241,7 @@ exports
 			within
 				if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 			
-			CLID_CalculateTargetObject_clock_type(id__,
+			CLID_WaitForDisableTargetWatch_clock_type(id__,
 					          const_TargetWatch_ObjectThreshold) = 
 				let
 					max = (clock_type_max(Union({
@@ -297,7 +297,7 @@ exports
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= share__choice(get_targetObjectxy?targetObjectxy -> share__choice(get_m?m -> share__choice(get_targetType?targetType -> share__choice(get_closestTargetObject?closestTargetObject -> true&(if (((ObjectData_clusterID(closestTargetObject)==ClusterData_clusterID(access_(m, targetType)))) or ((distance(ObjectData_position(closestTargetObject),targetObjectxy)<const_TargetWatch_ObjectThreshold))) then (share__choice(true & (share__choice(set_validObject!false -> SKIP))))else SKIP))))) ; 
+						Active 		= share__choice(get_targetObjectxy?targetObjectxy -> share__choice(get_closestTargetObject?closestTargetObject -> share__choice(get_m?m -> share__choice(get_targetType?targetType -> true&(if (((ObjectData_clusterID(closestTargetObject)==ClusterData_clusterID(access_(m, targetType)))) or ((distance(ObjectData_position(closestTargetObject),targetObjectxy)<const_TargetWatch_ObjectThreshold))) then (share__choice(true & (share__choice(set_validObject!false -> SKIP))))else SKIP))))) ; 
 								 	  Behaviour ; 
 								 	  share__choice(exit -> SKIP) ; SKIP ; 
 								 	  share__choice(exited -> SKIP) ; Inactive
@@ -314,7 +314,7 @@ exports
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= share__choice(get_targetObjectxy?targetObjectxy -> share__choice(get_m?m -> share__choice(get_targetType?targetType -> share__choice(get_closestTargetObject?closestTargetObject -> true&(if (((ObjectData_clusterID(closestTargetObject)==ClusterData_clusterID(access_(m, targetType)))) or ((distance(ObjectData_position(closestTargetObject),targetObjectxy)<const_TargetWatch_ObjectThreshold))) then (share__choice(true & (share__choice(set_validObject!false -> SKIP))))else SKIP))))) ; 
+						Active 		= share__choice(get_targetObjectxy?targetObjectxy -> share__choice(get_closestTargetObject?closestTargetObject -> share__choice(get_m?m -> share__choice(get_targetType?targetType -> true&(if (((ObjectData_clusterID(closestTargetObject)==ClusterData_clusterID(access_(m, targetType)))) or ((distance(ObjectData_position(closestTargetObject),targetObjectxy)<const_TargetWatch_ObjectThreshold))) then (share__choice(true & (share__choice(set_validObject!false -> SKIP))))else SKIP))))) ; 
 								 	  Behaviour ; 
 								 	  share__choice(exit -> SKIP) ; SKIP ; 
 								 	  share__choice(exited -> SKIP) ; Inactive
@@ -461,7 +461,7 @@ exports
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= share__choice(get_data?data -> share__choice(get_targetObjectxy?targetObjectxy -> share__choice(get_counter?counter -> share__choice(get_closestTargetObject?closestTargetObject -> true&(if (distance(ObjectData_position(access_((tuple3_3(data)), counter)),targetObjectxy)<distance(ObjectData_position(closestTargetObject),targetObjectxy)) then (share__choice(share__choice(get_data?data -> share__choice(get_counter?counter -> counter <= length((tuple3_3(data)))&counter >= 1 & (share__choice(set_closestTargetObject!access_((tuple3_3(data)), counter) -> SKIP))))))else SKIP))))) ; 
+						Active 		= share__choice(get_counter?counter -> share__choice(get_data?data -> share__choice(get_targetObjectxy?targetObjectxy -> share__choice(get_closestTargetObject?closestTargetObject -> true&(if (distance(ObjectData_position(access_((tuple3_3(data)), counter)),targetObjectxy)<distance(ObjectData_position(closestTargetObject),targetObjectxy)) then (share__choice(share__choice(get_counter?counter -> share__choice(get_data?data -> counter <= length((tuple3_3(data)))&counter >= 1 & (share__choice(set_closestTargetObject!access_((tuple3_3(data)), counter) -> SKIP))))))else SKIP))))) ; 
 								 	  Behaviour ; 
 								 	  share__choice(exit -> SKIP) ; SKIP ; 
 								 	  share__choice(exited -> SKIP) ; Inactive
@@ -478,7 +478,7 @@ exports
 						
 						Termination = terminate -> SKIP
 						
-						Active 		= share__choice(get_data?data -> share__choice(get_targetObjectxy?targetObjectxy -> share__choice(get_counter?counter -> share__choice(get_closestTargetObject?closestTargetObject -> true&(if (distance(ObjectData_position(access_((tuple3_3(data)), counter)),targetObjectxy)<distance(ObjectData_position(closestTargetObject),targetObjectxy)) then (share__choice(share__choice(get_data?data -> share__choice(get_counter?counter -> counter <= length((tuple3_3(data)))&counter >= 1 & (share__choice(set_closestTargetObject!access_((tuple3_3(data)), counter) -> SKIP))))))else SKIP))))) ; 
+						Active 		= share__choice(get_counter?counter -> share__choice(get_data?data -> share__choice(get_targetObjectxy?targetObjectxy -> share__choice(get_closestTargetObject?closestTargetObject -> true&(if (distance(ObjectData_position(access_((tuple3_3(data)), counter)),targetObjectxy)<distance(ObjectData_position(closestTargetObject),targetObjectxy)) then (share__choice(share__choice(get_counter?counter -> share__choice(get_data?data -> counter <= length((tuple3_3(data)))&counter >= 1 & (share__choice(set_closestTargetObject!access_((tuple3_3(data)), counter) -> SKIP))))))else SKIP))))) ; 
 								 	  Behaviour ; 
 								 	  share__choice(exit -> SKIP) ; SKIP ; 
 								 	  share__choice(exited -> SKIP) ; Inactive
@@ -691,18 +691,18 @@ exports
 						 										 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 						 										 )
 						 										  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
-						 										  [[set_validObject <- setL_validObject,set_data <- setL_data,set_counter <- setL_counter]]
+						 										  [[set_counter <- setL_counter,set_data <- setL_data,set_validObject <- setL_validObject]]
 						 										 )
 						 										 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
-						 										 			,setL_validObject
-						 										 			,setL_data
 						 										 			,setL_counter
+						 										 			,setL_data
+						 										 			,setL_validObject
 						 										|}) |]
 						 										 ((i0::enter -> Transitions(id__,cycle_TargetWatch_TargetWatch,
 						 										 		    const_TargetWatch_ObjectThreshold))
-						 										  [[ share__ <- x__ | x__ <- {| share__,setL_validObject,setL_data,setL_counter |} ]]
+						 										  [[ share__ <- x__ | x__ <- {| share__,setL_counter,setL_data,setL_validObject |} ]]
 						 										 )
-						 										)[[setL_validObject <- set_validObject,setL_data <- set_data,setL_counter <- set_counter]]
+						 										)[[setL_counter <- set_counter,setL_data <- set_data,setL_validObject <- set_validObject]]
 						 										)
 						 									)
 						 									 \ hideSet)
@@ -710,10 +710,10 @@ exports
 						 									[[ endexec_action <- endexec ]]
 						 									[[ startexec_action <- startexec ]]
 						 								)
-						 								[| {|get_CLID_CalculateTargetObject,CalculateTargetObject::entered,terminate|} |]
-						 								dbisim(Clock_CLID_CalculateTargetObject(id__,0,
+						 								[| {|get_CLID_WaitForDisableTargetWatch,WaitForDisableTargetWatch::entered,terminate|} |]
+						 								dbisim(Clock_CLID_WaitForDisableTargetWatch(id__,0,
 						 										          const_TargetWatch_ObjectThreshold))
-						 							)\{|get_CLID_CalculateTargetObject|}
+						 							)\{|get_CLID_WaitForDisableTargetWatch|}
 						 						)
 						 						[| {|get_CLID_PublishTargetObject,PublishTargetObject::entered,terminate|} |]
 						 						dbisim(Clock_CLID_PublishTargetObject(id__,0,
@@ -725,41 +725,41 @@ exports
 						 						          const_TargetWatch_ObjectThreshold))
 						 			)\{|get_CLID_ValidateTargetObject|}
 						 		)
-						 		[| {|get_CLID_WaitForDisableTargetWatch,WaitForDisableTargetWatch::entered,terminate|} |]
-						 		dbisim(Clock_CLID_WaitForDisableTargetWatch(id__,0,
+						 		[| {|get_CLID_CalculateTargetObject,CalculateTargetObject::entered,terminate|} |]
+						 		dbisim(Clock_CLID_CalculateTargetObject(id__,0,
 						 				          const_TargetWatch_ObjectThreshold))
-						 	)\{|get_CLID_WaitForDisableTargetWatch|}
+						 	)\{|get_CLID_CalculateTargetObject|}
 						 )
 						 ))
-						  [[ share__ <- x__ | x__ <- {| share__,setR_m,setR_counter,setR_closestTargetObjectPosition,setR_done,setR_validObject,setR_data,setR_targetObjectxy,setR_targetType,setR_closestTargetObject |} ]] 
-						  [[set_validObject <- setL_validObject,set_data <- setL_data,set_targetObjectxy <- setL_targetObjectxy,set_targetType <- setL_targetType,set_m <- setL_m,set_counter <- setL_counter,set_closestTargetObjectPosition <- setL_closestTargetObjectPosition,set_done <- setL_done,set_closestTargetObject <- setL_closestTargetObject]]
+						  [[ share__ <- x__ | x__ <- {| share__,setR_m,setR_done,setR_counter,setR_targetObjectxy,setR_closestTargetObjectPosition,setR_data,setR_closestTargetObject,setR_validObject,setR_targetType |} ]] 
+						  [[set_done <- setL_done,set_counter <- setL_counter,set_targetObjectxy <- setL_targetObjectxy,set_closestTargetObjectPosition <- setL_closestTargetObjectPosition,set_data <- setL_data,set_closestTargetObject <- setL_closestTargetObject,set_validObject <- setL_validObject,set_targetType <- setL_targetType,set_m <- setL_m]]
 						 )
 						 [| union(union(enteredSS,{| interrupt, terminate |}),{|share__
-						 			,setL_validObject
-						 			,setL_data
+						 			,setL_done
+						 			,setL_counter
 						 			,setL_targetObjectxy
+						 			,setL_closestTargetObjectPosition
+						 			,setL_data
+						 			,setL_closestTargetObject
+						 			,setL_validObject
 						 			,setL_targetType
 						 			,setL_m
-						 			,setL_counter
-						 			,setL_closestTargetObjectPosition
-						 			,setL_done
-						 			,setL_closestTargetObject
 						 			,setR_m
-						 			 			,setR_counter
-						 			 			,setR_closestTargetObjectPosition
 						 			 			,setR_done
-						 			 			,setR_validObject
-						 			 			,setR_data
+						 			 			,setR_counter
 						 			 			,setR_targetObjectxy
-						 			 			,setR_targetType
+						 			 			,setR_closestTargetObjectPosition
+						 			 			,setR_data
 						 			 			,setR_closestTargetObject
+						 			 			,setR_validObject
+						 			 			,setR_targetType
 						 			|}) |]
 						 ((During)
-						  [[ share__ <- x__ | x__ <- {| share__,setL_validObject,setL_data,setL_targetObjectxy,setL_targetType,setL_m,setL_counter,setL_closestTargetObjectPosition,setL_done,setL_closestTargetObject |} ]]
-						  [[set_m <- setR_m,set_counter <- setR_counter,set_closestTargetObjectPosition <- setR_closestTargetObjectPosition,set_done <- setR_done,set_validObject <- setR_validObject,set_data <- setR_data,set_targetObjectxy <- setR_targetObjectxy,set_targetType <- setR_targetType,set_closestTargetObject <- setR_closestTargetObject]]
+						  [[ share__ <- x__ | x__ <- {| share__,setL_done,setL_counter,setL_targetObjectxy,setL_closestTargetObjectPosition,setL_data,setL_closestTargetObject,setL_validObject,setL_targetType,setL_m |} ]]
+						  [[set_m <- setR_m,set_done <- setR_done,set_counter <- setR_counter,set_targetObjectxy <- setR_targetObjectxy,set_closestTargetObjectPosition <- setR_closestTargetObjectPosition,set_data <- setR_data,set_closestTargetObject <- setR_closestTargetObject,set_validObject <- setR_validObject,set_targetType <- setR_targetType]]
 						 )
-						)[[setL_validObject <- set_validObject,setL_data <- set_data,setL_targetObjectxy <- set_targetObjectxy,setL_targetType <- set_targetType,setL_m <- set_m,setL_counter <- set_counter,setL_closestTargetObjectPosition <- set_closestTargetObjectPosition,setL_done <- set_done,setL_closestTargetObject <- set_closestTargetObject]]
-						 [[setR_m <- set_m,setR_counter <- set_counter,setR_closestTargetObjectPosition <- set_closestTargetObjectPosition,setR_done <- set_done,setR_validObject <- set_validObject,setR_data <- set_data,setR_targetObjectxy <- set_targetObjectxy,setR_targetType <- set_targetType,setR_closestTargetObject <- set_closestTargetObject]]
+						)[[setL_done <- set_done,setL_counter <- set_counter,setL_targetObjectxy <- set_targetObjectxy,setL_closestTargetObjectPosition <- set_closestTargetObjectPosition,setL_data <- set_data,setL_closestTargetObject <- set_closestTargetObject,setL_validObject <- set_validObject,setL_targetType <- set_targetType,setL_m <- set_m]]
+						 [[setR_m <- set_m,setR_done <- set_done,setR_counter <- set_counter,setR_targetObjectxy <- set_targetObjectxy,setR_closestTargetObjectPosition <- set_closestTargetObjectPosition,setR_data <- set_data,setR_closestTargetObject <- set_closestTargetObject,setR_validObject <- set_validObject,setR_targetType <- set_targetType]]
 						)\union(enteredSS,{terminate}) 
 					)
 					During 		= share__choice(([] e__ : enteredSS @ e__ -> SKIP))
@@ -837,18 +837,18 @@ exports
 						 										 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 						 										 )
 						 										  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
-						 										  [[set_validObject <- setL_validObject,set_data <- setL_data,set_counter <- setL_counter]]
+						 										  [[set_counter <- setL_counter,set_data <- setL_data,set_validObject <- setL_validObject]]
 						 										 )
 						 										 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
-						 										 			,setL_validObject
-						 										 			,setL_data
 						 										 			,setL_counter
+						 										 			,setL_data
+						 										 			,setL_validObject
 						 										|}) |]
 						 										 ((i0::enter -> Transitions(id__,cycle_TargetWatch_TargetWatch,
 						 										 		    const_TargetWatch_ObjectThreshold))
-						 										  [[ share__ <- x__ | x__ <- {| share__,setL_validObject,setL_data,setL_counter |} ]]
+						 										  [[ share__ <- x__ | x__ <- {| share__,setL_counter,setL_data,setL_validObject |} ]]
 						 										 )
-						 										)[[setL_validObject <- set_validObject,setL_data <- set_data,setL_counter <- set_counter]]
+						 										)[[setL_counter <- set_counter,setL_data <- set_data,setL_validObject <- set_validObject]]
 						 										)
 						 									)
 						 									 \ hideSet)
@@ -856,10 +856,10 @@ exports
 						 									[[ endexec_action <- endexec ]]
 						 									[[ startexec_action <- startexec ]]
 						 								)
-						 								[| {|get_CLID_CalculateTargetObject,CalculateTargetObject::entered,terminate|} |]
-						 								dbisim(Clock_CLID_CalculateTargetObject(id__,0,
+						 								[| {|get_CLID_WaitForDisableTargetWatch,WaitForDisableTargetWatch::entered,terminate|} |]
+						 								dbisim(Clock_CLID_WaitForDisableTargetWatch(id__,0,
 						 										          const_TargetWatch_ObjectThreshold))
-						 							)\{|get_CLID_CalculateTargetObject|}
+						 							)\{|get_CLID_WaitForDisableTargetWatch|}
 						 						)
 						 						[| {|get_CLID_PublishTargetObject,PublishTargetObject::entered,terminate|} |]
 						 						dbisim(Clock_CLID_PublishTargetObject(id__,0,
@@ -871,41 +871,41 @@ exports
 						 						          const_TargetWatch_ObjectThreshold))
 						 			)\{|get_CLID_ValidateTargetObject|}
 						 		)
-						 		[| {|get_CLID_WaitForDisableTargetWatch,WaitForDisableTargetWatch::entered,terminate|} |]
-						 		dbisim(Clock_CLID_WaitForDisableTargetWatch(id__,0,
+						 		[| {|get_CLID_CalculateTargetObject,CalculateTargetObject::entered,terminate|} |]
+						 		dbisim(Clock_CLID_CalculateTargetObject(id__,0,
 						 				          const_TargetWatch_ObjectThreshold))
-						 	)\{|get_CLID_WaitForDisableTargetWatch|}
+						 	)\{|get_CLID_CalculateTargetObject|}
 						 )
 						 ))
-						  [[ share__ <- x__ | x__ <- {| share__,setR_m,setR_counter,setR_closestTargetObjectPosition,setR_done,setR_validObject,setR_data,setR_targetObjectxy,setR_targetType,setR_closestTargetObject |} ]] 
-						  [[set_validObject <- setL_validObject,set_data <- setL_data,set_targetObjectxy <- setL_targetObjectxy,set_targetType <- setL_targetType,set_m <- setL_m,set_counter <- setL_counter,set_closestTargetObjectPosition <- setL_closestTargetObjectPosition,set_done <- setL_done,set_closestTargetObject <- setL_closestTargetObject]]
+						  [[ share__ <- x__ | x__ <- {| share__,setR_m,setR_done,setR_counter,setR_targetObjectxy,setR_closestTargetObjectPosition,setR_data,setR_closestTargetObject,setR_validObject,setR_targetType |} ]] 
+						  [[set_done <- setL_done,set_counter <- setL_counter,set_targetObjectxy <- setL_targetObjectxy,set_closestTargetObjectPosition <- setL_closestTargetObjectPosition,set_data <- setL_data,set_closestTargetObject <- setL_closestTargetObject,set_validObject <- setL_validObject,set_targetType <- setL_targetType,set_m <- setL_m]]
 						 )
 						 [| union(union(enteredSS,{| interrupt, terminate |}),{|share__
-						 			,setL_validObject
-						 			,setL_data
+						 			,setL_done
+						 			,setL_counter
 						 			,setL_targetObjectxy
+						 			,setL_closestTargetObjectPosition
+						 			,setL_data
+						 			,setL_closestTargetObject
+						 			,setL_validObject
 						 			,setL_targetType
 						 			,setL_m
-						 			,setL_counter
-						 			,setL_closestTargetObjectPosition
-						 			,setL_done
-						 			,setL_closestTargetObject
 						 			,setR_m
-						 			 			,setR_counter
-						 			 			,setR_closestTargetObjectPosition
 						 			 			,setR_done
-						 			 			,setR_validObject
-						 			 			,setR_data
+						 			 			,setR_counter
 						 			 			,setR_targetObjectxy
-						 			 			,setR_targetType
+						 			 			,setR_closestTargetObjectPosition
+						 			 			,setR_data
 						 			 			,setR_closestTargetObject
+						 			 			,setR_validObject
+						 			 			,setR_targetType
 						 			|}) |]
 						 ((During)
-						  [[ share__ <- x__ | x__ <- {| share__,setL_validObject,setL_data,setL_targetObjectxy,setL_targetType,setL_m,setL_counter,setL_closestTargetObjectPosition,setL_done,setL_closestTargetObject |} ]]
-						  [[set_m <- setR_m,set_counter <- setR_counter,set_closestTargetObjectPosition <- setR_closestTargetObjectPosition,set_done <- setR_done,set_validObject <- setR_validObject,set_data <- setR_data,set_targetObjectxy <- setR_targetObjectxy,set_targetType <- setR_targetType,set_closestTargetObject <- setR_closestTargetObject]]
+						  [[ share__ <- x__ | x__ <- {| share__,setL_done,setL_counter,setL_targetObjectxy,setL_closestTargetObjectPosition,setL_data,setL_closestTargetObject,setL_validObject,setL_targetType,setL_m |} ]]
+						  [[set_m <- setR_m,set_done <- setR_done,set_counter <- setR_counter,set_targetObjectxy <- setR_targetObjectxy,set_closestTargetObjectPosition <- setR_closestTargetObjectPosition,set_data <- setR_data,set_closestTargetObject <- setR_closestTargetObject,set_validObject <- setR_validObject,set_targetType <- setR_targetType]]
 						 )
-						)[[setL_validObject <- set_validObject,setL_data <- set_data,setL_targetObjectxy <- set_targetObjectxy,setL_targetType <- set_targetType,setL_m <- set_m,setL_counter <- set_counter,setL_closestTargetObjectPosition <- set_closestTargetObjectPosition,setL_done <- set_done,setL_closestTargetObject <- set_closestTargetObject]]
-						 [[setR_m <- set_m,setR_counter <- set_counter,setR_closestTargetObjectPosition <- set_closestTargetObjectPosition,setR_done <- set_done,setR_validObject <- set_validObject,setR_data <- set_data,setR_targetObjectxy <- set_targetObjectxy,setR_targetType <- set_targetType,setR_closestTargetObject <- set_closestTargetObject]]
+						)[[setL_done <- set_done,setL_counter <- set_counter,setL_targetObjectxy <- set_targetObjectxy,setL_closestTargetObjectPosition <- set_closestTargetObjectPosition,setL_data <- set_data,setL_closestTargetObject <- set_closestTargetObject,setL_validObject <- set_validObject,setL_targetType <- set_targetType,setL_m <- set_m]]
+						 [[setR_m <- set_m,setR_done <- set_done,setR_counter <- set_counter,setR_targetObjectxy <- set_targetObjectxy,setR_closestTargetObjectPosition <- set_closestTargetObjectPosition,setR_data <- set_data,setR_closestTargetObject <- set_closestTargetObject,setR_validObject <- set_validObject,setR_targetType <- set_targetType]]
 						)\{terminate} 
 					)
 					During 		= share__choice(([] e__ : enteredSS @ e__ -> SKIP))
@@ -915,7 +915,7 @@ exports
 				
 				Transitions(id__,cycle_TargetWatch_TargetWatch,
 						    const_TargetWatch_ObjectThreshold) = ((let
-					Trans = share__choice(get_validObject?validObject -> get_data?data -> get_counter?counter -> get_CachePointsTW?CachePointsTW -> TimeOut_1(
+					Trans = share__choice(get_CachePointsTW?CachePointsTW -> get_counter?counter -> get_data?data -> get_validObject?validObject -> TimeOut_1(
 						 (share__ -> SKIP
 						 [] dbisim(((((counter==1)) and member(CachePointsTW,{true.m | m <- LSeq(ClusterData,2)})))&(internal__!NID_CalculateTargetObject -> SKIP ; get_CachePointsTW?b__?x__ -> set_m!x__ -> SKIP
 						 ; share__choice(exit -> SKIP) ; ((let 
@@ -960,16 +960,16 @@ exports
 				
 				
 				-- Clocks
-				Clock_CLID_WaitForDisableTargetWatch(id__,x__,
+				Clock_CLID_CalculateTargetObject(id__,x__,
 						          const_TargetWatch_ObjectThreshold) = 
 					TimeOut_1(
-						WaitForDisableTargetWatch::entered -> Clock_CLID_WaitForDisableTargetWatch(id__,0,
+						CalculateTargetObject::entered -> Clock_CLID_CalculateTargetObject(id__,0,
 								          const_TargetWatch_ObjectThreshold)
 						[]
-						get_CLID_WaitForDisableTargetWatch!x__ -> Clock_CLID_WaitForDisableTargetWatch(id__,x__,
+						get_CLID_CalculateTargetObject!x__ -> Clock_CLID_CalculateTargetObject(id__,x__,
 								          const_TargetWatch_ObjectThreshold)
 						[]
-						terminate -> SKIP,Clock_CLID_WaitForDisableTargetWatch(id__,clock_type_plus(x__,1,CLID_WaitForDisableTargetWatch_clock_type(id__,
+						terminate -> SKIP,Clock_CLID_CalculateTargetObject(id__,clock_type_plus(x__,1,CLID_CalculateTargetObject_clock_type(id__,
 								          const_TargetWatch_ObjectThreshold)),
 								          const_TargetWatch_ObjectThreshold))
 				Clock_CLID_ValidateTargetObject(id__,x__,
@@ -996,21 +996,21 @@ exports
 						terminate -> SKIP,Clock_CLID_PublishTargetObject(id__,clock_type_plus(x__,1,CLID_PublishTargetObject_clock_type(id__,
 								          const_TargetWatch_ObjectThreshold)),
 								          const_TargetWatch_ObjectThreshold))
-				Clock_CLID_CalculateTargetObject(id__,x__,
+				Clock_CLID_WaitForDisableTargetWatch(id__,x__,
 						          const_TargetWatch_ObjectThreshold) = 
 					TimeOut_1(
-						CalculateTargetObject::entered -> Clock_CLID_CalculateTargetObject(id__,0,
+						WaitForDisableTargetWatch::entered -> Clock_CLID_WaitForDisableTargetWatch(id__,0,
 								          const_TargetWatch_ObjectThreshold)
 						[]
-						get_CLID_CalculateTargetObject!x__ -> Clock_CLID_CalculateTargetObject(id__,x__,
+						get_CLID_WaitForDisableTargetWatch!x__ -> Clock_CLID_WaitForDisableTargetWatch(id__,x__,
 								          const_TargetWatch_ObjectThreshold)
 						[]
-						terminate -> SKIP,Clock_CLID_CalculateTargetObject(id__,clock_type_plus(x__,1,CLID_CalculateTargetObject_clock_type(id__,
+						terminate -> SKIP,Clock_CLID_WaitForDisableTargetWatch(id__,clock_type_plus(x__,1,CLID_WaitForDisableTargetWatch_clock_type(id__,
 								          const_TargetWatch_ObjectThreshold)),
 								          const_TargetWatch_ObjectThreshold))
 				
 				StateClocks(id__,
-						          const_TargetWatch_ObjectThreshold) = dbisim(Clock_CLID_WaitForDisableTargetWatch(id__,0,
+						          const_TargetWatch_ObjectThreshold) = dbisim(Clock_CLID_CalculateTargetObject(id__,0,
 						          const_TargetWatch_ObjectThreshold))
 				[| { terminate } |] (
 				dbisim(Clock_CLID_ValidateTargetObject(id__,0,
@@ -1019,13 +1019,13 @@ exports
 				dbisim(Clock_CLID_PublishTargetObject(id__,0,
 						          const_TargetWatch_ObjectThreshold))
 				[| { terminate } |] (
-				dbisim(Clock_CLID_CalculateTargetObject(id__,0,
+				dbisim(Clock_CLID_WaitForDisableTargetWatch(id__,0,
 						          const_TargetWatch_ObjectThreshold))
 				)
 				)
 				)
 				
-				stateClockSync = {|get_CLID_WaitForDisableTargetWatch,WaitForDisableTargetWatch::entered,get_CLID_ValidateTargetObject,ValidateTargetObject::entered,get_CLID_PublishTargetObject,PublishTargetObject::entered,get_CLID_CalculateTargetObject,CalculateTargetObject::entered|}
+				stateClockSync = {|get_CLID_CalculateTargetObject,CalculateTargetObject::entered,get_CLID_ValidateTargetObject,ValidateTargetObject::entered,get_CLID_PublishTargetObject,PublishTargetObject::entered,get_CLID_WaitForDisableTargetWatch,WaitForDisableTargetWatch::entered|}
 			}
 		
 		endmodule
@@ -1135,11 +1135,11 @@ exports
 		
 				Cycle =
 					Deadline(
-						(registerRead.i_EnableTargetWatch?x__ -> SKIP
-							||| registerRead.i_CurrentTypeTW?x__ -> SKIP
+						(registerRead.i_DisableTargetWatch?x__ -> SKIP
+							||| registerRead.i_EnableTargetWatch?x__ -> SKIP
 							||| registerRead.i_VisibleClustersTW?x__ -> SKIP
-							||| registerRead.i_DisableTargetWatch?x__ -> SKIP
-							||| registerRead.i_CachePointsTW?x__ -> SKIP);
+							||| registerRead.i_CachePointsTW?x__ -> SKIP
+							||| registerRead.i_CurrentTypeTW?x__ -> SKIP);
 						startexec -> CollectOutputs(SOutputEvents),0);
 					TimeOut_1(terminate -> SKIP,WAIT(cycle_TargetWatch_TargetWatch-1);Cycle)
 				
@@ -1255,7 +1255,7 @@ exports
 		-- Transitions
 		Transitions(id__,cycle_TargetWatch_TargetWatch,
 				    const_TargetWatch_ObjectThreshold) = ((let
-			Trans = share__choice(get_CurrentTypeTW?CurrentTypeTW -> get_DisableTargetWatch?DisableTargetWatch -> get_VisibleClustersTW?VisibleClustersTW -> get_EnableTargetWatch?EnableTargetWatch -> TimeOut_1(
+			Trans = share__choice(get_DisableTargetWatch?DisableTargetWatch -> get_VisibleClustersTW?VisibleClustersTW -> get_CurrentTypeTW?CurrentTypeTW -> get_EnableTargetWatch?EnableTargetWatch -> TimeOut_1(
 				 (share__ -> SKIP
 				 [] dbisim((true)&(internal__!NID_i0 -> SKIP ;  ((((SKIP)[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; WaitingForTarget::enter -> SKIP))))
 				 [] dbisim((((member(EnableTargetWatch,{true.targetObjectxy | targetObjectxy <- Vec2}) and member(VisibleClustersTW,{true.data | data <- {(x0__,x1__,x2__) | x0__ <- core_nat,x1__ <- LSeq(ClusterData,2),x2__ <- LSeq(ObjectData,2)}})) and member(CurrentTypeTW,{true.targetType | targetType <- core_nat})))&(endexec__.NID_WaitingForTarget -> startexec_action -> SKIP ; get_EnableTargetWatch?b__?x__ -> set_targetObjectxy!x__ -> SKIP;
@@ -1267,7 +1267,7 @@ exports
 				 	X = share__choice(exited -> SKIP [] endexec -> Y)
 				 	Y = share__choice(exited -> SKIP [] startexec -> X)
 				  within
-				  	X) ; ((SKIP)[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; DetectingTarget::enter -> SKIP)))
+				  	X) ; ((share__choice(true & (share__choice(set_counter!1 -> SKIP)));share__choice(true & (share__choice(set_validObject!true -> SKIP))))[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; DetectingTarget::enter -> SKIP)))
 				 [] dbisim((member(DisableTargetWatch,{true}))&(endexec__.NID_DetectingTarget -> startexec_action -> SKIP ;  share__choice(exit -> SKIP) ; ((let 
 				 	X = share__choice(exited -> SKIP [] endexec -> Y)
 				 	Y = share__choice(exited -> SKIP [] startexec -> X)
@@ -1456,7 +1456,7 @@ exports
 																)\{|get_validObject,set_validObject|}
 															)
 															[| {|get_done,set_done,terminate|} |]
-															Memory_done(false)
+															Memory_done(true)
 														)\{|get_done,set_done|}
 													)
 													[| {|get_data,set_data,terminate|} |]
@@ -1642,7 +1642,7 @@ exports
 																)\{|get_validObject,set_validObject|}
 															)
 															[| {|get_done,set_done,terminate|} |]
-															Memory_done(false)
+															Memory_done(true)
 														)\{|get_done,set_done|}
 													)
 													[| {|get_data,set_data,terminate|} |]
@@ -1738,7 +1738,7 @@ exports
 		[| { terminate } |] (
 		Memory_data((0,<>,<>))
 		[| { terminate } |] (
-		Memory_done(false)
+		Memory_done(true)
 		[| { terminate } |] (
 		Memory_validObject(true)
 		[| { terminate } |] (

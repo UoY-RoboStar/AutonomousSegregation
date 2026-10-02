@@ -1,7 +1,7 @@
 
 --
 -- RoboSim generator version 3.1.0.202608041342
--- Automatically generated on 22-09-2026 12:29:01
+-- Automatically generated on 01-10-2026 12:58:03
 --
 
 module ObstacleAvoidance
@@ -75,12 +75,12 @@ exports
 	localClockResets = {|clockReset.CLID_T|}
 	
 	
-	channel get_CLID_OAEnabled : core_clock_type 
 	channel get_CLID_T : core_clock_type 
+	channel get_CLID_OAEnabled : core_clock_type 
 	channel get_CLID_OADisabled : core_clock_type 
 	--channel increment__
 	
-	CLID_OAEnabled_clock_type(id__,
+	CLID_T_clock_type(id__,
 			          const_ObstacleAvoidance_pi,
 			          const_ObstacleAvoidance_DISTANCE,
 			          const_ObstacleAvoidance_min_range,
@@ -97,7 +97,7 @@ exports
 	within
 		if member(max,core_clock_type) then ctype else error("core_clock_type is not wide enough")
 	
-	CLID_T_clock_type(id__,
+	CLID_OAEnabled_clock_type(id__,
 			          const_ObstacleAvoidance_pi,
 			          const_ObstacleAvoidance_DISTANCE,
 			          const_ObstacleAvoidance_min_range,
@@ -139,10 +139,10 @@ exports
 	channel startexec, startexec_action
 	
 	-- declaring registerRead/Write datatypes
-	datatype RegisterDataInput = i_closestDistance.Bool.core_real
-		| i_DisableOA.Bool
-		| i_closestAngle.Bool.core_real
+	datatype RegisterDataInput = i_closestAngle.Bool.core_real
 		| i_EnableOA.Bool
+		| i_DisableOA.Bool
+		| i_closestDistance.Bool.core_real
 		| i_NOAMove.Bool.Vec2
 	
 	
@@ -153,10 +153,10 @@ exports
 	o_OAMove|}
 		
 	nametype RegisterInputs = {|
-	i_closestDistance,
-	i_DisableOA,
 	i_closestAngle,
 	i_EnableOA,
+	i_DisableOA,
+	i_closestDistance,
 	i_NOAMove|}
 	
 	channel registerRead 	: RegisterDataInput
@@ -640,10 +640,10 @@ exports
 		
 				Cycle =
 					Deadline(
-						(registerRead.i_closestDistance?x__ -> SKIP
-							||| registerRead.i_DisableOA?x__ -> SKIP
-							||| registerRead.i_closestAngle?x__ -> SKIP
+						(registerRead.i_closestAngle?x__ -> SKIP
 							||| registerRead.i_EnableOA?x__ -> SKIP
+							||| registerRead.i_DisableOA?x__ -> SKIP
+							||| registerRead.i_closestDistance?x__ -> SKIP
 							||| registerRead.i_NOAMove?x__ -> SKIP);
 						startexec -> CollectOutputs(SOutputEvents),0);
 					TimeOut_1(terminate -> SKIP,WAIT(cycle_ObstacleAvoidance_ObstacleAvoidance-1);Cycle)
@@ -795,7 +795,7 @@ exports
 				    const_ObstacleAvoidance_v_closest_distance,
 				    const_ObstacleAvoidance_v_av,
 				    const_ObstacleAvoidance_v_lv) = ((let
-			Trans = share__choice(get_closestDistance?closestDistance -> get_DisableOA?DisableOA -> get_EnableOA?EnableOA -> get_closest_angle?closest_angle -> get_closest_distance?closest_distance -> get_NOAMove?NOAMove -> get_closestAngle?closestAngle -> TimeOut_1(
+			Trans = share__choice(get_closest_distance?closest_distance -> get_NOAMove?NOAMove -> get_DisableOA?DisableOA -> get_closestDistance?closestDistance -> get_EnableOA?EnableOA -> get_closest_angle?closest_angle -> get_closestAngle?closestAngle -> TimeOut_1(
 				 (share__ -> SKIP
 				 [] dbisim((member(DisableOA,{true}))&(endexec__.NID_OAEnabled -> startexec_action -> SKIP ;  share__choice(exit -> SKIP) ; ((let 
 				 	X = share__choice(exited -> SKIP [] endexec -> Y)
@@ -971,11 +971,11 @@ exports
 						 [[j3::interrupt <- x__ | x__ <- {|internal__.NID_j3,internal__.NID_j3|}]]
 						 )
 						  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
-						  [[set_closest_angle <- setL_closest_angle,set_closest_distance <- setL_closest_distance]]
+						  [[set_closest_distance <- setL_closest_distance,set_closest_angle <- setL_closest_angle]]
 						 )
 						 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
-						 			,setL_closest_angle
 						 			,setL_closest_distance
+						 			,setL_closest_angle
 						|}) |]
 						 ((i1::enter -> Transitions(id__,cycle_ObstacleAvoidance_ObstacleAvoidance,
 						 		    const_ObstacleAvoidance_pi,
@@ -986,9 +986,9 @@ exports
 						 		    const_ObstacleAvoidance_v_closest_distance,
 						 		    const_ObstacleAvoidance_v_av,
 						 		    const_ObstacleAvoidance_v_lv))
-						  [[ share__ <- x__ | x__ <- {| share__,setL_closest_angle,setL_closest_distance |} ]]
+						  [[ share__ <- x__ | x__ <- {| share__,setL_closest_distance,setL_closest_angle |} ]]
 						 )
-						)[[setL_closest_angle <- set_closest_angle,setL_closest_distance <- set_closest_distance]]
+						)[[setL_closest_distance <- set_closest_distance,setL_closest_angle <- set_closest_angle]]
 						)
 					)
 					 \ hideSet)
@@ -1345,11 +1345,11 @@ exports
 						 [[j3::interrupt <- x__ | x__ <- {|internal__.NID_j3,internal__.NID_j3|}]]
 						 )
 						  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
-						  [[set_closest_angle <- setL_closest_angle,set_closest_distance <- setL_closest_distance]]
+						  [[set_closest_distance <- setL_closest_distance,set_closest_angle <- setL_closest_angle]]
 						 )
 						 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
-						 			,setL_closest_angle
 						 			,setL_closest_distance
+						 			,setL_closest_angle
 						|}) |]
 						 ((i1::enter -> Transitions(id__,cycle_ObstacleAvoidance_ObstacleAvoidance,
 						 		    const_ObstacleAvoidance_pi,
@@ -1360,9 +1360,9 @@ exports
 						 		    const_ObstacleAvoidance_v_closest_distance,
 						 		    const_ObstacleAvoidance_v_av,
 						 		    const_ObstacleAvoidance_v_lv))
-						  [[ share__ <- x__ | x__ <- {| share__,setL_closest_angle,setL_closest_distance |} ]]
+						  [[ share__ <- x__ | x__ <- {| share__,setL_closest_distance,setL_closest_angle |} ]]
 						 )
-						)[[setL_closest_angle <- set_closest_angle,setL_closest_distance <- set_closest_distance]]
+						)[[setL_closest_distance <- set_closest_distance,setL_closest_angle <- set_closest_angle]]
 						)
 					)
 					 \ hideSet)

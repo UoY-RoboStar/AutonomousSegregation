@@ -1,23 +1,23 @@
-datatype Vec2 { 
-	x : real 
+datatype Vec2 {
+	x : real
 	y : real
 }
 
-datatype ObjectData { 
-	objectID : nat 
-	clusterID : nat 
-	graphOrder : nat 
-	position : Vec2 
-	positionx : real 
+datatype ObjectData {
+	objectID : nat
+	clusterID : nat
+	graphOrder : nat
+	position : Vec2
+	positionx : real
 	positiony : real
-} 
+}
 
 
-datatype ClusterData { clusterID : nat 
-	clusterSize : nat 
-	clusterType : nat 
+datatype ClusterData { clusterID : nat
+	clusterSize : nat
+	clusterType : nat
 	centroid : Vec2
-} 
+}
 
 interface IVisibleClustersCC {
     event VisibleClustersCC : nat * Seq( ClusterData ) * Seq( ObjectData )
@@ -140,39 +140,39 @@ controller CacheConsC {
 }
 
 stm CacheConsS {
-    const lv : real = 1
-    const av : real = 1
-    const pi : real = 3
-    var randcoef : real = 100
-    const k1 : real = 1
-    const timeout : real = 6
-    const timeout_PUSH : real = 1
-    const timeout_BACKUP : real = 5
-    const timeout_EXILE : real = 5
-    const PUSH_LV : real = 1
-    const TARGET_AV : real = 1
-    const ANGLE_DIFF : real = 1
-    const ANGLE_DIFF_TOLERANCE : real = 1
-    const LINEAR_HOME : real = 1
-    var done : boolean = false
-    var angle : real = 10
-    var prob : real = 0
+    const lv : real // 0.25
+    const av : real // 1.0
+    const pi : real = 3 // 3.14159
+    var randcoef : real // 100
+    const k1 : real  // 0.1
+    const timeout : real // 6
+    const timeout_PUSH : real // 0.5
+    const timeout_BACKUP : real // 5.0
+    const timeout_EXILE : real // 5.0
+    const PUSH_LV : real // 0.2
+    const TARGET_AV : real // 0.3
+    const ANGLE_DIFF : real // 0.1
+    const ANGLE_DIFF_TOLERANCE : real // 0.01
+    const LINEAR_HOME : real //0.8
+    var done : boolean
+    var angle : real // 10.0
+    var prob : real // 0.0
     var counter : nat = 0
     var data : nat * Seq( ClusterData ) * Seq( ObjectData )
     var SmallestVisibleCluster : ClusterData
     var m : Seq( ClusterData )
-    var leftObject : nat = 0
-    var leftObjectx : real = 0
-    var leftObjecty : real = 0
-    var rightObject : nat = 0
-    var rightObjectx : real = 0
-    var rightObjecty : real = 0
-    var targetObjectID : nat = 0
-    var targetObjectx : real = 0
-    var targetObjecty : real = 0
+    var leftObject : nat // 0
+    var leftObjectx : real // 0.0
+    var leftObjecty : real // 0.0
+    var rightObject : nat // 0
+    var rightObjectx : real // 0.0
+    var rightObjecty : real // 0.0
+    var targetObjectID : nat 
+    var targetObjectx : real // 0.0
+    var targetObjecty : real // 0.0
     var targetPosition : Vec2
     var targetObject : Vec2
-    var ct : nat = 1
+    var ct : nat
     var coord : Vec2
     var moveCmd : Vec2
     clock T
@@ -183,7 +183,7 @@ stm CacheConsS {
         initial i0
         state ClusterSeen {
             state CalculateProb {
-                entry randcoef = randomcoef ( ) ; prob = ( k1 / ( k1 + SmallestVisibleCluster . clusterSize ) ) * ( k1 / ( k1 + SmallestVisibleCluster . clusterSize ) )
+                entry randcoef = randomcoef ( ) ; prob = ( k1 / ( k1 + SmallestVisibleCluster . clusterSize ) ) * ( k1 / ( k1 + SmallestVisibleCluster . clusterSize ) ) ; ct = SmallestVisibleCluster . clusterType
             }
             state CalcSmallestVisibleCluster {
                 entry if ( data [ 2 ] ) [ counter ] . clusterSize > SmallestVisibleCluster . clusterSize then SmallestVisibleCluster = ( data [ 2 ] ) [ counter ] end
@@ -204,7 +204,6 @@ stm CacheConsS {
                 from i0
                 to CalcSmallestVisibleCluster
             }
-            entry ct = SmallestVisibleCluster . clusterType
         }
         state ChooseTargetPosition {
             initial i0
@@ -258,7 +257,7 @@ stm CacheConsS {
                 condition leftObject == 0 \/ rightObject == 0
                 action done = true
             }
-            
+
         }
         state WaitForCluster {
         }
@@ -541,14 +540,14 @@ stm CacheConsS {
 }
 
 stm ObstacleAvoidance {
-    const pi : real
-    const DISTANCE : real
-    const min_range : real
-    const max_range : real
-    const v_closest_angle : real
+    const pi : real = 3
+    const DISTANCE : real // 0.4
+    const min_range : real // 0.1
+    const max_range : real // 0.4
+    const v_closest_angle : real 
     const v_closest_distance : real
-    const v_av : real
-    const v_lv : real
+    const v_av : real // 0.7
+    const v_lv : real // 0.07
     var closest_angle : real = v_closest_angle
     var closest_distance : real = v_closest_distance
     var av : real = v_av
@@ -598,10 +597,7 @@ stm ObstacleAvoidance {
         condition ( closest_distance >= min_range ) /\ ( closest_distance < max_range ) /\ ( abs ( closest_angle ) <= 90 )
         action current_speed = NOA_Move.y
     }
-    
-    
-    
-    
+
     transition t3 {
         from j0
         to OAEnabled
@@ -667,21 +663,25 @@ stm MoveManager {
     state MoveHandler {
         entry $ move ( cmd ) ; $ NOAMove ! NOAcmd
     }
+
     transition t0 {
         from MoveHandler
         to MoveHandler
         exec
-        condition $ RWMove ? cmd /\ $ RWMove ? NOAcmd /\ not $ OAMove /\ not $ CCMove
+        condition $ RWMove ? cmd /\ not $ OAMove /\ not $ CCMove
+        action NOAcmd = cmd
     }
     transition t1 {
         from i0
         to MoveHandler
+        action cmd.x = 0 ; cmd.y = 0 ; NOAcmd.x = 0 ; NOAcmd . y = 0
     }
     transition t2 {
         from MoveHandler
         to MoveHandler
         exec
-        condition $ CCMove ? cmd /\ $ CCMove ? NOAcmd /\ not $ OAMove
+        condition $ CCMove ? cmd /\ not $ OAMove
+        action NOAcmd = cmd
     }
     transition t3 {
         from MoveHandler
@@ -711,7 +711,7 @@ stm MoveManager {
 
 stm CachePointAssignment {
     var j : nat
-    var counter : nat = 1
+    var counter : nat
     var L : ClusterData
     var data : nat * Seq( ClusterData ) * Seq( ObjectData )
     var m : Seq( ClusterData )
@@ -796,10 +796,10 @@ stm TargetWatch {
     var targetObjectxy : Vec2
     var closestTargetObject : ObjectData
     var closestTargetObjectPosition : Vec2
-    var counter : nat = 0
+    var counter : nat
     var data : nat * Seq( ClusterData ) * Seq( ObjectData )
-    var done : boolean = false
-    var validObject : boolean = true
+    var done : boolean
+    var validObject : boolean
     var targetType : nat
     var m : Seq( ClusterData )
     input context { uses ITargetWatchFromCC uses IVisibleClustersTW uses ICurrentTypeTW uses ICachePointsTW }
@@ -865,6 +865,7 @@ stm TargetWatch {
         to DetectingTarget
         exec
         condition $ EnableTargetWatch ? targetObjectxy /\ $ VisibleClustersTW ? data /\ $ CurrentTypeTW ? targetType
+    	action counter = 1 ; validObject = true
     }
     transition t2 {
         from DetectingTarget
@@ -881,12 +882,12 @@ stm TargetWatch {
 }
 
 stm RandomWalk {
-    const lv : real
-    const av : real
-    const pi : real
+    const lv : real // 0.07
+    const av : real // 0.6
+    const pi : real = 3 // 3.14159
     const v_randcoef : real
     var randcoef : real = v_randcoef
-    var sign : nat = 1
+    var sign : nat
     var rwCmd : Vec2
     clock T
     input context { uses IClusterWatch }
@@ -948,7 +949,7 @@ stm RandomWalk {
         from Wait
         to Wander
         condition $ EnableClusterWatch
-        action exec
+        action sign = 1; exec
     }
     transition t3 {
         from Wander
@@ -959,51 +960,51 @@ stm RandomWalk {
     }
 }
 
-function randomnat ( ) : nat { } 
+function randomnat ( ) : nat { }
 
-function randomcoef ( ) : real { } 
+function randomcoef ( ) : real { }
 
-function sqrt ( v : real ) : real { 
-    precondition v >= 0 
+function sqrt ( v : real ) : real {
+    precondition v >= 0
     postcondition result * result == v
-} 
-
-function distance ( x1 : Vec2 , x2 : Vec2 ) : real { 
-    postcondition result == sqrt ( ( x2 . x - x1 . x ) * ( x2 . x - x1 . x ) + ( x2 . y - x1 . y ) * ( x2 . y - x1 . y ) ) 
 }
 
-function L2 ( x : Vec2 ) : real { 
+function distance ( x1 : Vec2 , x2 : Vec2 ) : real {
+    postcondition result == sqrt ( ( x2 . x - x1 . x ) * ( x2 . x - x1 . x ) + ( x2 . y - x1 . y ) * ( x2 . y - x1 . y ) )
+}
+
+function L2 ( x : Vec2 ) : real {
     postcondition result == sqrt ( ( x . x * x . x + x . y * x . y ) )
-} 
+}
 
-function dot ( x1 : Vec2 , x2 : Vec2 ) : real { 
+function dot ( x1 : Vec2 , x2 : Vec2 ) : real {
     postcondition result == x1 . x * x2 . x + x1 . y * x2 . y
-} 
+}
 
-function unit ( x : Vec2 ) : Vec2 { 
-    postcondition result . x == x . x / L2 ( x ) 
+function unit ( x : Vec2 ) : Vec2 {
+    postcondition result . x == x . x / L2 ( x )
     postcondition result . y == x . y / L2 ( x )
-} 
+}
 
-function angle_between ( x1 : Vec2 , x2 : Vec2 ) : real { 
+function angle_between ( x1 : Vec2 , x2 : Vec2 ) : real {
     postcondition result == acos ( dot ( unit ( x1 ) , unit ( x2 ) ) )
-} 
+}
 
-function calculate_turn_angle ( x1 : Vec2 , x2 : Vec2 ) : real { 
+function calculate_turn_angle ( x1 : Vec2 , x2 : Vec2 ) : real {
     postcondition result == 0
-} 
-function acos ( x : real ) : real { } 
-function abs ( x : real ) : real { 
+}
+function acos ( x : real ) : real { }
+function abs ( x : real ) : real {
     postcondition result == sqrt ( x * x )
-} 
-function randcoef ( ) : real { 
+}
+function randcoef ( ) : real {
     postcondition 0 <= result <= 1
-} 
-function randnat ( ) : real { 
+}
+function randnat ( ) : real {
     postcondition 0 <= result <= 6
-} function random_sign ( ) : nat { 
+} function random_sign ( ) : nat {
     postcondition result == 1
-} 
+}
 
 module CacheConsM {
     connection TurtleBot on ObjectCarried to ctrl_ref0 on ObjectCarried ( _async )
@@ -1019,3 +1020,4 @@ module CacheConsM {
     cref ctrl_ref0 = CacheConsC
     cycleDef cycle == 1
 }
+

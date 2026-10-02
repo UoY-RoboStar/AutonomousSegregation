@@ -1,7 +1,7 @@
 
 --
 -- RoboSim generator version 3.1.0.202608041342
--- Automatically generated on 22-09-2026 12:29:01
+-- Automatically generated on 01-10-2026 12:58:03
 --
 
 module RandomWalk
@@ -546,20 +546,20 @@ exports
 						 						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 						 						 )
 						 						  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
-						 						  [[clockReset.CLID_T <- clockResetL.CLID_T,set_randcoef <- setL_randcoef]]
+						 						  [[set_randcoef <- setL_randcoef,clockReset.CLID_T <- clockResetL.CLID_T]]
 						 						 )
 						 						 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
-						 						 			,clockResetL.CLID_T
 						 						 			,setL_randcoef
+						 						 			,clockResetL.CLID_T
 						 						|}) |]
 						 						 ((i0::enter -> Transitions(id__,cycle_RandomWalk_RandomWalk,
 						 						 		    const_RandomWalk_lv,
 						 						 		    const_RandomWalk_av,
 						 						 		    const_RandomWalk_pi,
 						 						 		    const_RandomWalk_v_randcoef))
-						 						  [[ share__ <- x__ | x__ <- {| share__,clockResetL.CLID_T,setL_randcoef |} ]]
+						 						  [[ share__ <- x__ | x__ <- {| share__,setL_randcoef,clockResetL.CLID_T |} ]]
 						 						 )
-						 						)[[clockResetL.CLID_T <- clockReset.CLID_T,setL_randcoef <- set_randcoef]]
+						 						)[[setL_randcoef <- set_randcoef,clockResetL.CLID_T <- clockReset.CLID_T]]
 						 						)
 						 					)
 						 					 \ hideSet)
@@ -584,25 +584,25 @@ exports
 						 	)\{|get_CLID_Turn|}
 						 )
 						 ))
-						  [[ share__ <- x__ | x__ <- {| share__,clockResetR.CLID_T,setR_randcoef,setR_sign,setR_rwCmd |} ]] 
-						  [[clockReset.CLID_T <- clockResetL.CLID_T,set_randcoef <- setL_randcoef,set_sign <- setL_sign,set_rwCmd <- setL_rwCmd]]
+						  [[ share__ <- x__ | x__ <- {| share__,setR_sign,setR_randcoef,clockResetR.CLID_T,setR_rwCmd |} ]] 
+						  [[set_sign <- setL_sign,set_randcoef <- setL_randcoef,clockReset.CLID_T <- clockResetL.CLID_T,set_rwCmd <- setL_rwCmd]]
 						 )
 						 [| union(union(enteredSS,{| interrupt, terminate |}),{|share__
-						 			,clockResetL.CLID_T
-						 			,setL_randcoef
 						 			,setL_sign
+						 			,setL_randcoef
+						 			,clockResetL.CLID_T
 						 			,setL_rwCmd
-						 			,clockResetR.CLID_T
+						 			,setR_sign
 						 			 			,setR_randcoef
-						 			 			,setR_sign
+						 			 			,clockResetR.CLID_T
 						 			 			,setR_rwCmd
 						 			|}) |]
 						 ((During)
-						  [[ share__ <- x__ | x__ <- {| share__,clockResetL.CLID_T,setL_randcoef,setL_sign,setL_rwCmd |} ]]
-						  [[clockReset.CLID_T <- clockResetR.CLID_T,set_randcoef <- setR_randcoef,set_sign <- setR_sign,set_rwCmd <- setR_rwCmd]]
+						  [[ share__ <- x__ | x__ <- {| share__,setL_sign,setL_randcoef,clockResetL.CLID_T,setL_rwCmd |} ]]
+						  [[set_sign <- setR_sign,set_randcoef <- setR_randcoef,clockReset.CLID_T <- clockResetR.CLID_T,set_rwCmd <- setR_rwCmd]]
 						 )
-						)[[clockResetL.CLID_T <- clockReset.CLID_T,setL_randcoef <- set_randcoef,setL_sign <- set_sign,setL_rwCmd <- set_rwCmd]]
-						 [[clockResetR.CLID_T <- clockReset.CLID_T,setR_randcoef <- set_randcoef,setR_sign <- set_sign,setR_rwCmd <- set_rwCmd]]
+						)[[setL_sign <- set_sign,setL_randcoef <- set_randcoef,clockResetL.CLID_T <- clockReset.CLID_T,setL_rwCmd <- set_rwCmd]]
+						 [[setR_sign <- set_sign,setR_randcoef <- set_randcoef,clockResetR.CLID_T <- clockReset.CLID_T,setR_rwCmd <- set_rwCmd]]
 						)\union(enteredSS,{terminate}) 
 					)
 					During 		= share__choice(([] e__ : enteredSS @ e__ -> SKIP))
@@ -676,20 +676,20 @@ exports
 						 						 [[i0::interrupt <- x__ | x__ <- {|internal__.NID_i0|}]]
 						 						 )
 						 						  [[ share__ <- x__ | x__ <- {| share__ |} ]] 
-						 						  [[clockReset.CLID_T <- clockResetL.CLID_T,set_randcoef <- setL_randcoef]]
+						 						  [[set_randcoef <- setL_randcoef,clockReset.CLID_T <- clockResetL.CLID_T]]
 						 						 )
 						 						 [| union(union(union(flowevts,transSync),{|terminate,endexec,startexec|}),{|share__
-						 						 			,clockResetL.CLID_T
 						 						 			,setL_randcoef
+						 						 			,clockResetL.CLID_T
 						 						|}) |]
 						 						 ((i0::enter -> Transitions(id__,cycle_RandomWalk_RandomWalk,
 						 						 		    const_RandomWalk_lv,
 						 						 		    const_RandomWalk_av,
 						 						 		    const_RandomWalk_pi,
 						 						 		    const_RandomWalk_v_randcoef))
-						 						  [[ share__ <- x__ | x__ <- {| share__,clockResetL.CLID_T,setL_randcoef |} ]]
+						 						  [[ share__ <- x__ | x__ <- {| share__,setL_randcoef,clockResetL.CLID_T |} ]]
 						 						 )
-						 						)[[clockResetL.CLID_T <- clockReset.CLID_T,setL_randcoef <- set_randcoef]]
+						 						)[[setL_randcoef <- set_randcoef,clockResetL.CLID_T <- clockReset.CLID_T]]
 						 						)
 						 					)
 						 					 \ hideSet)
@@ -714,25 +714,25 @@ exports
 						 	)\{|get_CLID_Turn|}
 						 )
 						 ))
-						  [[ share__ <- x__ | x__ <- {| share__,clockResetR.CLID_T,setR_randcoef,setR_sign,setR_rwCmd |} ]] 
-						  [[clockReset.CLID_T <- clockResetL.CLID_T,set_randcoef <- setL_randcoef,set_sign <- setL_sign,set_rwCmd <- setL_rwCmd]]
+						  [[ share__ <- x__ | x__ <- {| share__,setR_sign,setR_randcoef,clockResetR.CLID_T,setR_rwCmd |} ]] 
+						  [[set_sign <- setL_sign,set_randcoef <- setL_randcoef,clockReset.CLID_T <- clockResetL.CLID_T,set_rwCmd <- setL_rwCmd]]
 						 )
 						 [| union(union(enteredSS,{| interrupt, terminate |}),{|share__
-						 			,clockResetL.CLID_T
-						 			,setL_randcoef
 						 			,setL_sign
+						 			,setL_randcoef
+						 			,clockResetL.CLID_T
 						 			,setL_rwCmd
-						 			,clockResetR.CLID_T
+						 			,setR_sign
 						 			 			,setR_randcoef
-						 			 			,setR_sign
+						 			 			,clockResetR.CLID_T
 						 			 			,setR_rwCmd
 						 			|}) |]
 						 ((During)
-						  [[ share__ <- x__ | x__ <- {| share__,clockResetL.CLID_T,setL_randcoef,setL_sign,setL_rwCmd |} ]]
-						  [[clockReset.CLID_T <- clockResetR.CLID_T,set_randcoef <- setR_randcoef,set_sign <- setR_sign,set_rwCmd <- setR_rwCmd]]
+						  [[ share__ <- x__ | x__ <- {| share__,setL_sign,setL_randcoef,clockResetL.CLID_T,setL_rwCmd |} ]]
+						  [[set_sign <- setR_sign,set_randcoef <- setR_randcoef,clockReset.CLID_T <- clockResetR.CLID_T,set_rwCmd <- setR_rwCmd]]
 						 )
-						)[[clockResetL.CLID_T <- clockReset.CLID_T,setL_randcoef <- set_randcoef,setL_sign <- set_sign,setL_rwCmd <- set_rwCmd]]
-						 [[clockResetR.CLID_T <- clockReset.CLID_T,setR_randcoef <- set_randcoef,setR_sign <- set_sign,setR_rwCmd <- set_rwCmd]]
+						)[[setL_sign <- set_sign,setL_randcoef <- set_randcoef,clockResetL.CLID_T <- clockReset.CLID_T,setL_rwCmd <- set_rwCmd]]
+						 [[setR_sign <- set_sign,setR_randcoef <- set_randcoef,clockResetR.CLID_T <- clockReset.CLID_T,setR_rwCmd <- set_rwCmd]]
 						)\{terminate} 
 					)
 					During 		= share__choice(([] e__ : enteredSS @ e__ -> SKIP))
@@ -745,7 +745,7 @@ exports
 						    const_RandomWalk_av,
 						    const_RandomWalk_pi,
 						    const_RandomWalk_v_randcoef) = ((let
-					Trans = share__choice(get_CLID_T?T -> get_randcoef?randcoef -> TimeOut_1(
+					Trans = share__choice(get_randcoef?randcoef -> get_CLID_T?T -> TimeOut_1(
 						 (share__ -> SKIP
 						 [] dbisim((true)&(internal__!NID_i0 -> SKIP ;  ((((SKIP)[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; Turn::enter -> SKIP))))
 						 [] dbisim(((T>=randcoef))&(endexec__.NID_Turn -> startexec_action -> SKIP ;  share__choice(exit -> SKIP) ; ((let 
@@ -1081,7 +1081,7 @@ exports
 				 	X = share__choice(exited -> SKIP [] endexec -> Y)
 				 	Y = share__choice(exited -> SKIP [] startexec -> X)
 				  within
-				  	X) ; ((endexec -> startexec -> SKIP)[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; Wander::enter -> SKIP)))
+				  	X) ; ((share__choice(true & (share__choice(set_sign!1 -> SKIP)));endexec -> startexec -> SKIP)[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; Wander::enter -> SKIP)))
 				 [] dbisim((member(DisableClusterWatch,{true}))&(endexec__.NID_Wander -> startexec_action -> SKIP ;  share__choice(exit -> SKIP) ; ((let 
 				 	X = share__choice(exited -> SKIP [] endexec -> Y)
 				 	Y = share__choice(exited -> SKIP [] startexec -> X)
@@ -1306,7 +1306,7 @@ exports
 								)\{|get_rwCmd,set_rwCmd|}
 							)
 							[| {|get_sign,set_sign,terminate|} |]
-							Memory_sign(1)
+							Memory_sign(0)
 						)\{|get_sign,set_sign|}
 					)
 					[| {|get_randcoef,set_randcoef,terminate|} |]
@@ -1517,7 +1517,7 @@ exports
 								)\{|get_rwCmd,set_rwCmd|}
 							)
 							[| {|get_sign,set_sign,terminate|} |]
-							Memory_sign(1)
+							Memory_sign(0)
 						)\{|get_sign,set_sign|}
 					)
 					[| {|get_randcoef,set_randcoef,terminate|} |]
@@ -1556,7 +1556,7 @@ exports
 				    const_RandomWalk_pi,
 				    const_RandomWalk_v_randcoef) = Memory_randcoef(const_RandomWalk_v_randcoef)
 		[| { terminate } |] (
-		Memory_sign(1)
+		Memory_sign(0)
 		[| { terminate } |] (
 		Memory_rwCmd((0,0))
 		)

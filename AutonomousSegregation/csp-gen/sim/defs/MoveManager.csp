@@ -1,7 +1,7 @@
 
 --
 -- RoboSim generator version 3.1.0.202608041342
--- Automatically generated on 22-09-2026 12:29:01
+-- Automatically generated on 01-10-2026 12:58:03
 --
 
 module MoveManager
@@ -78,9 +78,9 @@ exports
 	channel startexec, startexec_action
 	
 	-- declaring registerRead/Write datatypes
-	datatype RegisterDataInput = i_OAMove.Bool.Vec2
-		| i_CCMove.Bool.Vec2
+	datatype RegisterDataInput = i_CCMove.Bool.Vec2
 		| i_RWMove.Bool.Vec2
+		| i_OAMove.Bool.Vec2
 	
 	
 	datatype RegisterDataOutput = o_move.Vec2
@@ -92,9 +92,9 @@ exports
 	o_NOAMove|}
 		
 	nametype RegisterInputs = {|
-	i_OAMove,
 	i_CCMove,
-	i_RWMove|}
+	i_RWMove,
+	i_OAMove|}
 	
 	channel registerRead 	: RegisterDataInput
 	channel registerWrite 	: RegisterDataOutput
@@ -247,9 +247,9 @@ exports
 		
 				Cycle =
 					Deadline(
-						(registerRead.i_OAMove?x__ -> SKIP
-							||| registerRead.i_CCMove?x__ -> SKIP
-							||| registerRead.i_RWMove?x__ -> SKIP);
+						(registerRead.i_CCMove?x__ -> SKIP
+							||| registerRead.i_RWMove?x__ -> SKIP
+							||| registerRead.i_OAMove?x__ -> SKIP);
 						startexec -> CollectOutputs(SOutputEvents),0);
 					TimeOut_1(terminate -> SKIP,WAIT(cycle_MoveManager_MoveManager-1);Cycle)
 				
@@ -336,25 +336,21 @@ exports
 		
 		-- Transitions
 		Transitions(id__,cycle_MoveManager_MoveManager) = ((let
-			Trans = share__choice(get_OAMove?OAMove -> get_CCMove?CCMove -> get_RWMove?RWMove -> TimeOut_1(
+			Trans = share__choice(get_RWMove?RWMove -> get_OAMove?OAMove -> get_CCMove?CCMove -> TimeOut_1(
 				 (share__ -> SKIP
-				 [] dbisim(((((member(RWMove,{true.cmd | cmd <- Vec2}) and member(RWMove,{true.NOAcmd | NOAcmd <- Vec2})) and (not (member(OAMove,{true.x__ | x__ <- Vec2})))) and (not (member(CCMove,{true.x__ | x__ <- Vec2})))))&(endexec__.NID_MoveHandler -> startexec_action -> SKIP ; get_RWMove?b__?x__ -> set_cmd!x__ -> SKIP;
-				 
-				 get_RWMove?b__?x__ -> set_NOAcmd!x__ -> SKIP
+				 [] dbisim((((member(RWMove,{true.cmd | cmd <- Vec2}) and (not (member(OAMove,{true.x__ | x__ <- Vec2})))) and (not (member(CCMove,{true.x__ | x__ <- Vec2})))))&(endexec__.NID_MoveHandler -> startexec_action -> SKIP ; get_RWMove?b__?x__ -> set_cmd!x__ -> SKIP
 				 ; share__choice(exit -> SKIP) ; ((let 
 				 	X = share__choice(exited -> SKIP [] endexec -> Y)
 				 	Y = share__choice(exited -> SKIP [] startexec -> X)
 				  within
-				  	X) ; ((SKIP)[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; MoveHandler::enter -> SKIP)))
-				 [] dbisim((true)&(internal__!NID_i0 -> SKIP ;  ((((SKIP)[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; MoveHandler::enter -> SKIP))))
-				 [] dbisim((((member(CCMove,{true.cmd | cmd <- Vec2}) and member(CCMove,{true.NOAcmd | NOAcmd <- Vec2})) and (not (member(OAMove,{true.x__ | x__ <- Vec2})))))&(endexec__.NID_MoveHandler -> startexec_action -> SKIP ; get_CCMove?b__?x__ -> set_cmd!x__ -> SKIP;
-				 
-				 get_CCMove?b__?x__ -> set_NOAcmd!x__ -> SKIP
+				  	X) ; ((share__choice(share__choice(get_cmd?cmd -> true & (share__choice(set_NOAcmd!cmd -> SKIP)))))[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; MoveHandler::enter -> SKIP)))
+				 [] dbisim((true)&(internal__!NID_i0 -> SKIP ;  ((((share__choice(share__choice(get_cmd?cmd -> true & (share__choice(set_cmd!update_Vec2_x(cmd,0) -> SKIP))));share__choice(share__choice(get_cmd?cmd -> true & (share__choice(set_cmd!update_Vec2_y(cmd,0) -> SKIP))));share__choice(share__choice(get_NOAcmd?NOAcmd -> true & (share__choice(set_NOAcmd!update_Vec2_x(NOAcmd,0) -> SKIP))));share__choice(share__choice(get_NOAcmd?NOAcmd -> true & (share__choice(set_NOAcmd!update_Vec2_y(NOAcmd,0) -> SKIP)))))[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; MoveHandler::enter -> SKIP))))
+				 [] dbisim(((member(CCMove,{true.cmd | cmd <- Vec2}) and (not (member(OAMove,{true.x__ | x__ <- Vec2})))))&(endexec__.NID_MoveHandler -> startexec_action -> SKIP ; get_CCMove?b__?x__ -> set_cmd!x__ -> SKIP
 				 ; share__choice(exit -> SKIP) ; ((let 
 				 	X = share__choice(exited -> SKIP [] endexec -> Y)
 				 	Y = share__choice(exited -> SKIP [] startexec -> X)
 				  within
-				  	X) ; ((SKIP)[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; MoveHandler::enter -> SKIP)))
+				  	X) ; ((share__choice(share__choice(get_cmd?cmd -> true & (share__choice(set_NOAcmd!cmd -> SKIP)))))[[ endexec <- endexec_action, startexec <- startexec_action ]]) ; MoveHandler::enter -> SKIP)))
 				 [] dbisim((((member(OAMove,{true.cmd | cmd <- Vec2}) and member(RWMove,{true.NOAcmd | NOAcmd <- Vec2})) and (not (member(CCMove,{true.x__ | x__ <- Vec2})))))&(endexec__.NID_MoveHandler -> startexec_action -> SKIP ; get_OAMove?b__?x__ -> set_cmd!x__ -> SKIP;
 				 
 				 get_RWMove?b__?x__ -> set_NOAcmd!x__ -> SKIP

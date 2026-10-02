@@ -1,7 +1,7 @@
 
 --
 -- RoboSim generator version 3.1.0.202608041342
--- Automatically generated on 22-09-2026 12:29:01
+-- Automatically generated on 01-10-2026 12:58:03
 --
 
 include "core_timed_defs.csp"
@@ -20,19 +20,7 @@ P_CacheConsS = let
 	id__ = 0
 	
 	
-	const_CacheConsS_lv = 1
-	const_CacheConsS_av = 1
 	const_CacheConsS_pi = 3
-	const_CacheConsS_k1 = 1
-	const_CacheConsS_timeout = 6
-	const_CacheConsS_timeout_PUSH = 1
-	const_CacheConsS_timeout_BACKUP = 5
-	const_CacheConsS_timeout_EXILE = 5
-	const_CacheConsS_PUSH_LV = 1
-	const_CacheConsS_TARGET_AV = 1
-	const_CacheConsS_ANGLE_DIFF = 1
-	const_CacheConsS_ANGLE_DIFF_TOLERANCE = 1
-	const_CacheConsS_LINEAR_HOME = 1
 	
 within
 	CacheConsS::O__(
