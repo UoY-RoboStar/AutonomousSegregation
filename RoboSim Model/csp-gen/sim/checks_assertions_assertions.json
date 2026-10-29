@@ -1,0 +1,6 @@
+[
+{ "name": "RandomWalk is deadlock free (A7) [failures divergences model]",
+  "type": "deadlock-free",
+  "negated": false 
+}
+			]

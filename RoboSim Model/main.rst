@@ -1,32 +1,34 @@
-//datatype Vec2 { 
-//	x : real 
+//datatype Vec2 {
+//	x : real
 //	y : real
 //}
 //
-//datatype ObjectData { 
-//	objectID : nat 
-//	clusterID : nat 
-//	graphOrder : nat 
+//datatype ObjectData {
+//	objectID : nat
+//	clusterID : nat
+//	graphOrder : nat
 //	position : Vec2
-//} 
+//	positionx : real
+//	positiony : real
+//}
 //
 //
-//datatype ClusterData { clusterID : nat 
-//	clusterSize : nat 
-//	clusterType : nat 
+//datatype ClusterData { clusterID : nat
+//	clusterSize : nat
+//	clusterType : nat
 //	centroid : Vec2
-//} 
+//}
 //
 //interface IVisibleClustersCC {
 //    event VisibleClustersCC : nat * Seq( ClusterData ) * Seq( ObjectData )
 //}
 //
 //interface IVisibleClustersCA {
-//    event VisibleClustersCA : nat * Seq( ClusterData )
+//    event VisibleClustersCA : nat * Seq( ClusterData ) * Seq( ObjectData )
 //}
 //
 //interface IVisibleClustersTW {
-//    event VisibleClustersTW : nat * Seq( ObjectData )
+//    event VisibleClustersTW : nat * Seq( ClusterData ) * Seq( ObjectData )
 //}
 //
 //interface IClusterWatch {
@@ -138,33 +140,36 @@
 //}
 //
 //stm CacheConsS {
-//    const lv : real
-//    const av : real
-//    const pi : real
-//    var randcoef : real
-//    const k1 : real
-//    const timeout : real
-//    const timeout_PUSH : real
-//    const timeout_BACKUP : real
-//    const timeout_EXILE : real
-//    const PUSH_LV : real
-//    const TARGET_AV : real
-//    const ANGLE_DIFF : real
-//    const ANGLE_DIFF_TOLERANCE : real
-//    const LINEAR_HOME : real
+//    const lv : real // 0.25
+//    const av : real // 1.0
+//    const pi : real = 3 // 3.14159
+//    var randcoef : real // 100
+//    const k1 : real  // 0.1
+//    const timeout : real // 6
+//    const timeout_PUSH : real // 0.5
+//    const timeout_BACKUP : real // 5.0
+//    const timeout_EXILE : real // 5.0
+//    const PUSH_LV : real // 0.2
+//    const TARGET_AV : real // 0.3
+//    const ANGLE_DIFF : real // 0.1
+//    const ANGLE_DIFF_TOLERANCE : real // 0.01
+//    const LINEAR_HOME : real //0.8
 //    var done : boolean
-//    var angle : real
-//    var prob : real
-//    var counter : nat
+//    var angle : real // 10.0
+//    var prob : real // 0.0
+//    var counter : nat = 0
 //    var data : nat * Seq( ClusterData ) * Seq( ObjectData )
 //    var SmallestVisibleCluster : ClusterData
 //    var m : Seq( ClusterData )
-//    var leftObject : nat
-//    var leftObjectx : real
-//    var leftObjecty : real
-//    var rightObject : nat
-//    var rightObjectx : real
-//    var rightObjecty : real
+//    var leftObject : nat // 0
+//    var leftObjectx : real // 0.0
+//    var leftObjecty : real // 0.0
+//    var rightObject : nat // 0
+//    var rightObjectx : real // 0.0
+//    var rightObjecty : real // 0.0
+//    var targetObjectID : nat 
+//    var targetObjectx : real // 0.0
+//    var targetObjecty : real // 0.0
 //    var targetPosition : Vec2
 //    var targetObject : Vec2
 //    var ct : nat
@@ -178,7 +183,7 @@
 //        initial i0
 //        state ClusterSeen {
 //            state CalculateProb {
-//                entry randcoef = randomcoef ( ) ; prob = ( k1 / ( k1 + SmallestVisibleCluster . clusterSize ) ) * ( k1 / ( k1 + SmallestVisibleCluster . clusterSize ) )
+//                entry randcoef = randomcoef ( ) ; prob = ( k1 / ( k1 + SmallestVisibleCluster . clusterSize ) ) * ( k1 / ( k1 + SmallestVisibleCluster . clusterSize ) ) ; ct = SmallestVisibleCluster . clusterType
 //            }
 //            state CalcSmallestVisibleCluster {
 //                entry if ( data [ 2 ] ) [ counter ] . clusterSize > SmallestVisibleCluster . clusterSize then SmallestVisibleCluster = ( data [ 2 ] ) [ counter ] end
@@ -199,15 +204,14 @@
 //                from i0
 //                to CalcSmallestVisibleCluster
 //            }
-//            entry ct = SmallestVisibleCluster . clusterType
 //        }
 //        state ChooseTargetPosition {
 //            initial i0
 //            state CalcLeftObject {
-//                entry if ( data [ 3 ] ) [ counter ] . clusterID == SmallestVisibleCluster . clusterID /\ ( data [ 3 ] ) [ counter ] . position . x < leftObjectx then leftObjectx = ( data [ 3 ] ) [ counter ] . position . x ; leftObjecty = ( data [ 3 ] ) [ counter ] . position . y ; leftObject = ( data [ 3 ] ) [ counter ] . objectID end
+//                entry if ( data [ 3 ] ) [ counter ] . clusterID == SmallestVisibleCluster . clusterID /\ ( data [ 3 ] ) [ counter ] . positionx < leftObjectx then leftObjectx = ( data [ 3 ] ) [ counter ] . positionx ; leftObjecty = ( data [ 3 ] ) [ counter ] . positiony ; leftObject = ( data [ 3 ] ) [ counter ] . objectID end
 //            }
 //            state CalcRightObject {
-//                entry if ( data [ 3 ] ) [ counter ] . clusterID == SmallestVisibleCluster . clusterID /\ ( data [ 3 ] ) [ counter ] . position . x > rightObjectx then rightObjectx = ( data [ 3 ] ) [ counter ] . position . x ; rightObjecty = ( data [ 3 ] ) [ counter ] . position . y ; rightObject = ( data [ 3 ] ) [ counter ] . objectID end
+//                entry if ( data [ 3 ] ) [ counter ] . clusterID == SmallestVisibleCluster . clusterID /\ ( data [ 3 ] ) [ counter ] . positionx > rightObjectx then rightObjectx = ( data [ 3 ] ) [ counter ] . positionx ; rightObjecty = ( data [ 3 ] ) [ counter ] . positiony ; rightObject = ( data [ 3 ] ) [ counter ] . objectID end
 //            }
 //            state ChooseLeftObject {
 //                entry targetPosition . x = leftObjectx ; targetPosition . y = leftObjecty ; done = true
@@ -253,7 +257,7 @@
 //                condition leftObject == 0 \/ rightObject == 0
 //                action done = true
 //            }
-//            
+//
 //        }
 //        state WaitForCluster {
 //        }
@@ -536,18 +540,18 @@
 //}
 //
 //stm ObstacleAvoidance {
-//    const pi : real
-//    const DISTANCE : real
-//    const min_range : real
-//    const max_range : real
-//    const v_closest_angle : real
+//    const pi : real = 3
+//    const DISTANCE : real // 0.4
+//    const min_range : real // 0.1
+//    const max_range : real // 0.4
+//    const v_closest_angle : real 
 //    const v_closest_distance : real
-//    const v_av : real
-//    const v_lv : real
+//    const v_av : real // 0.7
+//    const v_lv : real // 0.07
 //    var closest_angle : real = v_closest_angle
 //    var closest_distance : real = v_closest_distance
-//    var av : real
-//    var lv : real
+//    var av : real = v_av
+//    var lv : real = v_lv
 //    var NOA_Move : Vec2
 //    var current_speed : real
 //    var oaCmd : Vec2
@@ -593,10 +597,7 @@
 //        condition ( closest_distance >= min_range ) /\ ( closest_distance < max_range ) /\ ( abs ( closest_angle ) <= 90 )
 //        action current_speed = NOA_Move.y
 //    }
-//    
-//    
-//    
-//    
+//
 //    transition t3 {
 //        from j0
 //        to OAEnabled
@@ -652,6 +653,56 @@
 //    }
 //}
 //
+//// MoveManager WITH DEADLOCK
+//
+////stm MoveManager {
+////    var NOAcmd : Vec2
+////    var cmd : Vec2
+////    input context { uses CCMove uses OAMove uses RWMove }
+////    output context { uses NOAMove requires Move }
+////    cycleDef cycle == 1
+////    initial i0
+////    state MoveHandler {
+////        entry $ move ( cmd ) ; $ NOAMove ! NOAcmd
+////    }
+////
+////    transition t0 {
+////        from MoveHandler
+////        to MoveHandler
+////        exec
+////        condition $ RWMove ? cmd /\ not $ OAMove /\ not $ CCMove
+////        action NOAcmd = cmd
+////    }
+////    transition t1 {
+////        from i0
+////        to MoveHandler
+////        action cmd.x = 0 ; cmd.y = 0 ; NOAcmd.x = 0 ; NOAcmd . y = 0
+////    }
+////    transition t2 {
+////        from MoveHandler
+////        to MoveHandler
+////        exec
+////        condition $ CCMove ? cmd /\ not $ OAMove
+////        action NOAcmd = cmd
+////    }
+////    transition t3 {
+////        from MoveHandler
+////        to MoveHandler
+//////        exec
+////        condition $ OAMove ? cmd /\ $ RWMove ? NOAcmd /\ not $ CCMove
+////    }
+////    transition t4 {
+////        from MoveHandler
+////        to MoveHandler
+////        exec
+////        condition $ OAMove ? cmd /\ $ CCMove ? NOAcmd /\ not $ RWMove
+////    }
+////    
+////    
+////}
+//
+//// MoveManager WITH NO DEADLOCK
+//
 //stm MoveManager {
 //    var NOAcmd : Vec2
 //    var cmd : Vec2
@@ -662,21 +713,25 @@
 //    state MoveHandler {
 //        entry $ move ( cmd ) ; $ NOAMove ! NOAcmd
 //    }
+//
 //    transition t0 {
 //        from MoveHandler
 //        to MoveHandler
 //        exec
-//        condition $ RWMove ? cmd /\ $ RWMove ? NOAcmd /\ not $ OAMove /\ not $ CCMove
+//        condition $ RWMove ? cmd /\ not $ OAMove /\ not $ CCMove
+//        action NOAcmd = cmd
 //    }
 //    transition t1 {
 //        from i0
 //        to MoveHandler
+//        action cmd.x = 0 ; cmd.y = 0 ; NOAcmd.x = 0 ; NOAcmd . y = 0
 //    }
 //    transition t2 {
 //        from MoveHandler
 //        to MoveHandler
 //        exec
-//        condition $ CCMove ? cmd /\ $ CCMove ? NOAcmd /\ not $ OAMove
+//        condition $ CCMove ? cmd /\ not $ OAMove
+//        action NOAcmd = cmd
 //    }
 //    transition t3 {
 //        from MoveHandler
@@ -708,7 +763,7 @@
 //    var j : nat
 //    var counter : nat
 //    var L : ClusterData
-//    var data : nat * Seq( ClusterData )
+//    var data : nat * Seq( ClusterData ) * Seq( ObjectData )
 //    var m : Seq( ClusterData )
 //    input context { uses IVisibleClustersCA uses ICurrentTypeCA }
 //    output context { uses ICachePointsCC uses ICachePointsTW }
@@ -791,8 +846,8 @@
 //    var targetObjectxy : Vec2
 //    var closestTargetObject : ObjectData
 //    var closestTargetObjectPosition : Vec2
-//    var counter : nat = 0
-//    var data : nat * Seq( ObjectData )
+//    var counter : nat
+//    var data : nat * Seq( ClusterData ) * Seq( ObjectData )
 //    var done : boolean
 //    var validObject : boolean
 //    var targetType : nat
@@ -809,7 +864,7 @@
 //            entry closestTargetObjectPosition = closestTargetObject . position
 //        }
 //        state CalculateTargetObject {
-//            entry if distance ( ( data [ 2 ] ) [ counter ] . position , targetObjectxy ) < distance ( closestTargetObject . position , targetObjectxy ) then closestTargetObject = ( data [ 2 ] ) [ counter ] end
+//            entry if distance ( ( data [ 3 ] ) [ counter ] . position , targetObjectxy ) < distance ( closestTargetObject . position , targetObjectxy ) then closestTargetObject = ( data [ 3 ] ) [ counter ] end
 //        }
 //        initial i0
 //        state WaitForDisableTargetWatch {
@@ -860,6 +915,7 @@
 //        to DetectingTarget
 //        exec
 //        condition $ EnableTargetWatch ? targetObjectxy /\ $ VisibleClustersTW ? data /\ $ CurrentTypeTW ? targetType
+//    	action counter = 1 ; validObject = true
 //    }
 //    transition t2 {
 //        from DetectingTarget
@@ -876,104 +932,130 @@
 //}
 //
 //stm RandomWalk {
-//    const lv : real
-//    const av : real
-//    const pi : real
-//    const v_randcoef : real
-//    var randcoef : real 
-//    var sign : nat
-//    var rwCmd : Vec2
-//    clock T
-//    input context { uses IClusterWatch }
-//    output context { uses RWMove }
-//    cycleDef cycle == 1
-//    initial i0
-//    state Wander {
-//        initial i0
-//        state Turn {
-//            entry # T ; randcoef = randomcoef ( ) ; rwCmd . x = av * sign ; rwCmd . y = 0 ; $ RWMove ! rwCmd
-//        }
-//        state Move_Forward {
-//            entry # T ; rwCmd . x = 0 ; rwCmd . y = lv ; $ RWMove ! rwCmd
-//        }
-//        transition t0 {
-//            from i0
-//            to Turn
-//        }
-//        transition t1 {
-//            from Turn
-//            to Move_Forward
-//            exec
-//            condition since ( T ) >= randcoef
-//            action rwCmd . x = 0 ; rwCmd . y = 0 ; $ RWMove ! rwCmd ; randcoef = randomcoef ( ) ; sign = random_sign ( )
-//        }
-//        transition t2 {
-//            from Move_Forward
-//            to Turn
-//            exec
-//            condition since ( T ) >= randcoef
-//            action rwCmd . x = 0 ; rwCmd . y = 0 ; $ RWMove ! rwCmd ; randcoef = randomcoef ( )
-//        }
-//        transition t3 {
-//            from Move_Forward
-//            to Move_Forward
-//            exec
-//            condition since ( T ) < randcoef
-//        }
-//        transition t4 {
-//            from Turn
-//            to Turn
-//            exec
-//            condition since ( T ) < randcoef
-//        }
-//    }
-//    state Wait {
-//    }
-//    transition t0 {
-//        from i0
-//        to Wait
-//    }
-//    transition t1 {
-//        from Wait
-//        to Wait
-//        exec
-//        condition not $ EnableClusterWatch
-//    }
-//    transition t2 {
-//        from Wait
-//        to Wander
-//        condition $ EnableClusterWatch
-//        action exec
-//    }
-//    transition t3 {
-//        from Wander
-//        to Wait
-//        exec
-//        condition $ DisableClusterWatch
-//        action rwCmd . x = 0 ; rwCmd . y = 0 ; $ RWMove ! rwCmd
-//    }
+//	const lv : real
+//	const av : real
+//	const pi : real = 3
+//	const v_randcoef : real
+//	var randcoef : real = v_randcoef
+//	var sign : nat
+//	var rwCmd : Vec2
+//	clock T
+//	input context { uses IClusterWatch }
+//	output context { uses RWMove }
+//	cycleDef cycle == 1
+//	initial i0
+//	state Wander {
+//		initial i0
+//		state Turn {
+//			entry randcoef = randomcoef ( ) ; rwCmd . x = av * sign ; rwCmd . y = 0 ; $ RWMove ! rwCmd
+//		}
+//		state Move_Forward {
+//			entry rwCmd . x = 0 ; rwCmd . y = lv ; $ RWMove ! rwCmd
+//		}
+//		transition t4 {
+//			from i0
+//			to Turn
+//		}
+//		transition t5 {
+//			from Turn
+//			to Move_Forward
+//			exec
+//			condition since ( T ) >= randcoef
+//			action # T ; randcoef = randomcoef ( ) ; sign = random_sign ( )
+//		}
+//		transition t6 {
+//			from Move_Forward
+//			to Turn
+//			exec
+//			condition since ( T ) >= randcoef
+//			action # T ; randcoef = randomcoef ( )
+//		}
+//		transition t7 {
+//			from Move_Forward
+//			to Move_Forward
+//			exec
+//			condition since ( T ) < randcoef
+//		}
+//		transition t8 {
+//			from Turn
+//			to Turn
+//			exec
+//			condition since ( T ) < randcoef
+//		}
+//	}
+//	state Wait {
+//	}
+//	transition t0 {
+//		from i0
+//		to Wait
+//	}
+//	transition t1 {
+//		from Wait
+//		to Wait
+//		exec
+//		condition not $ EnableClusterWatch
+//	}
+//	transition t2 {
+//		from Wait
+//		to Wander
+//		exec
+//		condition $ EnableClusterWatch
+//	}
+//	transition t3 {
+//		from Wander
+//		to Wait
+//		exec
+//		condition $ DisableClusterWatch
+//		action rwCmd . x = 0 ; rwCmd . y = 0 ; $ RWMove ! rwCmd
+//	}
 //}
 //
-//function randomcoef ( ) : real { } 
+//function randomnat ( ) : nat { }
 //
-//function sqrt ( v : real ) : real { 
-//    precondition v >= 0 
+//function randomcoef ( ) : real { }
+//
+//function sqrt ( v : real ) : real {
+//    precondition v >= 0
 //    postcondition result * result == v
-//} 
-//
-//function distance ( x1 : Vec2 , x2 : Vec2 ) : real { 
-//    postcondition result == sqrt ( ( x2 . x - x1 . x ) * ( x2 . x - x1 . x ) + ( x2 . y - x1 . y ) * ( x2 . y - x1 . y ) ) 
 //}
 //
-//function calculate_turn_angle ( x1 : Vec2 , x2 : Vec2 ) : real { 
+//function distance ( x1 : Vec2 , x2 : Vec2 ) : real {
+//    postcondition result == sqrt ( ( x2 . x - x1 . x ) * ( x2 . x - x1 . x ) + ( x2 . y - x1 . y ) * ( x2 . y - x1 . y ) )
+//}
+//
+//function L2 ( x : Vec2 ) : real {
+//    postcondition result == sqrt ( ( x . x * x . x + x . y * x . y ) )
+//}
+//
+//function dot ( x1 : Vec2 , x2 : Vec2 ) : real {
+//    postcondition result == x1 . x * x2 . x + x1 . y * x2 . y
+//}
+//
+//
+//function unit ( x : Vec2 ) : Vec2 {
+//    postcondition result . x == x . x / L2 ( x )
+//    postcondition result . y == x . y / L2 ( x )
+//}
+//
+//function angle_between ( x1 : Vec2 , x2 : Vec2 ) : real {
+//    postcondition result == acos ( dot ( unit ( x1 ) , unit ( x2 ) ) )
+//}
+//
+//function calculate_turn_angle ( x1 : Vec2 , x2 : Vec2 ) : real {
 //    postcondition result == 0
-//} 
-//function abs ( x : real ) : real { 
+//}
+//function acos ( x : real ) : real { }
+//function abs ( x : real ) : real {
 //    postcondition result == sqrt ( x * x )
-//} 
-//function random_sign ( ) : nat { 
+//}
+//function randcoef ( ) : real {
+//    postcondition 0 <= result <= 1
+//}
+//function randnat ( ) : real {
+//    postcondition 0 <= result <= 6
+//} function random_sign ( ) : nat {
 //    postcondition result == 1
-//} 
+//}
 //
 //module CacheConsM {
 //    connection TurtleBot on ObjectCarried to ctrl_ref0 on ObjectCarried ( _async )
@@ -989,3 +1071,4 @@
 //    cref ctrl_ref0 = CacheConsC
 //    cycleDef cycle == 1
 //}
+//
