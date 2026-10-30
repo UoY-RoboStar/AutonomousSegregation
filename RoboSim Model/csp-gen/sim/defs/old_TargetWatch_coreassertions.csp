@@ -1,0 +1,37 @@
+
+--
+-- RoboSim generator version 3.1.0.202608041342
+-- Automatically generated on 30-10-2026 14:51:23
+--
+
+include "core_timed_defs.csp"
+include "core_defs.csp"
+include "old_TargetWatch.csp"
+include "state_timed_defs.csp"
+include "old_defs.csp"
+include "robochart_defs.csp"
+include "../instantiations.csp"
+
+transparent wbisim
+channel r__
+-- generate old_TargetWatch
+P_old_TargetWatch = let
+	cycle_old_TargetWatch_TargetWatch = 1
+	id__ = 0
+	
+	
+	
+within
+	old_TargetWatch::O__(
+		id__,
+		const_old_TargetWatch_ObjectThreshold
+	)
+assert P_old_TargetWatch :[deadlock-free]	
+assert P_old_TargetWatch;RUN({r__}) :[deadlock-free]
+assert P_old_TargetWatch :[deterministic]
+assert P_old_TargetWatch :[divergence-free]
+-- timed deadlock free
+assert prioritise(P_old_TargetWatch[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]]
+
+-- timelock free
+assert RUN({tock}) ||| CHAOS(diff(Events,{|tock|})) [F= P_old_TargetWatch

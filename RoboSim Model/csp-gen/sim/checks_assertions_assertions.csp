@@ -1,16 +1,18 @@
 
 --
 -- RoboSim generator version 3.1.0.202608041342
--- Automatically generated on 29-10-2026 16:22:13
+-- Automatically generated on 30-10-2026 14:49:21
 --
 
 include "defs/state_timed_defs.csp"
-include "defs/robochart_defs.csp"
-include "defs/function_toolkit_defs.csp"
 include "defs/core_defs.csp"
 include "defs/main_old%20(with%20deadlocks)_defs.csp"
-include "defs/core_timed_defs.csp"
 include "defs/sequence_toolkit_defs.csp"
+include "defs/old.csp"
+include "defs/robochart_defs.csp"
+include "defs/function_toolkit_defs.csp"
+include "defs/core_timed_defs.csp"
+include "defs/main_defs.csp"
 include "defs/set_toolkit_defs.csp"
 include "instantiations.csp"
 include "defs/relation_toolkit_defs.csp"
@@ -18,16 +20,31 @@ include "defs/_.csp"
 
 channel r__
 
--- A7 - timed deadlock free
-assert let
-cycle_RandomWalk_RandomWalk = 1
-id__ = 0
-
-	const_RandomWalk_pi = 3
-
+-- A72 - timed deadlock free
+assert prioritise(let 
+	cycle_old_RandomWalk_RandomWalk = 1
+	id__ = 0
+	
+	
+	const_old_RandomWalk_pi = 3
+	
 within
-RandomWalk::D__(id__,cycle_RandomWalk_RandomWalk,
-const_RandomWalk_lv,
-const_RandomWalk_av,
-const_RandomWalk_pi,
-const_RandomWalk_v_randcoef)  :[deadlock free]
+	old::RandomWalk::D__(id__,cycle_old_RandomWalk_RandomWalk,
+			    const_old_RandomWalk_lv,
+			    const_old_RandomWalk_av,
+			    const_old_RandomWalk_pi)[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]] :[tau priority]: {tock}
+
+-- A7 - timed deadlock free
+assert prioritise(let 
+	cycle_RandomWalk_RandomWalk = 1
+	id__ = 0
+	
+	
+	const_RandomWalk_pi = 3
+	
+within
+	RandomWalk::D__(id__,cycle_RandomWalk_RandomWalk,
+			    const_RandomWalk_lv,
+			    const_RandomWalk_av,
+			    const_RandomWalk_pi)[[tock<-tock,tock<-tock']],<diff(Events,{tock',tock}),{tock}>)\{tock} :[divergence free [FD]] :[tau priority]: {tock}
+

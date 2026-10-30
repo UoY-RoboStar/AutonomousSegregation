@@ -1,3 +1,5 @@
+package old
+
 interface IVisibleClustersCC {
 	event VisibleClustersCC : nat * Seq( ClusterData ) * Seq( ObjectData )
 }
@@ -847,9 +849,8 @@ stm RandomWalk {
 	const lv : real
 	const av : real
 	const pi : real = 3
-	const v_randcoef : real
-	var randcoef : real = v_randcoef
-	var sign : nat
+	var randcoef : real = randomcoef ( )
+	var sign : nat = random_sign ( )
 	var rwCmd : Vec2
 	clock T
 	input context { uses IClusterWatch }
@@ -859,7 +860,7 @@ stm RandomWalk {
 	state Wander {
 		initial i0
 		state Turn {
-			entry randcoef = randomcoef ( ) ; rwCmd . x = av * sign ; rwCmd . y = 0 ; $ RWMove ! rwCmd
+			entry rwCmd . x = av * sign ; rwCmd . y = 0 ; $ RWMove ! rwCmd
 		}
 		state Move_Forward {
 			entry rwCmd . x = 0 ; rwCmd . y = lv ; $ RWMove ! rwCmd
@@ -873,14 +874,14 @@ stm RandomWalk {
 			to Move_Forward
 			exec
 			condition since ( T ) >= randcoef
-			action rwCmd . x = 0 ; rwCmd . y = 0 ; $ RWMove ! rwCmd ; # T ; randcoef = randomcoef ( ) ; sign = random_sign ( )
+			action rwCmd . x = 0 ; rwCmd . y = 0 ; $ RWMove ! rwCmd ; # T ; randcoef = randomcoef ( ) 
 		}
 		transition t6 {
 			from Move_Forward
 			to Turn
 			exec
 			condition since ( T ) >= randcoef
-			action rwCmd . x = 0 ; rwCmd . y = 0 ; $ RWMove ! rwCmd ; # T ; randcoef = randomcoef ( )
+			action rwCmd . x = 0 ; rwCmd . y = 0 ; $ RWMove ! rwCmd ; # T ; randcoef = randomcoef ( ) ; sign = random_sign ( )
 		}
 		transition t7 {
 			from Move_Forward

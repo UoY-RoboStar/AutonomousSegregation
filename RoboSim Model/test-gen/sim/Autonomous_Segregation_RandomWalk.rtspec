@@ -1,4 +1,4 @@
-// Tests for RoboSim component 'RandomWalk' with length up to 5: 180 traces generated in 2.424s CPU time
+// Tests for RoboSim component 'RandomWalk' with length up to 5: 180 traces generated in 2.488s CPU time
 // Format: t0, ..., tn, fevent
 // <t0,...,tn> is a valid trace followed by a 'fevent' that is forbidden
 cspm robosim RandomWalk_timed_traces associated to RandomWalk {
