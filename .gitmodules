@@ -1,0 +1,19 @@
+[submodule "turtlebot3_ws/src/DynamixelSDK"]
+	path = turtlebot3_ws/src/DynamixelSDK
+	url = https://github.com/ROBOTIS-GIT/DynamixelSDK.git
+	branch = humble-devel
+[submodule "RealRobot/SBC/SBC_ws/src/ld08_driver"]
+	path = RealRobot/SBC/SBC_ws/src/ld08_driver
+	url = https://github.com/ROBOTIS-GIT/ld08_driver.git
+	branch = ros2-devel
+[submodule "RealRobot/SBC/SBC_ws/src/turtlebot3"]
+	path = RealRobot/SBC/SBC_ws/src/turtlebot3
+	url = https://github.com/spragunr/turtlebot3.git
+	branch = humble-devel
+[submodule "turtlebot3_ws/src/turtlebot3_msgs"]
+	path = turtlebot3_ws/src/turtlebot3_msgs
+	url = https://github.com/ROBOTIS-GIT/turtlebot3_msgs.git
+[submodule "turtlebot3_ws/src/turtlebot3"]
+	path = turtlebot3_ws/src/turtlebot3
+	url = https://github.com/ROBOTIS-GIT/turtlebot3.git
+	branch = humble

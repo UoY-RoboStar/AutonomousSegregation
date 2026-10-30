@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<sdf version="1.9">
+  <model name="overhead_camera">
+    <static>true</static>
+    <pose>-0.5 0 10 0 1.5707963 1.5707963</pose>
+    <link name="link">
+      <sensor name="camera" type="camera">
+        <camera>
+          <horizontal_fov>0.70186</horizontal_fov>
+          <image><width>4096</width><height>3520</height><format>L8</format></image>
+          <clip><near>0.1</near><far>20</far></clip>
+        </camera>
+      </sensor>
+    </link>
+  </model>
+</sdf>

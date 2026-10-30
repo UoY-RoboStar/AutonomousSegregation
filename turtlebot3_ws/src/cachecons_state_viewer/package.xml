@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>cachecons_state_viewer</name>
+  <version>0.1.0</version>
+  <description>Simulator-independent ROS and Qt state-machine viewer for CacheCons.</description>
+  <maintainer email="arjun.badyal@york.ac.uk">Arjun Badyal</maintainer>
+  <license>BSD-3-Clause</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>simulation_interfaces</depend>
+  <depend>qtbase5-dev</depend>
+  <depend>rclcpp</depend>
+  <depend>std_msgs</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

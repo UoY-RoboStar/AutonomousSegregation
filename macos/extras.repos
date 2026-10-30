@@ -1,0 +1,24 @@
+# ROS 2 Humble packages that Ubuntu installs with apt but ros2.repos leaves
+# out, pinned to the apt versions. macos/install-ros2.sh builds them with ROS 2
+# Humble from source.
+repositories:
+  actuator_msgs:
+    type: git
+    url: https://github.com/rudislabs/actuator_msgs.git
+    version: 0.0.1
+  ros_gz:
+    type: git
+    url: https://github.com/gazebosim/ros_gz.git
+    version: 0.244.12
+  tf_transformations:
+    type: git
+    url: https://github.com/DLu/tf_transformations.git
+    version: 1.1.1
+  vision_msgs:
+    type: git
+    url: https://github.com/ros-perception/vision_msgs.git
+    version: 4.1.1
+  vision_opencv:
+    type: git
+    url: https://github.com/ros-perception/vision_opencv.git
+    version: 3.2.1

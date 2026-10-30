@@ -1,0 +1,33 @@
+# CacheCons programs generated from the RoboSim model, talking to ROS 2 through the r2r crate.
+# r2r builds its bindings from the ROS 2 environment that is sourced when `cargo build` runs.
+# These programs were written against r2r 0.6, whose build script no longer compiles with
+# current Rust toolchains (checked with rustc 1.98); moving to a current r2r release will
+# need the generated code adjusting to its API.
+[package]
+name = "cachecons_rust"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[[bin]]
+name = "cachecons"
+path = "src/bin/cachecons.rs"
+
+[[bin]]
+name = "cachecons_simple"
+path = "src/bin/cachecons_simple.rs"
+
+[dependencies]
+r2r = "0.6.3"
+futures = "0.3.19"
+serde = { version = "1.0.133", features = ["derive"] }
+serde_json = "1.0.74"
+log = "0.4"
+simplelog = "0.11.2"
+rand = "0.8.5"
+clap = "3.2.8"
+ctrlc = { version = "3.2.2", features = ["termination"] }
+nalgebra = { version = "0.31.2", features = ["serde-serialize"] }
+strum = { version = "0.24", features = ["derive"] }
+parse-display = "0.6.0"
+uuid = { version = "0.8.2", features = ["serde", "v4"] }
