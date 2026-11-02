@@ -46,14 +46,14 @@ def sensors(model, namespace, camera_rate=CAMERA_RATE):
 
 
 # The real robots' tag mount: a white plate on standoffs and clear end panels above the
-# lidar, carrying ArUco tag N (DICT_4X4_100, 45 mm) with its top edge facing the robot's right.
+# lidar, carrying ArUco tag N (DICT_4X4_100, 45 mm).
 TAG_MOUNT = """<visual name="tag_plate">
   <pose>-0.032 0 0.2065 0 0 0</pose>
-  <geometry><box><size>0.138 0.058 0.003</size></box></geometry>
+  <geometry><box><size>0.058 0.138 0.003</size></box></geometry>
   <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse></material>
 </visual>
 <visual name="aruco_tag">
-  <pose>-0.032 0 0.2081 0 0 3.1415927</pose>
+  <pose>-0.032 0 0.2081 0 0 1.5707963</pose>
   <geometry><plane><normal>0 0 1</normal><size>0.0525 0.0525</size></plane></geometry>
   <material><ambient>1 1 1 1</ambient><diffuse>1 1 1 1</diffuse><specular>0 0 0 1</specular>
     <pbr><metal><albedo_map>model://burger/materials/textures/aruco_{tag}.png</albedo_map>
@@ -64,15 +64,15 @@ TAG_MOUNT = """<visual name="tag_plate">
   <geometry><box><size>0.006 0.006 0.055</size></box></geometry>
   <material><ambient>0.7 0.7 0.72 1</ambient><diffuse>0.7 0.7 0.72 1</diffuse></material>
 </visual>
-""" for index, (x, y) in enumerate([(.063, .023), (.063, -.023), (-.063, .023), (-.063, -.023)])
+""" for index, (x, y) in enumerate([(.023, .063), (-.023, .063), (.023, -.063), (-.023, -.063)])
 ) + "".join(f"""<visual name="tag_panel_{index}">
-  <pose>{-0.032 + x} 0 0.1775 0 0 0</pose>
-  <geometry><box><size>0.003 0.058 0.055</size></box></geometry>
+  <pose>-0.032 {y} 0.1775 0 0 0</pose>
+  <geometry><box><size>0.058 0.003 0.055</size></box></geometry>
   <material><ambient>0.9 0.95 1 0.15</ambient><diffuse>0.9 0.95 1 0.15</diffuse></material>
   <transparency>0.85</transparency>
   <cast_shadows>false</cast_shadows>
 </visual>
-""" for index, x in enumerate([.0675, -.0675]))
+""" for index, y in enumerate([.0675, -.0675]))
 
 
 def robot_model(package_dir, namespace, entity, pose):

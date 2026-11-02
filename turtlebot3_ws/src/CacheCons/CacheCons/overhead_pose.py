@@ -25,7 +25,7 @@ PARAMETERS.minMarkerPerimeterRate = 0.01
 PARAMETERS.perspectiveRemovePixelPerCell = 8
 # ArucoDetector copies the parameters, so create it after setting them.
 DETECTOR = cv2.aruco.ArucoDetector(DICTIONARY, PARAMETERS) if NEW_ARUCO_API else None
-# The tag is centred above the lidar, behind the robot's origin, top edge facing its right.
+# The tag is centred above the lidar, behind the robot's origin, top edge facing its back.
 TAG_OFFSET = (-0.032, 0.0)
 
 
@@ -50,8 +50,8 @@ def tag_pose(corners, calibration):
     bottom = calibration.to_floor(tuple((corners[2] + corners[3]) / 2))
     if None in (centre, top, bottom):
         return None
-    yaw = math.remainder(math.atan2(top[1] - bottom[1], top[0] - bottom[0]) + math.pi / 2,
-                         2 * math.pi)
+    # The tag's top edge faces the robot's back, so the robot points from top edge to bottom edge.
+    yaw = math.atan2(bottom[1] - top[1], bottom[0] - top[0])
     c, s = math.cos(yaw), math.sin(yaw)
     return (centre[0] - c * TAG_OFFSET[0] + s * TAG_OFFSET[1],
             centre[1] - s * TAG_OFFSET[0] - c * TAG_OFFSET[1], yaw)
