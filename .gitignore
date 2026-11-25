@@ -21,3 +21,11 @@ models/csp-gen/
 # Python bytecode
 __pycache__/
 *.pyc
+
+# Testing workspace
+testing/build/
+testing/log/
+testing/install/
+testing/suites/verdicts/
+*.pyc
+testing/.vscode

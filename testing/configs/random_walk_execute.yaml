@@ -1,0 +1,7 @@
+# random_walk SUT, driver-controlled: inputs -> acks -> /stc/execute (step + simulated time) -> cycle -> report_cycle_done
+sut_cmd: ros2 run random_walk random_walk
+cycle_period: 0.1   # simulated seconds that pass between two cycles (added to the time sent with each step)
+timeout: 5.0        # wall-clock seconds per cycle; harness faults only, never a verdict
+inputs:
+  DisableClusterWatch: {topic: /DisableClusterWatch, type: std_msgs/msg/Bool}
+  EnableClusterWatch:  {topic: /EnableClusterWatch,  type: std_msgs/msg/Bool}
